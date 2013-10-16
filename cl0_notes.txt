@@ -1,0 +1,11 @@
+# Kyle Galbraith	Compliance Level 0 - Notes
+
+- Reading through the spec for CL0 it sounds like we are doing the sequ_fast function that only handles just printing out the integers.
+
+- CL0 will only accept EXACTLY 2 integers. Meaning that if we pass in one integer we should throw an error, and if we pass in 3 integers we should throw an error. This is different from the traditional seq implementation which allows you to pass in 3 integers, FIRST INCREMENT LAST. So with CL0 we will not be implementing the step functionality that traditional seq has.
+
+- The definition of what is an integer value is a bit loose. Is the string 'one' an integer value? I believe that what the spec is asking for is -1......N+1. The term SHOULD though throws me off a little bit.
+
+- Like traditional seq if x > y then we don't print anything out. This is another error case that we must handle in a slightly different way. I am suspecting an error function or a usage function is going to be handy here.
+
+- CL0 does not call for us to implement -s to allow the user to specify a seperator for their sequence. However, the default should be /n which means it should be in the default sequ object. 
