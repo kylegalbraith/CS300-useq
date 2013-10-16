@@ -4,7 +4,7 @@
 
 - CL0 will only accept EXACTLY 2 integers. Meaning that if we pass in one integer we should throw an error, and if we pass in 3 integers we should throw an error. This is different from the traditional seq implementation which allows you to pass in 3 integers, FIRST INCREMENT LAST. So with CL0 we will not be implementing the step functionality that traditional seq has.
 
-- The definition of what is an integer value is a bit loose. Is the string 'one' an integer value? I believe that what the spec is asking for is -1......N+1. The term SHOULD though throws me off a little bit.
+- Because the term SHOULD is used I am going to cast all floating point numbers to an int and display a warning message that the arguments passed in should be integers.
 
 - Like traditional seq if x > y then we don't print anything out. This is another error case that we must handle in a slightly different way. I am suspecting an error function or a usage function is going to be handy here.
 
