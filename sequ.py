@@ -1,3 +1,4 @@
+# Copyright (C) 2013 by Kyle Galbraith
 # Kyle Galbraith - CS300 - useq compliance level 0
 
 # Need sys to pass arguments in
