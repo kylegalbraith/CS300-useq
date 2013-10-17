@@ -1,3 +1,5 @@
+#!/usr/bin/env python  
+
 # Copyright (C) 2013 by Kyle Galbraith
 # Kyle Galbraith - CS300 - useq compliance level 0
 
