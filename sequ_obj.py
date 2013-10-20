@@ -5,6 +5,7 @@ class sequ_obj(object):
     """description of class"""
     startValue = 0
     endValue = 0
+    seperator = '\n'
 
 
 
