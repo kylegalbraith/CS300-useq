@@ -9,3 +9,9 @@
 - Like traditional seq if x > y then we don't print anything out. This is another error case that we must handle in a slightly different way. I am suspecting an error function or a usage function is going to be handy here.
 
 - CL0 does not call for us to implement -s to allow the user to specify a seperator for their sequence. However, the default should be /n which means it should be in the default sequ object. 
+
+- Running through test cases I discovered that an interesting decision is made handling floats. I am going to take the floor of the float no matter what, so 6.1 and 6.7 both become 6. I am noting this because it might be useful to refactor this code to take the ceiling when the number behind the decimal point is greater than or equal to 5.
+
+- All of my test cases have passed so far, additionally I thought of new test cases regarding 0's.
+
+ 
