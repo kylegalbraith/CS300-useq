@@ -1,0 +1,3 @@
+# Kyle Galbraith	Compliance Level 1 - Notes
+
+- To parse the additional flags that can be passed in I will need to loop through the parameters until I see a number. When I see a number I will then have to break out of that loop and read in either FIRST, FIRST LAST, or FIRST INCREMENT LAST.
