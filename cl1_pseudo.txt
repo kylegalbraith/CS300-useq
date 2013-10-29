@@ -1,4 +1,15 @@
-sequ compliance level 0 will read in two integers and then print out the sequence between those two integers. The following is the pseudocode I am following for this application.
+sequ compliance level 1 will read in flags --format/-f, --seperator/-s, --equal-width/-w,
+followed by 1, 2, or 3 floats. Or it can read in --version or --help.
+
+Read in --version or --help anywhere in the command line arguments. These arguments superceed any of the other arguments passed in as they hault program execution.
+     If command line == --version
+     	Print message showing the version number of sequ. Exit.
+     If command line == --help
+     	Print help documentation. Exit.
+     If command line == --version --help
+     	Print message showing the version number of sequ. Exit.
+     If command line == --help --version
+     	Print help documentation. Exit.	
 
 Read in two integers or floats from the command line. 
 	If parameters passed into the application is greater than 2 or less than 2
