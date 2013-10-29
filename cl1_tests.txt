@@ -31,7 +31,7 @@ T10. input: 1 1000
 	output: 1 2 3 4 5 up to and including 1000
 
 T11. input:
-	output: Error - two parameters must be passed in
+	output: Error - print help message
 
 T12. input: 1 4 5
 	output: 1 5
@@ -43,14 +43,37 @@ T14. input: 0.1 2.2
 	output: 0.1 1.1 2.1
 
 T15. input: 6.7 12
-	output: 6 7 8 9 10 11 12
+	output: 6.7 7.7 8.7 9.7 10.7 11.7 
 
 T16. input: 2.2
-	output: Error - two parameters must be passed in
+	output: 2.2
 
 T17. input: 1.2 2.1 3.3
-	output: Error - two parameters must be passed in
+	output: 1.2 3.3
 
+T18. input: --version
+     	output: Print version info
+
+T19. input: --help
+        output: Print help documentation
+
+T20. input: --version 1 10
+        output: Print version info
+
+T21. input: 1 10 --version
+        output: Print version info
+
+T22. input: --help 1.1 6
+        output: Print help documentation
+
+T23. input: 1.1 6 --help
+        output: Print help documentation
+
+T24. input: --version --help
+        output: Print version info
+
+T25. input: --help --version
+        output: Print help documentation
 
 
 
