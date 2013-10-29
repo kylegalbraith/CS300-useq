@@ -21,9 +21,17 @@ def setup():
 
     # Get the total args passed in as exactly 2 are required
     totalArgs = len(arguments)
+    parameterLoop = 0
 
-    if totalArgs > 2 or totalArgs == 1 or totalArgs == 0:
-        usage(1)
+    while parameterLoop < totalArgs and isinstance(arguments[parameterLoop], basestring):
+        if arguments[parameterLoop] == "--help":
+            print "Go To Help"
+        if arguments[parameterLoop] == "--format" or arguments[parameterLoop] == "-f":
+            print "format"
+        parameterLoop += 1
+        
+    #if totalArgs > 2 or totalArgs == 1 or totalArgs == 0:
+     #   usage(1)
 
     for x in range(totalArgs):
         try:
@@ -34,18 +42,9 @@ def setup():
     assert type(arguments[0]) is FloatType, "Argument one was not casted as a float"
     assert type(arguments[1]) is FloatType, "Argument two was not casted as a float"
     
-    # Warn if arguments are not integers. Is there a fractional part.
-    if not math.floor(arguments[0]) == arguments[0]:
-        usage(3)
-    if not math.floor(arguments[1]) == arguments[1]:
-        usage(3)
-
-    initialObj.startValue = int(arguments[0])
-    initialObj.endValue = int(arguments[1])
-
-    assert type(initialObj.startValue) is IntType, "Start value was not casted to an int correctly"
-    assert type(initialObj.endValue) is IntType, "End value was not casted to an int correctly"
-
+    initialObj.startValue = arguments[0]
+    initialObj.endValue = arguments[1]
+ 
     return initialObj
 
 # usage will be the initial error handling function so if the initial requirements are not met, print out the correct thing to do.
@@ -72,9 +71,13 @@ def outputSeq(sequObj):
     # If the start is greater than the end then we just exit
     if start > end:
         exit(1)
-    for x in range(start, end + 1):
-        outputStr = str(x)
-        print outputStr + sequObj.seperator,
+    while start <= end:
+        print sequObj.format % + start + sequObj.seperator,
+        start += sequObj.step
+
+    #for x in range(dist + 1):
+        #outputStr = float(x)
+        #print sequObj.format % + outputStr + sequObj.seperator,
     # The program was successful
     exit(0)
 

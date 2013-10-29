@@ -6,6 +6,7 @@ class sequ_obj(object):
     startValue = 0
     endValue = 0
     seperator = '\n'
+    format = "%g"
     step = 1
 
 
