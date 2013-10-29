@@ -1,13 +1,16 @@
-# # Copyright (C) 2013 by Kyle Galbraith
+#/usr/bin/env python
+# Copyright (C) 2013 by Kyle Galbraith
 
-class sequ_obj(object):
+class sequ_obj:
     import sys
     """description of class"""
-    startValue = 0
-    endValue = 0
-    seperator = '\n'
-    format = "%g"
-    step = 1
+    # Constructor for sequ_obj
+    def __init__(self):
+        self.startValue = 0
+        self.endValue = 0
+        self.seperator = '\n'
+        self.formatOption = "%g"
+        self.step = 1
 
 
 

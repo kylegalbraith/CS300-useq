@@ -1,7 +1,7 @@
 #!/usr/bin/env python  
 
 # Copyright (C) 2013 by Kyle Galbraith
-# Kyle Galbraith - CS300 - useq compliance level 0
+# Kyle Galbraith - CS300 - sequ compliance level 1
 
 # Need sys to pass arguments in
 import sys
@@ -72,7 +72,7 @@ def outputSeq(sequObj):
     if start > end:
         exit(1)
     while start <= end:
-        print sequObj.format % + start + sequObj.seperator,
+        print sequObj.formatOption % + start + sequObj.seperator,
         start += sequObj.step
 
     #for x in range(dist + 1):
