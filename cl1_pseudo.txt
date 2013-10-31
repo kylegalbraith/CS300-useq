@@ -1,36 +1,35 @@
 sequ compliance level 1 will read in flags --format/-f, --seperator/-s, --equal-width/-w,
 followed by 1, 2, or 3 floats. Or it can read in --version or --help.
 
-Read in --version or --help anywhere in the command line arguments. These arguments superceed any of the other arguments passed in as they hault program execution.
-     If command line == --version
-     	Print message showing the version number of sequ. Exit.
-     If command line == --help
-     	Print help documentation. Exit.
-     If command line == --version --help
-     	Print message showing the version number of sequ. Exit.
-     If command line == --help --version
-     	Print help documentation. Exit.	
+Parse the arguments that are of type string by looping through the args until you see a number or something that is not of type string.
+	If arg == --version
+		Print message showing the version number of sequ. Exit.
+	If arg == --help
+		Print help documentation. Exit.
+	If arg == --format or -f
+		Look at the next argument on the command line.
+		If next arg on the command line is a valid format string for printf
+			Assign the format string to sequ object
+		Else
+			Print usage message. Exit.
+	If arg == --seperator or -s
+		Assign the seperator string to the sequ object
+	If arg == --equal-width or -w
+		Set equal-width bool on sequ object
+When the loop hits a numerical argument we will break out of this loop and into one that will parse the numerical arguments.
 
-Read in two integers or floats from the command line. 
-	If parameters passed into the application is greater than 2 or less than 2
-		Print usage message saying that exactly two parameters must be used
-		Exit the program
-	
-	If the two parameters can not be casted to a float or int (i.e. a string has been 		passed in)
-		Catch the exception that will be thrown.
-		Print usage message saying that only integers can be used
-		Exit the program
-	
-	Check to see if any of the parameters have a fractional part (meaning they are a 		float)	
-		Print a warning that only integers should be used
-		Continue program execution
-		
-	Set the start and end value for the sequence
-		Set the start and end value for the sequence to be ints. If they are floats 		they will lose their precision. This is in response to the "SHOULD" keyword 		in the spec regarding the parameters passed in being ints.
-		
-	If start value is greater than end value
-		Print nothing and exit program
+Parse numerical command line arguments
+	If numerical args > 3
+		Print usage. Exit.
+	If numerical args == 3
+		Assign 1st arg to be the start value of sequ object
+		Assign 2nd arg to be the step valud of sequ object
+		Assign 3rd arg to be the end value of sequ object
+	If numerical args == 2
+		Assign 1st arg to be the start value of sequ object
+		Assign 2nd arg to be the end value of sequ object
+	If numerical args == 1
+		Assign arg to be the end value of sequ object				
 
-	Else
-		Print sequence of numbers from start value through end value. We print the 			end value.
-		Exit program succesfully.
+
+

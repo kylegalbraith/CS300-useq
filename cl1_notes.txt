@@ -1,3 +1,7 @@
 # Kyle Galbraith	Compliance Level 1 - Notes
 
 - To parse the additional flags that can be passed in I will need to loop through the parameters until I see a number. When I see a number I will then have to break out of that loop and read in either FIRST, FIRST LAST, or FIRST INCREMENT LAST.
+
+- Parsing the flags will be somewhat rudimentary, except for the format flag. The format flag is going to require a little extra processing. If you see -f or --format we need to step to the next parameter to get what the format string is, making sure we update our counter as well so that we do not process the format string twice. Once we have the format string we are going to set it on the sequ object. However, we will not return the sequ object until we have tested the format string in a try catch to make sure it is valid.
+
+- For --help or --version we will need to print either one and then exit the program with success.
