@@ -29,7 +29,13 @@ Parse numerical command line arguments
 		Assign 1st arg to be the start value of sequ object
 		Assign 2nd arg to be the end value of sequ object
 	If numerical args == 1
-		Assign arg to be the end value of sequ object				
+		Assign arg to be the end value of sequ object
+
+If there are any command line arguments remaining after parsing flags and numericals
+	Print error, extra operand. Exit.
+
+Return sequ object to main
+Call output function				
 
 
 
