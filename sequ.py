@@ -21,14 +21,23 @@ def setup():
 
     # Get the total args passed in as exactly 2 are required
     totalArgs = len(arguments)
-    parameterLoop = 0
+    stringParse = 0
 
-    while parameterLoop < totalArgs and isinstance(arguments[parameterLoop], basestring):
-        if arguments[parameterLoop] == "--help":
+    while stringParse < totalArgs and isinstance(arguments[stringParse], basestring):
+        if arguments[stringParse] == "--help":
             print "Go To Help"
-        if arguments[parameterLoop] == "--format" or arguments[parameterLoop] == "-f":
-            print "format"
+        if arguments[stringParse] == "--version":
+            print "Print version info"
+        if arguments[stringParse] == "--format" or arguments[stringParse] == "-f":
+            parameterLoop += 1
+            initialObj.formatOption = arguments[parameterLoop]
+            print "format" 
+        if arguments[stringParse] == "--seperator" or arguments[stringParse] == "-s":
+            print "sep for string"
+        if arguments[stringParse] == "--equal-width" or arguments[stringParse] == "-w":
+            print "set equal-width"     
         parameterLoop += 1
+
         
     #if totalArgs > 2 or totalArgs == 1 or totalArgs == 0:
      #   usage(1)
