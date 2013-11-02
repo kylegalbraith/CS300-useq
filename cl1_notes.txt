@@ -5,3 +5,10 @@
 - Parsing the flags will be somewhat rudimentary, except for the format flag. The format flag is going to require a little extra processing. If you see -f or --format we need to step to the next parameter to get what the format string is, making sure we update our counter as well so that we do not process the format string twice. Once we have the format string we are going to set it on the sequ object. However, we will not return the sequ object until we have tested the format string in a try catch to make sure it is valid.
 
 - For --help or --version we will need to print either one and then exit the program with success.
+
+- To handle going from parsing flags (aka strings) to numbers we likely do not want to loop through all of the command line arguments again so we need to know where in the array of arguments to start for the integers.
+
+- This seems like a hacky way to do it. But we can have one while loop that goes through all of the command line args, we try to create a float out of each arg and if it throws an exception we test it for the string flags. Big problem here is that then you can have the args scattered so something like this would be processed without error 
+./sequ -f 1 "%E" 10
+
+- Loop through the command line args and try to cast the arg to a float, if it works we break out of the loop as we are now in the numerical portion of the command line.
