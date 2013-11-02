@@ -64,6 +64,7 @@ def setup():
     lengthOfNumbers = len(numbers)
     assert lengthOfNumbers < 4, "Error in number assignments"
 
+    # Three different cases to consider for the numbers array. 3 numbers = start, step, and end need to be set. 2 numbers = start and end value need to be set. 1 number = just the end value needs to be set
     if(lengthOfNumbers == 3):
         initialObj.startValue = numbers[0]
         initialObj.step = numbers[1]
@@ -74,7 +75,7 @@ def setup():
     if(lengthOfNumbers == 1):
         initialObj.endValue = numbers[0]
 
-    checkFormat = initialObj.formatOption % + initialObj.endValue
+    checkFormat = initialObj.formatOption % initialObj.endValue
   
     return initialObj
 

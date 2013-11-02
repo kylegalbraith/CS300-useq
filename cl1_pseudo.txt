@@ -16,7 +16,7 @@ Parse the arguments that are of type string by looping through the args until yo
 		Assign the seperator string to the sequ object
 	If arg == --equal-width or -w
 		Set equal-width bool on sequ object
-When the loop hits a numerical argument we will break out of this loop and into one that will parse the numerical arguments.
+When the loop hits a numerical argument we will break out of this loop and into one that will parse the numerical arguments. Starting from the array index that the string loop left off on.
 
 Parse numerical command line arguments
 	If numerical args > 3
