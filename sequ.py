@@ -69,15 +69,22 @@ def setup():
         initialObj.startValue = numbers[0]
         initialObj.step = numbers[1]
         initialObj.endValue = numbers[2]
+        checkStartEnd(initialObj.startValue, initialObj.endValue)
     if(lengthOfNumbers == 2):
         initialObj.startValue = numbers[0]
         initialObj.endValue = numbers[1]
+        checkStartEnd(initialObj.startValue, initialObj.endValue)
     if(lengthOfNumbers == 1):
         initialObj.endValue = numbers[0]
 
     checkFormat = initialObj.formatOption % initialObj.endValue
   
     return initialObj
+
+# check if the start value > end value, if it is then exit without any output
+def checkStartEnd (start, end):
+    if start > end:
+        exit(1)
 
 # usage will be the initial error handling function so if the initial requirements are not met, print out the correct thing to do.
 def usage(errorCode):
@@ -103,17 +110,11 @@ def usage(errorCode):
 def outputSeq(sequObj):
     start = sequObj.startValue
     end = sequObj.endValue
-    
-    # If the start is greater than the end then we just exit
-    if start > end:
-        exit(1)
+
     while start <= end:
         print sequObj.formatOption % + start + sequObj.seperator,
         start += sequObj.step
 
-    #for x in range(dist + 1):
-        #outputStr = float(x)
-        #print sequObj.format % + outputStr + sequObj.seperator,
     # The program was successful
     exit(0)
 
