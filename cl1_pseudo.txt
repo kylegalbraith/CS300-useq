@@ -16,26 +16,32 @@ Parse the arguments that are of type string by looping through the args until yo
 		Assign the seperator string to the sequ object
 	If arg == --equal-width or -w
 		Set equal-width bool on sequ object
-When the loop hits a numerical argument we will break out of this loop and into one that will parse the numerical arguments. Starting from the array index that the string loop left off on.
+	If arg == numerical argument
+		break out of the loop
 
 Parse numerical command line arguments
 	If numerical args > 3
-		Print usage. Exit.
+		Print error, extra operand. Exit.
+	If numerical args == 0
+		Print usage. Exit
 	If numerical args == 3
 		Assign 1st arg to be the start value of sequ object
-		Assign 2nd arg to be the step valud of sequ object
+		Assign 2nd arg to be the step value of sequ object
 		Assign 3rd arg to be the end value of sequ object
+		If start value > end value
+			Print nothing. Exit.
 	If numerical args == 2
 		Assign 1st arg to be the start value of sequ object
 		Assign 2nd arg to be the end value of sequ object
+		If start value > end value
+			Print nothing. Exit.
 	If numerical args == 1
 		Assign arg to be the end value of sequ object
 
-If there are any command line arguments remaining after parsing flags and numericals
-	Print error, extra operand. Exit.
-
-Return sequ object to main
-Call output function				
+Call output function
+	If start value > end value
+		Print nothing. Exit.
+					
 
 
 
