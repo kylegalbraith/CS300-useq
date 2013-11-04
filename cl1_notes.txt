@@ -12,3 +12,5 @@
 ./sequ -f 1 "%E" 10
 
 - Loop through the command line args and try to cast the arg to a float, if it works we break out of the loop as we are now in the numerical portion of the command line.
+
+- The equal-width flag requires us to think about when we put a zero in front and when we do not. If you do seq -w 1 10, then we need to print 01 02 03 04 05 06 07 08 09 10, not 010.
