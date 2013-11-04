@@ -93,6 +93,18 @@ T30. input: 10 -1 10
 T31. input: 1 -1 10
 	output: nothing
 
+T32. input: -w 9.8 .01 10.1
+	output: 09.80 09.81 ... 10.10
+
+T33. input: -w -1.001 11
+	output:
+
+T34. input: -w -1 1.1 11
+	output: -1.0 00.1 01.2 02.3 03.4 ... 10.0
+
+T35. input: -f "%a" -1 1.1 11
+	output: error right now because python does not have double
+
 
 
 
