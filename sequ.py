@@ -81,6 +81,11 @@ def setup():
         initialObj.step = numbers[1]
         initialObj.endValue = numbers[2]
         
+        checkStepWhole = initialObj.step % 1
+
+        if(initialObj.formatOption == "%g" and checkStepWhole != 0):
+            initialObj.formatOption = "%0.1f"
+
         if(initialObj.step < 0):
             if(initialObj.startValue >= initialObj.endValue):
                 initialObj.negativeStep = True
