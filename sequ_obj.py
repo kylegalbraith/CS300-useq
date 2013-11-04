@@ -10,7 +10,11 @@ class sequ_obj:
         self.endValue = 0
         self.seperator = '\n'
         self.formatOption = "%g"
+        self.equalWidth = ""
         self.step = 1
+        self.negativeStep = False
+
+
 
 
 

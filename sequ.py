@@ -22,6 +22,8 @@ def setup():
     # Get the total args passed in as exactly 2 are required
     totalArgs = len(arguments)
     stringParse = 0
+    seenFormat = False
+    seenEw = False
 
     while stringParse < totalArgs:
         # Try to cast each argument to a float, if it works then we break out of the loop as we have hit the 
@@ -37,19 +39,28 @@ def setup():
             if arguments[stringParse] == "--format" or arguments[stringParse] == "-f":
                 stringParse += 1
                 try:
-                    initialObj.formatOption = arguments[stringParse]
+                    if(seenEw == False):
+                        initialObj.formatOption = arguments[stringParse]
+                        seenFormat = True
+                    else:
+                        usage(6)
                 except IndexError:
                     usage(4)
-                print initialObj.formatOption 
             if arguments[stringParse] == "--seperator" or arguments[stringParse] == "-s":
                 print "sep for string"
             if arguments[stringParse] == "--equal-width" or arguments[stringParse] == "-w":
-                print "set equal-width"     
-            stringParse += 1
-    
+                if(seenFormat == False):
+                    initialObj.equalWidth = "0"
+                    seenEw = True
+                else:
+                    usage(6)  
+            stringParse += 1   
+  
     totalNumberArgs = totalArgs - stringParse
     numbers = []
-    assert totalNumberArgs >= 1, "There are no numbers in here"
+    
+    if(totalNumberArgs == 0):
+        usage(5)
     
     if(totalNumberArgs <= 3):
         for x in range(stringParse, totalArgs):
@@ -69,7 +80,15 @@ def setup():
         initialObj.startValue = numbers[0]
         initialObj.step = numbers[1]
         initialObj.endValue = numbers[2]
-        checkStartEnd(initialObj.startValue, initialObj.endValue)
+        
+        if(initialObj.step < 0):
+            if(initialObj.startValue >= initialObj.endValue):
+                initialObj.negativeStep = True
+            else:
+                exit(1)
+        else:
+            checkStartEnd(initialObj.startValue, initialObj.endValue)
+    
     if(lengthOfNumbers == 2):
         initialObj.startValue = numbers[0]
         initialObj.endValue = numbers[1]
@@ -90,7 +109,9 @@ def checkStartEnd (start, end):
 def usage(errorCode):
     
     assert type(errorCode) is IntType, "Error code not recognized"
-    
+    helpString = '\nTry \'sequ --help\' for more information.'
+
+
     if(errorCode == 1):
         print 'Print help documentation'
         exit(1)
@@ -98,10 +119,16 @@ def usage(errorCode):
         print 'Print version info'
         exit(1)
     elif(errorCode == 3):
-        print 'sequ: extra operand'
+        print 'sequ: extra operand', + helpString 
         exit(1)
     elif(errorCode == 4):
         print 'Invalid format string. Use --help for more information.'
+        exit(1)
+    elif(errorCode == 5):
+        print 'sequ: missing operand' + helpString
+        exit(1)
+    elif(errorCode == 6):
+        print 'sequ: format string may not be used when printing equal width strings' + helpString
         exit(1)
     else:
         print 'ERROR - An unexpected error has ocurred'
@@ -110,10 +137,17 @@ def usage(errorCode):
 def outputSeq(sequObj):
     start = sequObj.startValue
     end = sequObj.endValue
+    step = sequObj.step
+    negativeStep = sequObj.negativeStep
 
-    while start <= end:
-        print sequObj.formatOption % + start + sequObj.seperator,
-        start += sequObj.step
+    if(negativeStep):
+        while start >= end:
+            print sequObj.equalWidth + sequObj.formatOption % + start + sequObj.seperator,
+            start += step
+    else:
+        while start <= end:
+            print sequObj.equalWidth + sequObj.formatOption % + start + sequObj.seperator,
+            start += step    
 
     # The program was successful
     exit(0)
