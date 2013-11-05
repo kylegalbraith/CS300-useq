@@ -51,6 +51,8 @@ T16. input: 2.2
 T17. input: 1.2 2.1 3.3
 	output: 1.2 3.3
 
+## These are new test cases for CL1 ##
+
 T18. input: --version
      	output: Print version info
 
@@ -61,13 +63,13 @@ T20. input: --version 1 10
         output: Print version info
 
 T21. input: 1 10 --version
-        output: Print version info
+        output: Error - extra operand
 
 T22. input: --help 1.1 6
         output: Print help documentation
 
 T23. input: 1.1 6 --help
-        output: Print help documentation
+        output: Error - extra operand
 
 T24. input: --version --help
         output: Print version info
@@ -78,12 +80,6 @@ T25. input: --help --version
 T26. input: -w 1 10
 	output: 01 02 03 04 05 06 07 08 09 10
 
-T27. input: -f "%e" 1 4
-	output: 1.000000e+00 2.000000e+00 3.000000e+00 4.000000e+00
-
-T28. input: -w -f "%e" 1 6
-	output: Error cannot use format string when using equal width strings
-
 T29. input: 1 -1 0
 	output: 1 0
 
@@ -93,16 +89,37 @@ T30. input: 10 -1 10
 T31. input: 1 -1 10
 	output: nothing
 
-T32. input: -w 9.8 .01 10.1
+T32. input: -10 -1
+	output: -10 -9 -8 -7 -6 -5 -4 -3 -2 -1
+
+T33. input: -w -10 -1
+	output: -10 -09 -08 -07 -06 -05 -04 -03 -02 -01 
+
+T34. input: -w 9.8 .01 10.1
 	output: 09.80 09.81 ... 10.10
 
-T33. input: -w -1.001 11
+T35. input: -w -1.001 11
 	output:
 
-T34. input: -w -1 1.1 11
+T36. input: -w -1 1.1 11
 	output: -1.0 00.1 01.2 02.3 03.4 ... 10.0
 
-T35. input: -f "%a" -1 1.1 11
+T37. input: -w 10 -1.1 1
+	output: 10.0 08.9 07.8 06.7 05.6 04.5 03.4 02.3 01.2
+
+T38. input: -w -1.1 10
+	output: -1.1 -0.1 00.9 01.9 02.9 03.9 04.9 05.9 06.9 07.9 08.9 09.9
+
+T39. input: -w -1.1 1.2 10
+	output: -1.1 00.1 01.3 02.5 03.7 04.9 06.1 07.3 08.5 09.7
+
+T40. input: -w -f "%e" 1 6
+	output: Error cannot use format string when using equal width strings
+
+T41. input: -f "%e" 1 4
+	output: 1.000000e+00 2.000000e+00 3.000000e+00 4.000000e+00
+
+T42. input: -f "%a" -1 1.1 11
 	output: error right now because python does not have double
 
 

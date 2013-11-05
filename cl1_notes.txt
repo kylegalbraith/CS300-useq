@@ -16,3 +16,5 @@
 - The equal-width flag requires us to think about when we put a zero in front and when we do not. If you do seq -w 1 10, then we need to print 01 02 03 04 05 06 07 08 09 10, not 010.
 
 - There is a problem using the %a format option in Python because Python does support doubles and therefore the flag %a is going to throw an error. Currently researching a solution to this.
+
+- When using -w if start = a negative and end equals a negative we need another place to the left of the decimal.
