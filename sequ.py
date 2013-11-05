@@ -110,28 +110,31 @@ def setup():
             # doing floor to avoid floating point errors
             print "start rem " + str(startRemainder)
             # There is a bug here in that if step remainder is 0.1 it could be interpreted as 0.09 which then causes startRightOfDecimal to be 2 instead of 1.
-            # To resolve the problem I am adding 1 to the floor of the log of startRemainder
+            # To resolve the problem I am adding 1 to the floor of the log of startRemaider
             startRightOfDecimal = -int(math.floor(math.log(startRemainder, 10)) + 1)
             print "start right " + str(startRightOfDecimal)
         if(stepRemainder > 0):
             stepRightOfDecimal = -int(math.floor(math.log(stepRemainder, 10)))
 
-        #print startRemainder
-        print stepRemainder
-        #print startRightOfDecimal
-        print stepRightOfDecimal
-
         rightOfDecimal = max(startRightOfDecimal, stepRightOfDecimal)
-        if(initialObj.startValue <= 0):
+        print "rd " + str(rightOfDecimal)
+        if(initialObj.startValue < 0):
             # If the startValue == 0 then we dont take the max, instead just use the endValue + 1 (the +1 is so we end up with the right # of 0's in this scenario)
             # seq -w 0 -1.1 -16.1
-            leftOfDecimal = int(math.floor(math.log(abs(initialObj.endValue), 10)) + 1)
+            if(initialObj.endValue != 0):
+                leftOfDecimal = -int(math.floor(math.log(abs(initialObj.endValue), 10)))
+            else:
+                leftOfDecimal = int(math.floor(math.log(abs(initialObj.step), 10)) + 1)
         else:
             leftOfDecimal = int(math.floor(max(math.log(abs(initialObj.startValue), 10), math.log(abs(initialObj.endValue), 10))))
+        print "ld " + str(leftOfDecimal)
+        
+        if(leftOfDecimal == 0):
+            leftOfDecimal = leftOfDecimal + 1
 
         if(rightOfDecimal > 0):
-           leftOfDecimal = leftOfDecimal + 1
-
+            leftOfDecimal = leftOfDecimal + 1
+        
         if(initialObj.equalWidth):
             initialObj.formatOption = "%0" + str(leftOfDecimal + rightOfDecimal + 1) + "." + str(rightOfDecimal) + "f"
         else:
