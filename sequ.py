@@ -13,7 +13,7 @@ def setup():
     # Create a new sequ_obj which will have all of the defaults set for normal sequ operation.
     initialObj = sequ_obj()
 
-    assert initialObj.startValue == 0, "Start value was not initialized correctly"
+    assert initialObj.startValue == 1, "Start value was not initialized correctly"
     assert initialObj.endValue == 0, "End value was not initialized correctly"
 
     # Get the arguments that have been passed in, and ignore the first one since it is the invocation of the script
@@ -21,6 +21,9 @@ def setup():
 
     # Get the total args passed in as exactly 2 are required
     totalArgs = len(arguments)
+    # loop variables. 
+    # seenFormat = flag for we have seen the format flag
+    # seenEw = flag for we have seen the equal-width
     stringParse = 0
     seenFormat = False
     seenEw = False
@@ -50,12 +53,13 @@ def setup():
                 print "sep for string"
             if arguments[stringParse] == "--equal-width" or arguments[stringParse] == "-w":
                 if(seenFormat == False):
-                    initialObj.equalWidth = "0"
+                    initialObj.equalWidth = True
                     seenEw = True
                 else:
                     usage(6)  
             stringParse += 1   
   
+    # Need to check that the number of args leftover is equal to or less than 3 but greater than 0
     totalNumberArgs = totalArgs - stringParse
     numbers = []
     
@@ -81,11 +85,6 @@ def setup():
         initialObj.step = numbers[1]
         initialObj.endValue = numbers[2]
         
-        checkStepWhole = initialObj.step % 1
-
-        if(initialObj.formatOption == "%g" and checkStepWhole != 0):
-            initialObj.formatOption = "%0.1f"
-
         if(initialObj.step < 0):
             if(initialObj.startValue >= initialObj.endValue):
                 initialObj.negativeStep = True
@@ -100,6 +99,46 @@ def setup():
         checkStartEnd(initialObj.startValue, initialObj.endValue)
     if(lengthOfNumbers == 1):
         initialObj.endValue = numbers[0]
+    
+    if(initialObj.formatOption == "%g"):
+        # special code
+        startRightOfDecimal = 0
+        stepRightOfDecimal = 0
+        startRemainder = abs(initialObj.startValue % 1)
+        stepRemainder = abs(initialObj.step % 1)
+        if(startRemainder > 0):
+            # doing floor to avoid floating point errors
+            print "start rem " + str(startRemainder)
+            # There is a bug here in that if step remainder is 0.1 it could be interpreted as 0.09 which then causes startRightOfDecimal to be 2 instead of 1.
+            # To resolve the problem I am adding 1 to the floor of the log of startRemainder
+            startRightOfDecimal = -int(math.floor(math.log(startRemainder, 10)) + 1)
+            print "start right " + str(startRightOfDecimal)
+        if(stepRemainder > 0):
+            stepRightOfDecimal = -int(math.floor(math.log(stepRemainder, 10)))
+
+        #print startRemainder
+        print stepRemainder
+        #print startRightOfDecimal
+        print stepRightOfDecimal
+
+        rightOfDecimal = max(startRightOfDecimal, stepRightOfDecimal)
+        if(initialObj.startValue < 0):
+            # If the startValue == 0 then we dont take the max, instead just use the endValue + 1 (the +1 is so we end up with the right # of 0's in this scenario)
+            # seq -w 0 -1.1 -16.1
+            leftOfDecimal = int(math.floor(math.log(abs(initialObj.endValue), 10)))
+        else:
+            leftOfDecimal = int(math.floor(max(math.log(abs(initialObj.startValue), 10), math.log(abs(initialObj.endValue), 10))))
+
+        if(rightOfDecimal > 0):
+           leftOfDecimal = leftOfDecimal + 1
+
+        if(initialObj.equalWidth):
+            initialObj.formatOption = "%0" + str(leftOfDecimal + rightOfDecimal + 1) + "." + str(rightOfDecimal) + "f"
+        else:
+            initialObj.formatOption = "%0." + str(rightOfDecimal) + "f"
+
+        print initialObj.formatOption
+
 
     checkFormat = initialObj.formatOption % initialObj.endValue
   
@@ -124,7 +163,7 @@ def usage(errorCode):
         print 'Print version info'
         exit(1)
     elif(errorCode == 3):
-        print 'sequ: extra operand', + helpString 
+        print 'sequ: extra operand' + helpString 
         exit(1)
     elif(errorCode == 4):
         print 'Invalid format string. Use --help for more information.'
@@ -147,11 +186,11 @@ def outputSeq(sequObj):
 
     if(negativeStep):
         while start >= end:
-            print sequObj.equalWidth + sequObj.formatOption % + start + sequObj.seperator,
+            print sequObj.formatOption % + start + sequObj.seperator,
             start += step
     else:
         while start <= end:
-            print sequObj.equalWidth + sequObj.formatOption % + start + sequObj.seperator,
+            print sequObj.formatOption % + start + sequObj.seperator,
             start += step    
 
     # The program was successful
