@@ -122,10 +122,10 @@ def setup():
         print stepRightOfDecimal
 
         rightOfDecimal = max(startRightOfDecimal, stepRightOfDecimal)
-        if(initialObj.startValue < 0):
+        if(initialObj.startValue <= 0):
             # If the startValue == 0 then we dont take the max, instead just use the endValue + 1 (the +1 is so we end up with the right # of 0's in this scenario)
             # seq -w 0 -1.1 -16.1
-            leftOfDecimal = int(math.floor(math.log(abs(initialObj.endValue), 10)))
+            leftOfDecimal = int(math.floor(math.log(abs(initialObj.endValue), 10)) + 1)
         else:
             leftOfDecimal = int(math.floor(max(math.log(abs(initialObj.startValue), 10), math.log(abs(initialObj.endValue), 10))))
 
