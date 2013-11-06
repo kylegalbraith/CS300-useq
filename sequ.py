@@ -6,6 +6,7 @@
 # Need sys to pass arguments in
 import sys
 import math
+import string
 from types import *
 from sequ_obj import *
 
@@ -32,7 +33,7 @@ def setup():
         # Try to cast each argument to a float, if it works then we break out of the loop as we have hit the 
         # numerical portion of the args. Else continue parsing to see if the arg matches a flag.
         try:
-            arguments[stringParse] = float(arguments[stringParse])
+            float(arguments[stringParse])
             break
         except ValueError:
             if arguments[stringParse] == "--help":
@@ -62,6 +63,7 @@ def setup():
     # Need to check that the number of args leftover is equal to or less than 3 but greater than 0
     totalNumberArgs = totalArgs - stringParse
     numbers = []
+    numberStrings = []
     
     if(totalNumberArgs == 0):
         usage(5)
@@ -70,6 +72,7 @@ def setup():
         for x in range(stringParse, totalArgs):
             try:
                 number = float(arguments[x])
+                numberStrings.append(arguments[x])
                 numbers.append(number)
             except ValueError:
                 usage(3)
@@ -79,11 +82,18 @@ def setup():
     lengthOfNumbers = len(numbers)
     assert lengthOfNumbers < 4, "Error in number assignments"
 
+
+    startValueString = ""
+    stepValueString = ""
+    endValueString = ""
     # Three different cases to consider for the numbers array. 3 numbers = start, step, and end need to be set. 2 numbers = start and end value need to be set. 1 number = just the end value needs to be set
     if(lengthOfNumbers == 3):
         initialObj.startValue = numbers[0]
         initialObj.step = numbers[1]
         initialObj.endValue = numbers[2]
+        startValueString = numberStrings[0]
+        stepValueString = numberStrings[1]
+        endValueString = numberStrings[2]
         
         if(initialObj.step < 0):
             if(initialObj.startValue >= initialObj.endValue):
@@ -97,18 +107,30 @@ def setup():
         initialObj.startValue = numbers[0]
         initialObj.endValue = numbers[1]
         checkStartEnd(initialObj.startValue, initialObj.endValue)
+        startValueString = numberStrings[0]
+        endValueString = numberStrings[1]
     if(lengthOfNumbers == 1):
         initialObj.endValue = numbers[0]
+        endValueString = numberStrings[0]
     # end assigning start step end values
 
     # get the padding and setup format option for that, if equal-width is true we use 
     # a different format. If -f/--format was used then the default value for format will
     # not be present and this block of code will never run.
     if(initialObj.formatOption == "%g"):
+        # need this code so if you enter fixed point arguments we can take the maximum number
+        # of zeros from the arguments to use for the right of decimal.
+        maxRightOfDecimal = 0
+        if(len(numberStrings) > 1):
+            for st in numberStrings:
+                decimalIndex = st.find(".")
+                if(decimalIndex > 0):
+                    maxRightOfDecimal = max(maxRightOfDecimal, (len(st) - 1) - decimalIndex)    
+                
         # variables to hold the number of places following '.' in the start value and step value
         startRightOfDecimal = 0
         stepRightOfDecimal = 0
-
+        endRightOfDecimal = 0
         # get the remainder of the start and step value
         # if they are whole numbers they will 0, else they will be nonzero
         startRemainder = round(abs(initialObj.startValue % 1), 6)
@@ -121,8 +143,10 @@ def setup():
         if(stepRemainder > 0):
             stepRightOfDecimal = -int(math.floor(math.log(stepRemainder, 10)))
 
-        rightOfDecimal = max(startRightOfDecimal, stepRightOfDecimal)
-
+        if(maxRightOfDecimal > 0):
+            rightOfDecimal = maxRightOfDecimal
+        else:
+            rightOfDecimal = max(startRightOfDecimal, stepRightOfDecimal)
                
         #if(initialObj.startValue <= 0):
             # If the startValue == 0 then we dont take the max, instead just use the endValue + 1 (the +1 is so we end up with the right # of 0's in this scenario)
