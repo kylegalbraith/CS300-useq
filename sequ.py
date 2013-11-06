@@ -51,7 +51,9 @@ def setup():
                 except IndexError:
                     usage(4)
             if arguments[stringParse] == "--seperator" or arguments[stringParse] == "-s":
-                print "sep for string"
+                stringParse += 1
+                initialObj.seperator = arguments[stringParse]
+                print arguments[stringParse]
             if arguments[stringParse] == "--equal-width" or arguments[stringParse] == "-w":
                 if(seenFormat == False):
                     initialObj.equalWidth = True
