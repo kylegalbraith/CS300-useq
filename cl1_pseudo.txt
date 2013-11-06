@@ -7,15 +7,21 @@ Parse the arguments that are of type string by looping through the args until yo
 	If arg == --help
 		Print help documentation. Exit.
 	If arg == --format or -f
-		Look at the next argument on the command line.
-		If next arg on the command line is a valid format string for printf
-			Assign the format string to sequ object
+		If --equal-width has not been seen
+			Look at the next argument on the command line.
+			If next arg on the command line is a valid format string for printf
+				Assign the format string to sequ object
+			Else
+				Print usage message. Exit.
 		Else
-			Print usage message. Exit.
+			Print message that you cannot use -f with -w. Exit.
 	If arg == --seperator or -s
 		Assign the seperator string to the sequ object
 	If arg == --equal-width or -w
-		Set equal-width bool on sequ object
+		If --format has not been seen
+			Set equal-width bool on sequ object
+		Else
+			Print message that you cannot use -f with -w. Exit.
 	If arg == numerical argument
 		break out of the loop
 
@@ -37,6 +43,10 @@ Parse numerical command line arguments
 			Print nothing. Exit.
 	If numerical args == 1
 		Assign arg to be the end value of sequ object
+
+If format option = default format option
+	Check
+
 
 Call output function
 	If start value > end value
