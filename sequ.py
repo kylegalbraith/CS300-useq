@@ -10,6 +10,12 @@ import string
 from types import *
 from sequ_obj import *
 
+# These are constants used throughout the program
+SEQU_VERSION = "1.0"
+SEQU_COPYRIGHT = "Copyright (C) 2013 Free Software Foundation, Inc."
+SEQU_LICENSE = "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>. \nThis is free software: you are free to change and redistribute it. \nThere is NO WARRANTY, to the extent permitted by law."
+
+
 def setup():
     # Create a new sequ_obj which will have all of the defaults set for normal sequ operation.
     initialObj = sequ_obj()
@@ -37,9 +43,9 @@ def setup():
             break
         except ValueError:
             if arguments[stringParse] == "--help":
-                usage(1)
+                printHelp()
             if arguments[stringParse] == "--version":
-                usage(2)
+                printVersion()
             if arguments[stringParse] == "--format" or arguments[stringParse] == "-f":
                 stringParse += 1
                 try:
@@ -196,14 +202,7 @@ def usage(errorCode):
     assert type(errorCode) is IntType, "Error code not recognized"
     helpString = '\nTry \'sequ --help\' for more information.'
 
-
-    if(errorCode == 1):
-        print 'Print help documentation'
-        exit(1)
-    elif(errorCode == 2):
-        print 'Print version info'
-        exit(1)
-    elif(errorCode == 3):
+    if(errorCode == 3):
         print 'sequ: extra operand' + helpString 
         exit(1)
     elif(errorCode == 4):
@@ -217,6 +216,15 @@ def usage(errorCode):
         exit(1)
     else:
         print 'ERROR - An unexpected error has ocurred'
+
+# print help information
+def printHelp():
+    print 'help information'
+    exit(0)
+
+def printVersion():
+    print 'sequ (CS300 Term Project) ' + SEQU_VERSION + '\n' + SEQU_COPYRIGHT + '\n' + SEQU_LICENSE + '\n\n' + 'Written by Kyle Galbraith.'
+    exit(0)
 
 # outputSeq will output the sequence between the integers passed in
 def outputSeq(sequObj):
