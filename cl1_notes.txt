@@ -18,3 +18,5 @@
 - There is a problem using the %a format option in Python because Python does support doubles and therefore the flag %a is going to throw an error. Currently researching a solution to this.
 
 - When using -w if start = a negative and end equals a negative we need another place to the left of the decimal.
+
+- This is bad, seq 10.0 ignores the fix point, but seq 1.00 1.0 10.0 takes the max of the number of 0's behind the decimal point. So we need to make sure that we check for this.
