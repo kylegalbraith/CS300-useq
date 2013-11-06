@@ -187,8 +187,12 @@ def setup():
 
     # double check the format option to make sure it is is valid. The likely case where
     # format option is invalid is when the user has used -f/--format
-    checkFormat = initialObj.formatOption % initialObj.endValue
-  
+    try:
+        checkFormat = initialObj.formatOption % initialObj.endValue
+    except ValueError:
+        usage(2, initialObj.formatOption)
+
+
     return initialObj
 
 # check if the start value > end value, if it is then exit without any output
@@ -197,12 +201,15 @@ def checkStartEnd (start, end):
         exit(1)
 
 # usage will be the initial error handling function so if the initial requirements are not met, print out the correct thing to do.
-def usage(errorCode):
+def usage(errorCode, error=""):
     
     assert type(errorCode) is IntType, "Error code not recognized"
     helpString = '\nTry \'sequ --help\' for more information.'
 
-    if(errorCode == 3):
+    if(errorCode == 2):
+        print 'sequ: format ' + "'" + error + "'" + ' has unknown ' + error + ' directive' 
+        exit(1)
+    elif(errorCode == 3):
         print 'sequ: extra operand' + helpString 
         exit(1)
     elif(errorCode == 4):
