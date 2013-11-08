@@ -70,9 +70,12 @@ def setup():
   
     # Need to check that the number of args leftover is equal to or less than 3 but greater than 0
     totalNumberArgs = totalArgs - stringParse
+    # numbers is an array of floats
     numbers = []
+    # numberStrings is an array of strings that represent the float
     numberStrings = []
     
+    # No numbers were passed in
     if(totalNumberArgs == 0):
         usage(5)
     
@@ -80,21 +83,26 @@ def setup():
         for x in range(stringParse, totalArgs):
             try:
                 number = float(arguments[x])
+                # if the argument can be casted to a float, then push the string representation of the argument into the string array
                 numberStrings.append(arguments[x])
                 numbers.append(number)
             except ValueError:
                 usage(3)
+    # There is more than 3 arguments, meaning there is an extra operand
     else:
         usage(3)
 
     lengthOfNumbers = len(numbers)
     assert lengthOfNumbers < 4, "Error in number assignments"
 
-
+    # These will store the string representation of start, step, and end values so we can count the places in each
     startValueString = ""
     stepValueString = ""
     endValueString = ""
-    # Three different cases to consider for the numbers array. 3 numbers = start, step, and end need to be set. 2 numbers = start and end value need to be set. 1 number = just the end value needs to be set
+    # Three different cases to consider for the numbers array. 
+    # 3 numbers = start, step, and end need to be set
+    # 2 numbers = start and end value need to be set
+    # 1 number = just the end value needs to be set
     if(lengthOfNumbers == 3):
         initialObj.startValue = numbers[0]
         initialObj.step = numbers[1]
@@ -104,57 +112,59 @@ def setup():
         endValueString = numberStrings[2]
         
         if(initialObj.step < 0):
-            if(initialObj.startValue >= initialObj.endValue):
+            if(checkNegStepEnd()):
                 initialObj.negativeStep = True
-            else:
-                exit(1)
         else:
+            # If start > end then just exit, nothing to output
             checkStartEnd(initialObj.startValue, initialObj.endValue)
     
     if(lengthOfNumbers == 2):
         initialObj.startValue = numbers[0]
         initialObj.endValue = numbers[1]
-        checkStartEnd(initialObj.startValue, initialObj.endValue)
         startValueString = numberStrings[0]
         endValueString = numberStrings[1]
+                
+        # If start > end then just exit, nothing to output
+        checkStartEnd(initialObj.startValue, initialObj.endValue)
+
     if(lengthOfNumbers == 1):
         initialObj.endValue = numbers[0]
         endValueString = numberStrings[0]
     # end assigning start step end values
 
-    # get the padding and setup format option for that, if equal-width is true we use 
-    # a different format. If -f/--format was used then the default value for format will
-    # not be present and this block of code will never run.
+    # TODO: Refactor the code below into their own functions so that this is much cleaner looking
+    # If -f/--format was used then the default value for format will not be present and this block of code will never run.
     if(initialObj.formatOption == "%g"):
-        # need this code so if you enter fixed point arguments we can take the maximum number
+        # need this code so if start, step, and end are all fixed point arguments we can take the maximum number
         # of zeros from the arguments to use for the right of decimal.
-        maxRightOfDecimal = 0
-        if(len(numberStrings) > 1):
-            for st in numberStrings:
-                decimalIndex = st.find(".")
-                if(decimalIndex > 0):
-                    maxRightOfDecimal = max(maxRightOfDecimal, (len(st) - 1) - decimalIndex)    
-                
-        # variables to hold the number of places following '.' in the start value and step value
-        startRightOfDecimal = 0
-        stepRightOfDecimal = 0
-        endRightOfDecimal = 0
-        # get the remainder of the start and step value
-        # if they are whole numbers they will 0, else they will be nonzero
-        startRemainder = round(abs(initialObj.startValue % 1), 6)
-        stepRemainder = round(abs(initialObj.step % 1), 6)
-        if(startRemainder > 0):
-            # doing floor to avoid floating point errors
-            # There is a bug here in that if step remainder is 0.1 it could be interpreted as 0.09 which then causes startRightOfDecimal to be 2 instead of 1.
-            # To resolve the problem I am adding 1 to the floor of the log of startRemaider
-            startRightOfDecimal = -int(math.floor(math.log(startRemainder, 10)))
-        if(stepRemainder > 0):
-            stepRightOfDecimal = -int(math.floor(math.log(stepRemainder, 10)))
-
-        if(maxRightOfDecimal > 0):
-            rightOfDecimal = maxRightOfDecimal
+        # This will return the maximum number of places behind the decimal point
+        maxPlacesRightOfDecimal = getMaxRightOfDecimal(numberStrings)
+        
+        if(maxPlacesRightOfDecimal > 0):
+            rightOfDecimal = maxPlacesRightOfDecimal
         else:
-            rightOfDecimal = max(startRightOfDecimal, stepRightOfDecimal)
+            rightOfDecimal = calculateRightOfDecimal(initialObj.startValue, initialObj.step)  
+                
+        ## variables to hold the number of places following '.' in the start value and step value
+        #startRightOfDecimal = 0
+        #stepRightOfDecimal = 0
+        #endRightOfDecimal = 0
+        ## get the remainder of the start and step value
+        ## if they are whole numbers they will 0, else they will be nonzero
+        #startRemainder = round(abs(initialObj.startValue % 1), 6)
+        #stepRemainder = round(abs(initialObj.step % 1), 6)
+        #if(startRemainder > 0):
+        #    # doing floor to avoid floating point errors
+        #    # There is a bug here in that if step remainder is 0.1 it could be interpreted as 0.09 which then causes startRightOfDecimal to be 2 instead of 1.
+        #    # To resolve the problem I am adding 1 to the floor of the log of startRemaider
+        #    startRightOfDecimal = -int(math.floor(math.log(startRemainder, 10)))
+        #if(stepRemainder > 0):
+        #    stepRightOfDecimal = -int(math.floor(math.log(stepRemainder, 10)))
+
+        #if(maxPlacesRightOfDecimal > 0):
+         #   rightOfDecimal = maxPlacesRightOfDecimal
+        #else:
+         #   rightOfDecimal = max(startRightOfDecimal, stepRightOfDecimal)
                
         #if(initialObj.startValue <= 0):
             # If the startValue == 0 then we dont take the max, instead just use the endValue + 1 (the +1 is so we end up with the right # of 0's in this scenario)
@@ -195,9 +205,52 @@ def setup():
 
     return initialObj
 
+def calculateRightOfDecimal(startValue, stepValue):
+    # variables to hold the number of places following '.' in the start
+    # value and step value
+    startRightOfDecimal = 0
+    stepRightOfDecimal = 0
+    endRightOfDecimal = 0
+    # get the remainder of the start and step value
+    # if they are whole numbers they will 0, else they will be nonzero
+    startRemainder = round(abs(startValue % 1), 6)
+    stepRemainder = round(abs(stepValue % 1), 6)
+    
+    if(startRemainder > 0):
+        # doing floor to avoid floating point errors
+        # There is a bug here in that if step remainder is 0.1 it could be
+        # interpreted as 0.09 which then causes startRightOfDecimal to be 2
+        # instead of 1.
+        # To resolve the problem I am adding 1 to the floor of the log of
+        # startRemaider
+        startRightOfDecimal = -int(math.floor(math.log(startRemainder, 10)))
+    
+    if(stepRemainder > 0):
+        stepRightOfDecimal = -int(math.floor(math.log(stepRemainder, 10)))
+     
+    return max(startRightOfDecimal, stepRightOfDecimal) 
+
+
+# Returns the maximum number of places to the right of decimal. Need this for the case where all 3 args are fixed point
+def getMaxRightOfDecimal(numberStrings):
+    maxRightOfDecimal = 0
+    if(len(numberStrings) > 1):
+        for floatString in numberStrings:
+            decimalIndex = floatString.find(".")
+            if(decimalIndex > 0):
+                maxRightOfDecimal = max(maxRightOfDecimal, (len(floatString) - 1) - decimalIndex)
+    return maxRightOfDecimal 
+
 # check if the start value > end value, if it is then exit without any output
 def checkStartEnd (start, end):
     if start > end:
+        exit(1)
+
+# If the step < 0 then start must be >= end to output things in the correct order, else just exit.
+def checkNegStepEnd(start, end):
+    if(start >= end):
+        return True
+    else:
         exit(1)
 
 # usage will be the initial error handling function so if the initial requirements are not met, print out the correct thing to do.
