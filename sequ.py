@@ -65,12 +65,11 @@ def setup():
                         # format is
                         else:
                             parsedFormat = parseFormat(arguments[stringParse])
-                            if not "%" in parsedFormat:
-                                usage(1, parsedFormat)
-                            else:
+                            if "%" in parsedFormat:
                                 initialObj.formatOption = parsedFormat 
                                 seenFormat = True
-                                                                                        
+                            else:
+                                usage(1, parsedFormat)                                                                                                                     
                     else:
                         usage(6)
                 except IndexError:
@@ -163,36 +162,7 @@ def setup():
             rightOfDecimal = fixedPointRightOfDecimal
         else:
             rightOfDecimal = calculateRightOfDecimal(initialObj.startValue, initialObj.step)  
-                
-        ## variables to hold the number of places following '.' in the start value and step value
-        #startRightOfDecimal = 0
-        #stepRightOfDecimal = 0
-        #endRightOfDecimal = 0
-        ## get the remainder of the start and step value
-        ## if they are whole numbers they will 0, else they will be nonzero
-        #startRemainder = round(abs(initialObj.startValue % 1), 6)
-        #stepRemainder = round(abs(initialObj.step % 1), 6)
-        #if(startRemainder > 0):
-        #    # doing floor to avoid floating point errors
-        #    # There is a bug here in that if step remainder is 0.1 it could be interpreted as 0.09 which then causes startRightOfDecimal to be 2 instead of 1.
-        #    # To resolve the problem I am adding 1 to the floor of the log of startRemaider
-        #    startRightOfDecimal = -int(math.floor(math.log(startRemainder, 10)))
-        #if(stepRemainder > 0):
-        #    stepRightOfDecimal = -int(math.floor(math.log(stepRemainder, 10)))
 
-        #if(maxPlacesRightOfDecimal > 0):
-         #   rightOfDecimal = maxPlacesRightOfDecimal
-        #else:
-         #   rightOfDecimal = max(startRightOfDecimal, stepRightOfDecimal)
-               
-        #if(initialObj.startValue <= 0):
-            # If the startValue == 0 then we dont take the max, instead just use the endValue + 1 (the +1 is so we end up with the right # of 0's in this scenario)
-            # seq -w 0 -1.1 -16.1
-            #if(initialObj.endValue != 0):
-         #       leftOfDecimal = -int(math.floor(math.log(abs(initialObj.endValue), 10)))
-          #  else:
-           #     leftOfDecimal = int(math.floor(math.log(abs(initialObj.step), 10)) + 1)
-        #else:
         leftOfDecimal = calculateLeftOfDecimal(initialObj.startValue, initialObj.endValue)
 
         if(initialObj.startValue < 0 or initialObj.endValue < 0):
