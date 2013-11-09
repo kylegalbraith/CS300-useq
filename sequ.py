@@ -112,7 +112,7 @@ def setup():
         endValueString = numberStrings[2]
         
         if(initialObj.step < 0):
-            if(checkNegStepEnd()):
+            if(checkNegStepEnd(initialObj.startValue, initialObj.endValue)):
                 initialObj.negativeStep = True
         else:
             # If start > end then just exit, nothing to output
@@ -138,10 +138,10 @@ def setup():
         # need this code so if start, step, and end are all fixed point arguments we can take the maximum number
         # of zeros from the arguments to use for the right of decimal.
         # This will return the maximum number of places behind the decimal point
-        maxPlacesRightOfDecimal = getMaxRightOfDecimal(numberStrings)
+        fixedPointRightOfDecimal = getMaxFixedPointRightOfDecimal(numberStrings)
         
-        if(maxPlacesRightOfDecimal > 0):
-            rightOfDecimal = maxPlacesRightOfDecimal
+        if(fixedPointRightOfDecimal > 0):
+            rightOfDecimal = fixedPointRightOfDecimal
         else:
             rightOfDecimal = calculateRightOfDecimal(initialObj.startValue, initialObj.step)  
                 
@@ -174,7 +174,7 @@ def setup():
           #  else:
            #     leftOfDecimal = int(math.floor(math.log(abs(initialObj.step), 10)) + 1)
         #else:
-        leftOfDecimal = int(math.floor(math.log(max(abs(initialObj.startValue), abs(initialObj.endValue)), 10)))
+        leftOfDecimal = calculateLeftOfDecimal(initialObj.startValue, initialObj.endValue)
 
         if(initialObj.startValue < 0 or initialObj.endValue < 0):
             print 'got called'
@@ -205,6 +205,8 @@ def setup():
 
     return initialObj
 
+# If the args are not all fixed point then we will need to calculate how many places we need for output.
+# This gives us the output format for %0.pf by calculating p and also the right hand side if -w is used
 def calculateRightOfDecimal(startValue, stepValue):
     # variables to hold the number of places following '.' in the start
     # value and step value
@@ -230,9 +232,20 @@ def calculateRightOfDecimal(startValue, stepValue):
      
     return max(startRightOfDecimal, stepRightOfDecimal) 
 
+# calculate the number of places needed to the left of the decimal
+def calculateLeftOfDecimal(startValue, endValue):
+    #int(math.floor(math.log(max(abs(initialObj.startValue), abs(initialObj.endValue)), 10)))
+    
+    absoluteStart = abs(startValue)
+    absoluteEnd = abs(endValue)
+    largest = max(absoluteStart, absoluteEnd)
+    logOfLargestValue = math.log(largest, 10)
+    floorLog = math.floor(logOfLargestValue)
+
+    return int(floorLog)  
 
 # Returns the maximum number of places to the right of decimal. Need this for the case where all 3 args are fixed point
-def getMaxRightOfDecimal(numberStrings):
+def getMaxFixedPointRightOfDecimal(numberStrings):
     maxRightOfDecimal = 0
     if(len(numberStrings) > 1):
         for floatString in numberStrings:
