@@ -46,7 +46,11 @@ def setup():
                 printHelp()
             if arguments[stringParse] == "--version":
                 printVersion()
-            if "--format" or "-f" in arguments[stringParse]:                
+
+            formatVerboseSub = "--format" in arguments[stringParse]
+            formatSub = "-f" in arguments[stringParse]
+            if formatVerboseSub or formatSub:               
+                print 'in format'
                 try:
                     if(seenEw == False):                       
                         argumentLength = len(arguments[stringParse])
@@ -74,6 +78,7 @@ def setup():
                         usage(6)
                 except IndexError:
                     usage(4)
+
             if arguments[stringParse] == "--seperator" or arguments[stringParse] == "-s":
                 stringParse += 1
                 initialObj.seperator = arguments[stringParse]
@@ -83,7 +88,8 @@ def setup():
                     initialObj.equalWidth = True
                     seenEw = True
                 else:
-                    usage(6)  
+                    usage(6)
+                      
             stringParse += 1   
   
     # Need to check that the number of args leftover is equal to or less than 3 but greater than 0
