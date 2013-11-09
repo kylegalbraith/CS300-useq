@@ -48,13 +48,7 @@ def setup():
                 printVersion()
             if "--format" or "-f" in arguments[stringParse]:                
                 try:
-                    if(seenEw == False):
-                        initialObj.formatOption = parseFormat(arguments[stringParse])
-                        if not "%" in initialObj.formatOption:
-                            usage(1, initialObj.formatOption)
-                        else: 
-                            seenFormat = True
-                        
+                    if(seenEw == False):                       
                         argumentLength = len(arguments[stringParse])
                         verboseFormatLength = len("--format")
                         formatFlagLength = len("-f")
@@ -67,18 +61,16 @@ def setup():
                                 seenFormat = True
                             else:
                                 usage(1, arguments[stringParse])
-                        # Need to parse the flag to find where the actual format is
+                        # Need to parse the flag to find where the actual
+                        # format is
                         else:
-                            formatString = arguments[stringParse]
-                            startHere = formatString.find('=') + 1
-                            appendString = ""
-                            for x in range(startHere, argumentLength):
-                                appendString += formatString[x]
-
-                            if "%" in appendString:
-                                initialObj.formatOption = appendString                                
+                            parsedFormat = parseFormat(arguments[stringParse])
+                            if not "%" in parsedFormat:
+                                usage(1, parsedFormat)
                             else:
-                                usage(1, appendString)                                                                                          
+                                initialObj.formatOption = parsedFormat 
+                                seenFormat = True
+                                                                                        
                     else:
                         usage(6)
                 except IndexError:
@@ -234,24 +226,14 @@ def setup():
 
 def parseFormat(argumentString):
     argumentLength = len(argumentString)
-    verboseFormatLength = len("--format")
-    formatFlagLength = len("-f")
-                        
-    # There is no = behind the flag so we can assume that
-    # the format is the next place on the command line
-    if(argumentLength == verboseFormatLength or argumentLength == formatFlagLength):
-        stringParse += 1
-        return argumentString
-    else:
-            usage(1, arguments[stringParse])
-        # Need to parse the flag to find where the format is
-    else:
-        formatString = argumentString
-        startHere = formatString.find('=') + 1
-        appendString = ""
-        for x in range(startHere, argumentLength):
-            appendString += formatString[x]
-        return appendString
+    
+    formatString = argumentString
+    startHere = formatString.find('=') + 1
+    appendString = ""
+    for x in range(startHere, argumentLength):
+        appendString += formatString[x]
+    
+    return appendString
   
 
 # If the args are not all fixed point then we will need to calculate how many places we need for output.
