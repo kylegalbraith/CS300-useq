@@ -46,12 +46,36 @@ def setup():
                 printHelp()
             if arguments[stringParse] == "--version":
                 printVersion()
-            if arguments[stringParse] == "--format" or arguments[stringParse] == "-f":
-                stringParse += 1
+            if "--format" or "-f" in arguments[stringParse]:                
                 try:
                     if(seenEw == False):
-                        initialObj.formatOption = arguments[stringParse]
+                        initialObj.formatOption = parseFormat(arguments[stringParse])
                         seenFormat = True
+                        
+                        argumentLength = len(arguments[stringParse])
+                        verboseFormatLength = len("--format")
+                        formatFlagLength = len("-f")
+                        
+                        # There is no = behind the flag so we can assume that the format is the next place on the command line
+                        if(argumentLength == verboseFormatLength or argumentLength == formatFlagLength):
+                            stringParse += 1
+                            if "%" in arguments[stringParse]:
+                                initialObj.formatOption = arguments[stringParse]
+                                seenFormat = True
+                            else:
+                                usage(1, arguments[stringParse])
+                        # Need to parse the flag to find where the actual format is
+                        else:
+                            formatString = arguments[stringParse]
+                            startHere = formatString.find('=') + 1
+                            appendString = ""
+                            for x in range(startHere, argumentLength):
+                                appendString += formatString[x]
+
+                            if "%" in appendString:
+                                initialObj.formatOption = appendString                                
+                            else:
+                                usage(1, appendString)                                                                                          
                     else:
                         usage(6)
                 except IndexError:
@@ -205,6 +229,35 @@ def setup():
 
     return initialObj
 
+def parseFormat(argumentString):
+    argumentLength = len(argumentString)
+    verboseFormatLength = len("--format")
+    formatFlagLength = len("-f")
+                        
+    # There is no = behind the flag so we can assume that
+    # the format is the next place on the command line
+    if(argumentLength == verboseFormatLength or argumentLength == formatFlagLength):
+        stringParse += 1
+        if "%" in argumentString:
+            return argumentString
+            #initialObj.formatOption = arguments[stringParse]
+            #seenFormat = True
+        else:
+            usage(1, arguments[stringParse])
+        # Need to parse the flag to find where the format is
+    else:
+        formatString = argumentString
+        startHere = formatString.find('=') + 1
+        appendString = ""
+        for x in range(startHere, argumentLength):
+            appendString += formatString[x]
+
+        if "%" in appendString:
+            return appendString
+            #initialObj.formatOption = appendString                                
+        else:
+            usage(1, appendString)    
+
 # If the args are not all fixed point then we will need to calculate how many places we need for output.
 # This gives us the output format for %0.pf by calculating p and also the right hand side if -w is used
 def calculateRightOfDecimal(startValue, stepValue):
@@ -272,7 +325,10 @@ def usage(errorCode, error=""):
     assert type(errorCode) is IntType, "Error code not recognized"
     helpString = '\nTry \'sequ --help\' for more information.'
 
-    if(errorCode == 2):
+    if(errorCode == 1):
+        print 'sequ: format ' + "'" + error + "'" + ' has no % directive' 
+        exit(1)
+    elif(errorCode == 2):
         print 'sequ: format ' + "'" + error + "'" + ' has unknown ' + error + ' directive' 
         exit(1)
     elif(errorCode == 3):
