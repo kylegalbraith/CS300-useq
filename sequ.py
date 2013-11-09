@@ -50,7 +50,10 @@ def setup():
                 try:
                     if(seenEw == False):
                         initialObj.formatOption = parseFormat(arguments[stringParse])
-                        seenFormat = True
+                        if not "%" in initialObj.formatOption:
+                            usage(1, initialObj.formatOption)
+                        else: 
+                            seenFormat = True
                         
                         argumentLength = len(arguments[stringParse])
                         verboseFormatLength = len("--format")
@@ -238,11 +241,8 @@ def parseFormat(argumentString):
     # the format is the next place on the command line
     if(argumentLength == verboseFormatLength or argumentLength == formatFlagLength):
         stringParse += 1
-        if "%" in argumentString:
-            return argumentString
-            #initialObj.formatOption = arguments[stringParse]
-            #seenFormat = True
-        else:
+        return argumentString
+    else:
             usage(1, arguments[stringParse])
         # Need to parse the flag to find where the format is
     else:
@@ -251,12 +251,8 @@ def parseFormat(argumentString):
         appendString = ""
         for x in range(startHere, argumentLength):
             appendString += formatString[x]
-
-        if "%" in appendString:
-            return appendString
-            #initialObj.formatOption = appendString                                
-        else:
-            usage(1, appendString)    
+        return appendString
+  
 
 # If the args are not all fixed point then we will need to calculate how many places we need for output.
 # This gives us the output format for %0.pf by calculating p and also the right hand side if -w is used
