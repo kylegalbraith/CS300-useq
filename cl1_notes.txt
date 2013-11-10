@@ -37,3 +37,5 @@ Link to repo: https://kgalb2@projects.cecs.pdx.edu/git/masseycs300-kgalb2
 
 - Testing --equal-width and -w
 	- The case sequ -w -1 1.1 11 is printing out to way to many places
+		remedied on 11/10/13 my leftOfDecimal checks had some off by one errors
+

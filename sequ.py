@@ -219,8 +219,10 @@ def setup():
             leftOfDecimal = leftOfDecimal + 1
 
         # Changed this on 11/9/13, need to check for a neg startValue and non neg endValue        
-        #if(initialObj.startValue < 0 and initialObj.endValue > 0):
-         #   leftOfDecimal = leftOfDecimal + 1
+        if(initialObj.startValue > 0 and initialObj.endValue < 0):
+            leftOfDecimal = leftOfDecimal + 1
+        elif(initialObj.startValue < 0 and initialObj.endValue > 0):
+            leftOfDecimal = leftOfDecimal + 1
         
         if(rightOfDecimal > 0):
             leftOfDecimal = leftOfDecimal + 1
