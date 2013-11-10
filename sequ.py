@@ -89,10 +89,11 @@ def setup():
 
                     if(argumentLength == verboseSeparatorLength or argumentLength == separatorFlagLength):
                         stringParse += 1
-                        initialObj.separator = arguments[stringParse]
+                        initialObj.separator = escapeInSeparator(arguments[stringParse])
                     else:
-                        parsedSep = parseSeparator(arguments[stringParse], verboseSeparatorLength, separatorFlagLength)
-                        #containEqual = "=" in arguments[stringParse]
+                        parsedEscapedSeparator = parseSeparator(arguments[stringParse], verboseSeparatorLength, separatorFlagLength)
+                        initialObj.separator = parsedEscapedSeparator
+                    print initialObj.separator
 
                 except IndexError:
                     print 'too far'
@@ -186,12 +187,10 @@ def setup():
         leftOfDecimal = calculateLeftOfDecimal(initialObj.startValue, initialObj.endValue)
 
         if(initialObj.startValue < 0 or initialObj.endValue < 0):
-            print 'got called'
             leftOfDecimal = leftOfDecimal + 1
 
         # added this on 11/5/13        
         if(leftOfDecimal == 0):
-           print 'lod == 0'
            leftOfDecimal = leftOfDecimal + 1
         
         if(rightOfDecimal > 0):
@@ -215,10 +214,9 @@ def setup():
     return initialObj
 
 def escapeInSeparator(parsedSeparator):
-    for character in parsedSeparator:
-        if(character == \):
-            print 'backslash'
-        print character
+    # replace any occurrence of \ with a empty string
+    escapedSeparator = parsedSeparator.replace("\\", "")
+    return escapedSeparator
 
 def parseSeparator(argumentString, verboseSepLength, sepFlagLength):
     argumentLength = len(argumentString)
@@ -235,12 +233,14 @@ def parseSeparator(argumentString, verboseSepLength, sepFlagLength):
             for x in range(sepFlagLength, argumentLength):
                 appendString += passedSeparator[x]
             parsedSeparator = escapeInSeparator(appendString)
+            return parsedSeparator
         else:
             usage(7, passedSeparator)
     else:
         for x in range(startHere + 1, argumentLength):
             appendString += passedSeparator[x]  
-        print appendString
+        parsedSeparator = escapeInSeparator(appendString)
+        return parsedSeparator
 
 def parseFormat(argumentString):
     argumentLength = len(argumentString)
