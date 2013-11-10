@@ -15,6 +15,35 @@ SEQU_VERSION = "1.0"
 SEQU_COPYRIGHT = "Copyright (C) 2013 Free Software Foundation, Inc."
 SEQU_LICENSE = "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>. \nThis is free software: you are free to change and redistribute it. \nThere is NO WARRANTY, to the extent permitted by law."
 
+# usage will be the initial error handling function so if the initial requirements are not met, print out the correct thing to do.
+def usage(errorCode, error=""):
+    
+    assert type(errorCode) is IntType, "Error code not recognized"
+    helpString = '\nTry \'sequ --help\' for more information.'
+
+    if(errorCode == 1):
+        print 'sequ: format ' + "'" + error + "'" + ' has no % directive' 
+        exit(1)
+    elif(errorCode == 2):
+        print 'sequ: format ' + "'" + error + "'" + ' has unknown ' + error + ' directive' 
+        exit(1)
+    elif(errorCode == 3):
+        print 'sequ: extra operand' + helpString 
+        exit(1)
+    elif(errorCode == 4):
+        print 'sequ: option ' + "'" + error + "'" + ' requires an argument' + helpString
+        exit(1)
+    elif(errorCode == 5):
+        print 'sequ: missing operand' + helpString
+        exit(1)
+    elif(errorCode == 6):
+        print 'sequ: format string may not be used when printing equal width strings' + helpString
+        exit(1)
+    elif(errorCode == 7):
+        print 'sequ: unrecognized option ' + "'" + error + "'"
+        exit(1)
+    else:
+        print 'ERROR - An unexpected error has ocurred'
 
 def setup():
     # Create a new sequ_obj which will have all of the defaults set for normal sequ operation.
@@ -92,7 +121,6 @@ def setup():
                     else:
                         parsedEscapedSeparator = parseSeparator(arguments[stringParse], verboseSeparatorLength, separatorFlagLength)
                         initialObj.separator = parsedEscapedSeparator
-                    print initialObj.separator
 
                 except IndexError:
                     usage(4, "--separator")
@@ -188,9 +216,9 @@ def setup():
         if(initialObj.startValue < 0 or initialObj.endValue < 0):
             leftOfDecimal = leftOfDecimal + 1
 
-        # added this on 11/5/13        
-        if(leftOfDecimal == 0):
-           leftOfDecimal = leftOfDecimal + 1
+        # Changed this on 11/9/1, need to check for a neg startValue and non neg endValue        
+        if(initialObj.startValue < 0 and initialObj.endValue > 0):
+            leftOfDecimal = leftOfDecimal + 1
         
         if(rightOfDecimal > 0):
             leftOfDecimal = leftOfDecimal + 1
@@ -312,36 +340,6 @@ def checkNegStepEnd(start, end):
         return True
     else:
         exit(1)
-
-# usage will be the initial error handling function so if the initial requirements are not met, print out the correct thing to do.
-def usage(errorCode, error=""):
-    
-    assert type(errorCode) is IntType, "Error code not recognized"
-    helpString = '\nTry \'sequ --help\' for more information.'
-
-    if(errorCode == 1):
-        print 'sequ: format ' + "'" + error + "'" + ' has no % directive' 
-        exit(1)
-    elif(errorCode == 2):
-        print 'sequ: format ' + "'" + error + "'" + ' has unknown ' + error + ' directive' 
-        exit(1)
-    elif(errorCode == 3):
-        print 'sequ: extra operand' + helpString 
-        exit(1)
-    elif(errorCode == 4):
-        print 'sequ: option ' + "'" + error + "'" + ' requires an argument' + helpString
-        exit(1)
-    elif(errorCode == 5):
-        print 'sequ: missing operand' + helpString
-        exit(1)
-    elif(errorCode == 6):
-        print 'sequ: format string may not be used when printing equal width strings' + helpString
-        exit(1)
-    elif(errorCode == 7):
-        print 'sequ: unrecognized option ' + "'" + error + "'"
-        exit(1)
-    else:
-        print 'ERROR - An unexpected error has ocurred'
 
 # print help information
 def printHelp():
