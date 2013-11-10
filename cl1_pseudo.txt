@@ -8,22 +8,26 @@ Parse the arguments that are of type string by looping through the args until yo
 		Print help documentation. Exit.
 	If arg == --format or -f
 		If --equal-width has not been seen
-			Look at the next argument on the command line.
-			If next arg on the command line is a valid format string for printf
+			Look at the next argument on the command line or the next character without a space after the flag
+			If next arg or character is a valid format string for printf
 				Assign the format string to sequ object
 			Else
 				Print usage message. Exit.
 		Else
 			Print message that you cannot use -f with -w. Exit.
-	If arg == --seperator or -s
-		Assign the seperator string to the sequ object
+	If arg == --separator or -s
+		Look at the next argument on the command line or the next character without a space after the flag
+		Escape any occurrence of a \ in the separator string
+		Assign separator to sequ object
 	If arg == --equal-width or -w
 		If --format has not been seen
-			Set equal-width bool on sequ object
+			Set equal width bool to true
 		Else
 			Print message that you cannot use -f with -w. Exit.
 	If arg == numerical argument
 		break out of the loop
+	Else
+		An invalid argument has been passed in. Exit.
 
 Parse numerical command line arguments
 	If numerical args > 3
@@ -45,12 +49,37 @@ Parse numerical command line arguments
 		Assign arg to be the end value of sequ object
 
 If format option = default format option
-	Check
+	If all 3 numbers are fixed point
+		Take the maximum number of places to the right of decimal, so whichever argument (FIRST, STEP, LAST) has the most places to the right
+		of the decimal we will use that for the number of places to the right.
 
+	Calculate the number of places to the left of decimal
+	If START or LAST are less than 0
+		Add an additional place to left of decimal to account for the '-' sign
 
+	If START is less than 0 and LAST are greater than 0
+		Add an additional place to left of decimal
+
+	If right of decimal is greater than 0 
+		Add an additional place to left of decimal
+
+	If equal-width = TRUE
+		lrd = left of decimal + right of decimal + 1
+		Set the format option to %0lrd.right of decimalf
+	Else
+		Set the format options %0.right of decimalf
+
+Check the format option to see if it is valid, this mostly needs to be checked is -f is used
+If the format option is not valid print out an error. Exit.
+
+Return sequ object
 Call output function
-	If start value > end value
-		Print nothing. Exit.
+	If the step is negative
+		Print from start to end as long as start greater than or equal to end. Format each output using the supplied format option. Separate each output with '\n' is no
+		separator is specified, otherwise use the one provided
+	Else
+		Print from start to end as long as start is less that or equal to end. Format each output using the supplied format option. Separate each output with '\n' is no
+		separator is specified, otherwise use the one provided
 					
 
 
