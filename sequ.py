@@ -50,12 +50,11 @@ def setup():
             formatVerboseSub = "--format" in arguments[stringParse]
             formatSub = "-f" in arguments[stringParse]
             if formatVerboseSub or formatSub:               
-                print 'in format'
                 try:
                     if(seenEw == False):                       
-                        argumentLength = len(arguments[stringParse])
                         verboseFormatLength = len("--format")
                         formatFlagLength = len("-f")
+                        argumentLength = len(arguments[stringParse])            
                         
                         # There is no = behind the flag so we can assume that the format is the next place on the command line
                         if(argumentLength == verboseFormatLength or argumentLength == formatFlagLength):
@@ -79,10 +78,25 @@ def setup():
                 except IndexError:
                     usage(4)
 
-            if arguments[stringParse] == "--seperator" or arguments[stringParse] == "-s":
-                stringParse += 1
-                initialObj.seperator = arguments[stringParse]
-                print arguments[stringParse]
+            separatorVerboseSub = "--separator" in arguments[stringParse]
+            separatorSub = "-s" in arguments[stringParse]
+            if separatorVerboseSub or separatorSub:
+            #if arguments[stringParse] == "--separator" or arguments[stringParse] == "-s":
+                try:
+                    verboseSeparatorLength = len("--separator")
+                    separatorFlagLength = len("-s")
+                    argumentLength = len(arguments[stringParse])
+
+                    if(argumentLength == verboseSeparatorLength or argumentLength == separatorFlagLength):
+                        stringParse += 1
+                        initialObj.separator = arguments[stringParse]
+                    else:
+                        parsedSep = parseSeparator(arguments[stringParse], verboseSeparatorLength, separatorFlagLength)
+                        #containEqual = "=" in arguments[stringParse]
+
+                except IndexError:
+                    print 'too far'
+
             if arguments[stringParse] == "--equal-width" or arguments[stringParse] == "-w":
                 if(seenFormat == False):
                     initialObj.equalWidth = True
@@ -200,6 +214,34 @@ def setup():
 
     return initialObj
 
+def escapeInSeparator(parsedSeparator):
+    for character in parsedSeparator:
+        if(character == \):
+            print 'backslash'
+        print character
+
+def parseSeparator(argumentString, verboseSepLength, sepFlagLength):
+    argumentLength = len(argumentString)
+    passedSeparator = argumentString
+    startHere = passedSeparator.find('=')
+    appendString = ""
+    # If there is no equals then grab everything behind the arguments
+    if(startHere == -1):
+        # See if we need to grab the data behind -s or behind --separator
+        greaterThanFlag = argumentLength > sepFlagLength
+        lessThanVerbose = argumentLength < verboseSepLength
+
+        if(greaterThanFlag and lessThanVerbose):
+            for x in range(sepFlagLength, argumentLength):
+                appendString += passedSeparator[x]
+            parsedSeparator = escapeInSeparator(appendString)
+        else:
+            usage(7, passedSeparator)
+    else:
+        for x in range(startHere + 1, argumentLength):
+            appendString += passedSeparator[x]  
+        print appendString
+
 def parseFormat(argumentString):
     argumentLength = len(argumentString)
     
@@ -241,7 +283,6 @@ def calculateRightOfDecimal(startValue, stepValue):
 
 # calculate the number of places needed to the left of the decimal
 def calculateLeftOfDecimal(startValue, endValue):
-    #int(math.floor(math.log(max(abs(initialObj.startValue), abs(initialObj.endValue)), 10)))
     
     absoluteStart = abs(startValue)
     absoluteEnd = abs(endValue)
@@ -297,6 +338,9 @@ def usage(errorCode, error=""):
     elif(errorCode == 6):
         print 'sequ: format string may not be used when printing equal width strings' + helpString
         exit(1)
+    elif(errorCode == 7):
+        print 'sequ: unrecognized option ' + "'" + error + "'"
+        exit(1)
     else:
         print 'ERROR - An unexpected error has ocurred'
 
@@ -318,11 +362,11 @@ def outputSeq(sequObj):
 
     if(negativeStep):
         while start >= end:
-            print sequObj.formatOption % + start + sequObj.seperator,
+            print sequObj.formatOption % + start + sequObj.separator,
             start += step
     else:
         while start <= end:
-            print sequObj.formatOption % + start + sequObj.seperator,
+            print sequObj.formatOption % + start + sequObj.separator,
             start += step    
 
     # The program was successful

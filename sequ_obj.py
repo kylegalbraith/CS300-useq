@@ -9,7 +9,7 @@ class sequ_obj:
     def __init__(self):
         self.startValue = 1
         self.endValue = 0
-        self.seperator = '\n'
+        self.separator = '\n'
         self.formatOption = "%g"
         self.equalWidth = False
         self.step = 1
