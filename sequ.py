@@ -14,6 +14,7 @@ from sequ_obj import *
 SEQU_VERSION = "1.0"
 SEQU_COPYRIGHT = "Copyright (C) 2013 Free Software Foundation, Inc."
 SEQU_LICENSE = "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>. \nThis is free software: you are free to change and redistribute it. \nThere is NO WARRANTY, to the extent permitted by law."
+SEQU_HELP = "Usage: \n\tsequ [OPTION]... LAST\n\tsequ [OPTION]... FIRST LAST\n\tsequ [OPTION]... FIRST INCREMENT LAST\nPrint numbers from FIRST to LAST, in steps of INCREMENT.\n\n\t-f, --format=FORMAT\tuse printf style floating-point FORMAT (%a is not supported)\n\t-s, --separator=STRING\tuse STRING to separate numbers (default: \\n)\n\t-w, --equal-width\tequalize width by padding with leading zeroes\n\t--help\tdisplay this help and exit\n\t--version\tdisplay version info and exit\n\nIf FIRST or INCREMENT is omitted, it defaults to 1. That is,\nan omitted INCREMENT defaults to 1 even when LAST is smaller than FIRST.\nFIRST, INCREMENT, and LAST are interpreted as floating point values.\nINCREMENT is usually positive if FIRST is smaller than LAST, and\nINCEREMENT is usually negative if FIRST is greater than LAST.\nFORMAT must be suitable for printing one argument of type 'float';\nit defaults to %.precf if FIRST, INCREMENT, and LAST are all fixed point\ndecimal numbers with maximum precision prec, and %g otherwise."
 
 # usage will be the initial error handling function so if the initial requirements are not met, print out the correct thing to do.
 def usage(errorCode, error=""):
@@ -343,7 +344,7 @@ def checkNegStepEnd(start, end):
 
 # print help information
 def printHelp():
-    print 'help information'
+    print SEQU_HELP
     exit(0)
 
 def printVersion():
