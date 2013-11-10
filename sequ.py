@@ -238,16 +238,18 @@ def setup():
 
     return initialObj
 
+# replace any occurrence of \ with a empty string
 def escapeInSeparator(parsedSeparator):
-    # replace any occurrence of \ with a empty string
     escapedSeparator = parsedSeparator.replace("\\", "")
     return escapedSeparator
 
+# parse the passed in separator argument into a valid format
 def parseSeparator(argumentString, verboseSepLength, sepFlagLength):
     argumentLength = len(argumentString)
     passedSeparator = argumentString
     startHere = passedSeparator.find('=')
     appendString = ""
+    parsedSeparator = ""
     # If there is no equals then grab everything behind the arguments
     if(startHere == -1):
         # See if we need to grab the data behind -s or behind --separator
@@ -258,15 +260,16 @@ def parseSeparator(argumentString, verboseSepLength, sepFlagLength):
             for x in range(sepFlagLength, argumentLength):
                 appendString += passedSeparator[x]
             parsedSeparator = escapeInSeparator(appendString)
-            return parsedSeparator
         else:
             usage(7, passedSeparator)
     else:
         for x in range(startHere + 1, argumentLength):
             appendString += passedSeparator[x]  
         parsedSeparator = escapeInSeparator(appendString)
-        return parsedSeparator
+        
+    return parsedSeparator
 
+# parse the format argument after the = into a valid format
 def parseFormat(argumentString):
     argumentLength = len(argumentString)
     
