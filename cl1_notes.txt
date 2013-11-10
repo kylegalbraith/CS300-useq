@@ -22,3 +22,5 @@
 - This is bad, seq 10.0 ignores the fix point, but seq 1.00 1.0 10.0 takes the max of the number of 0's behind the decimal point. So we need to make sure that we check for this.
 
 - The seperator command can read in the seperator differently depending on -s or --seperator. Going to need tests for that.
+
+- --format and --separator need to output an error message when no argument is supplied for them

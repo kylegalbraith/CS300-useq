@@ -76,12 +76,11 @@ def setup():
                     else:
                         usage(6)
                 except IndexError:
-                    usage(4)
+                    usage(4, "--format")
 
             separatorVerboseSub = "--separator" in arguments[stringParse]
             separatorSub = "-s" in arguments[stringParse]
             if separatorVerboseSub or separatorSub:
-            #if arguments[stringParse] == "--separator" or arguments[stringParse] == "-s":
                 try:
                     verboseSeparatorLength = len("--separator")
                     separatorFlagLength = len("-s")
@@ -96,7 +95,7 @@ def setup():
                     print initialObj.separator
 
                 except IndexError:
-                    print 'too far'
+                    usage(4, "--separator")
 
             if arguments[stringParse] == "--equal-width" or arguments[stringParse] == "-w":
                 if(seenFormat == False):
@@ -330,7 +329,7 @@ def usage(errorCode, error=""):
         print 'sequ: extra operand' + helpString 
         exit(1)
     elif(errorCode == 4):
-        print 'Invalid format string. Use --help for more information.'
+        print 'sequ: option ' + "'" + error + "'" + ' requires an argument' + helpString
         exit(1)
     elif(errorCode == 5):
         print 'sequ: missing operand' + helpString
