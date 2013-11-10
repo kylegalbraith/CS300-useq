@@ -38,4 +38,7 @@ Link to repo: https://kgalb2@projects.cecs.pdx.edu/git/masseycs300-kgalb2
 - Testing --equal-width and -w
 	- The case sequ -w -1 1.1 11 is printing out to way to many places
 		remedied on 11/10/13 my leftOfDecimal checks had some off by one errors
+	- The case sequ -w -1 1.1 5 is actually broken in core utils seq, I handle it correctly by outputing -1.0 00.1 01.2 02.3 03.4 04.5
+
+- Testing --format and -f
 
