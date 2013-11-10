@@ -132,8 +132,8 @@ def setup():
                     seenEw = True
                 else:
                     usage(6)
-            else:
-                usage(7, arguments[stringParse])
+            #else:
+                #usage(7, arguments[stringParse])
                       
             stringParse += 1   
   
@@ -217,8 +217,7 @@ def setup():
 
         if(initialObj.startValue <= 0 and initialObj.endValue <= 0):
             leftOfDecimal = leftOfDecimal + 1
-
-        # Changed this on 11/9/13, need to check for a neg startValue and non neg endValue        
+       
         if(initialObj.startValue > 0 and initialObj.endValue < 0):
             leftOfDecimal = leftOfDecimal + 1
         elif(initialObj.startValue < 0 and initialObj.endValue > 0):

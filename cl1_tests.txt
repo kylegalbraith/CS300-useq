@@ -162,6 +162,12 @@ T44. input: -f "%a" -1 1.1 11
 	input: --format "%e" 0.1 -0.1 -0.2
 	output: 1.000000e-01 0.000000e+00 -1.000000e-01 -2.000000e-01
 
+	input: -f "%0.1e" 1 3
+	output: 1.0e+00 2.0e+00 3.0e+00
+
+	input: -f "%03.3E" 1 3
+	output: 1.000E+00 2.000E+00 3.000E+00
+
 	input: --format= "%e" 1 3
 	output: ERROR - No % directive
 

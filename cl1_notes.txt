@@ -41,4 +41,9 @@ Link to repo: https://kgalb2@projects.cecs.pdx.edu/git/masseycs300-kgalb2
 	- The case sequ -w -1 1.1 5 is actually broken in core utils seq, I handle it correctly by outputing -1.0 00.1 01.2 02.3 03.4 04.5
 
 - Testing --format and -f
+	- All tests passed succesfully, need to add code to catch invalid flags passed in. Right now I just ignore them.
+
+- Testing --separator and -s
+	- All tests passed succesfully
+
 
