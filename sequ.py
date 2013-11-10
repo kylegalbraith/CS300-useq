@@ -211,16 +211,16 @@ def setup():
         if(fixedPointRightOfDecimal > 0):
             rightOfDecimal = fixedPointRightOfDecimal
         else:
-            rightOfDecimal = calculateRightOfDecimal(initialObj.startValue, initialObj.step)  
-
+            rightOfDecimal = calculateRightOfDecimal(initialObj.startValue, initialObj.step)
+            
         leftOfDecimal = calculateLeftOfDecimal(initialObj.startValue, initialObj.endValue)
 
-        if(initialObj.startValue < 0 or initialObj.endValue < 0):
+        if(initialObj.startValue <= 0 and initialObj.endValue <= 0):
             leftOfDecimal = leftOfDecimal + 1
 
         # Changed this on 11/9/13, need to check for a neg startValue and non neg endValue        
-        if(initialObj.startValue < 0 and initialObj.endValue > 0):
-            leftOfDecimal = leftOfDecimal + 1
+        #if(initialObj.startValue < 0 and initialObj.endValue > 0):
+         #   leftOfDecimal = leftOfDecimal + 1
         
         if(rightOfDecimal > 0):
             leftOfDecimal = leftOfDecimal + 1
@@ -315,7 +315,10 @@ def calculateLeftOfDecimal(startValue, endValue):
     absoluteStart = abs(startValue)
     absoluteEnd = abs(endValue)
     largest = max(absoluteStart, absoluteEnd)
-    logOfLargestValue = math.log(largest, 10)
+    if(largest != 0):
+        logOfLargestValue = math.log(largest, 10)
+    else:
+        logOfLargestValue = 1
     floorLog = math.floor(logOfLargestValue)
 
     return int(floorLog)  
@@ -326,9 +329,10 @@ def getMaxFixedPointRightOfDecimal(numberStrings):
     if(len(numberStrings) > 1):
         for floatString in numberStrings:
             decimalIndex = floatString.find(".")
-            if(decimalIndex > 0):
+            # Off by one error on 11/10/13
+            if(decimalIndex >= 0):
                 maxRightOfDecimal = max(maxRightOfDecimal, (len(floatString) - 1) - decimalIndex)
-    return maxRightOfDecimal 
+    return maxRightOfDecimal
 
 # check if the start value > end value, if it is then exit without any output
 def checkStartEnd (start, end):

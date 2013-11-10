@@ -27,3 +27,13 @@ Link to repo: https://kgalb2@projects.cecs.pdx.edu/git/masseycs300-kgalb2
 - --format and --separator need to output an error message when no argument is supplied for them
 
 - I am documenting that you cannot use %a in python and thus the format you use for -f must be of type 'float' not 'double' like it is seq.
+
+- Testing the normal operation of sequ (i.e. no flags passed in), so just FIRST, STEP, LAST
+	- The sequ 0 0 test failed on 11/10/13
+		Remedied on 11/10/13 by adding a check to make sure we do not take the log of 0
+
+- Testing --help and --version
+	- All tests passed succesfully
+
+- Testing --equal-width and -w
+	- The case sequ -w -1 1.1 11 is printing out to way to many places
