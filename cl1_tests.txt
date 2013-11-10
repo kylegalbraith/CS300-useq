@@ -137,8 +137,12 @@ T41. input: -w 0 1.1 16.1
 	input: -w -1 1 1
 	output: -1 00 01 
 	
-	input: 1 0.5 2
+	input: -w 1 0.5 2
 	output: 1.0 1.5 2.0
+
+	# this test is actually broken in seq
+	input: -w -1 1.1 5
+	output: -1.0 00.1 01.2 02.3 03.4 04.5
 
 
 ## Format Tests ##
