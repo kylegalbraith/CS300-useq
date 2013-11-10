@@ -360,11 +360,17 @@ def outputSeq(sequObj):
 
     if(negativeStep):
         while start >= end:
-            print sequObj.formatOption % + start + sequObj.separator,
+            if(start != end):
+                sys.stdout.write(sequObj.formatOption % + start + sequObj.separator)
+            else:
+                sys.stdout.write(sequObj.formatOption % + start)
             start += step
     else:
         while start <= end:
-            print sequObj.formatOption % + start + sequObj.separator,
+            if(start != end):
+                sys.stdout.write(sequObj.formatOption % + start + sequObj.separator)
+            else:
+                sys.stdout.write(sequObj.formatOption % + start)
             start += step    
 
     # The program was successful
