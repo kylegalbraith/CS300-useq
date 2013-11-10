@@ -28,7 +28,7 @@ def usage(errorCode, error=""):
         print 'sequ: format ' + "'" + error + "'" + ' has unknown ' + error + ' directive' 
         exit(1)
     elif(errorCode == 3):
-        print 'sequ: extra operand' + helpString 
+        print 'sequ: extra operand ' + "'" + error + "'" + helpString 
         exit(1)
     elif(errorCode == 4):
         print 'sequ: option ' + "'" + error + "'" + ' requires an argument' + helpString
@@ -73,7 +73,7 @@ def setup():
         except ValueError:
             if arguments[stringParse] == "--help":
                 printHelp()
-            if arguments[stringParse] == "--version":
+            elif arguments[stringParse] == "--version":
                 printVersion()
 
             formatVerboseSub = "--format" in arguments[stringParse]
@@ -125,12 +125,14 @@ def setup():
                 except IndexError:
                     usage(4, "--separator")
 
-            if arguments[stringParse] == "--equal-width" or arguments[stringParse] == "-w":
+            elif arguments[stringParse] == "--equal-width" or arguments[stringParse] == "-w":
                 if(seenFormat == False):
                     initialObj.equalWidth = True
                     seenEw = True
                 else:
                     usage(6)
+            else:
+                usage(7, arguments[stringParse])
                       
             stringParse += 1   
   
@@ -156,7 +158,7 @@ def setup():
                 usage(3)
     # There is more than 3 arguments, meaning there is an extra operand
     else:
-        usage(3)
+        usage(3, arguments[4])
 
     lengthOfNumbers = len(numbers)
     assert lengthOfNumbers < 4, "Error in number assignments"
@@ -198,7 +200,6 @@ def setup():
         endValueString = numberStrings[0]
     # end assigning start step end values
 
-    # TODO: Refactor the code below into their own functions so that this is much cleaner looking
     # If -f/--format was used then the default value for format will not be present and this block of code will never run.
     if(initialObj.formatOption == "%g"):
         # need this code so if start, step, and end are all fixed point arguments we can take the maximum number
@@ -216,7 +217,7 @@ def setup():
         if(initialObj.startValue < 0 or initialObj.endValue < 0):
             leftOfDecimal = leftOfDecimal + 1
 
-        # Changed this on 11/9/1, need to check for a neg startValue and non neg endValue        
+        # Changed this on 11/9/13, need to check for a neg startValue and non neg endValue        
         if(initialObj.startValue < 0 and initialObj.endValue > 0):
             leftOfDecimal = leftOfDecimal + 1
         
@@ -228,15 +229,12 @@ def setup():
         else:
             initialObj.formatOption = "%0." + str(rightOfDecimal) + "f"
 
-        print initialObj.formatOption
-
     # double check the format option to make sure it is is valid. The likely case where
     # format option is invalid is when the user has used -f/--format
     try:
         checkFormat = initialObj.formatOption % initialObj.endValue
     except ValueError:
         usage(2, initialObj.formatOption)
-
 
     return initialObj
 
@@ -280,7 +278,6 @@ def parseFormat(argumentString):
     
     return appendString
   
-
 # If the args are not all fixed point then we will need to calculate how many places we need for output.
 # This gives us the output format for %0.pf by calculating p and also the right hand side if -w is used
 def calculateRightOfDecimal(startValue, stepValue):
