@@ -166,7 +166,6 @@ def setup():
         usage(3, arguments[4])
 
     lengthOfNumbers = len(numbers)
-    assert lengthOfNumbers < 4, "Error in number assignments"
 
     # These will store the string representation of start, step, and end values so we can count the places in each
     startValueString = ""
@@ -210,30 +209,7 @@ def setup():
         # need this code so if start, step, and end are all fixed point arguments we can take the maximum number
         # of zeros from the arguments to use for the right of decimal.
         # This will return the maximum number of places behind the decimal point
-        fixedPointRightOfDecimal = getMaxFixedPointRightOfDecimal(numberStrings)
-        
-        if(fixedPointRightOfDecimal > 0):
-            rightOfDecimal = fixedPointRightOfDecimal
-        else:
-            rightOfDecimal = calculateRightOfDecimal(initialObj.startValue, initialObj.step)
-            
-        leftOfDecimal = calculateLeftOfDecimal(initialObj.startValue, initialObj.endValue)
-
-        if(initialObj.startValue <= 0 and initialObj.endValue <= 0):
-            leftOfDecimal = leftOfDecimal + 1
-       
-        if(initialObj.startValue > 0 and initialObj.endValue < 0):
-            leftOfDecimal = leftOfDecimal + 1
-        elif(initialObj.startValue < 0 and initialObj.endValue > 0):
-            leftOfDecimal = leftOfDecimal + 1
-        
-        if(rightOfDecimal > 0):
-            leftOfDecimal = leftOfDecimal + 1
-        
-        if(initialObj.equalWidth):
-            initialObj.formatOption = "%0" + str(leftOfDecimal + rightOfDecimal + 1) + "." + str(rightOfDecimal) + "f"
-        else:
-            initialObj.formatOption = "%0." + str(rightOfDecimal) + "f"
+        initialObj.formatOption = createFormatOption(numberStrings, initialObj.startValue, initialObj.step, initialObj.endValue, initialObj.equalWidth)
 
     # double check the format option to make sure it is is valid. The likely case where
     # format option is invalid is when the user has used -f/--format
@@ -243,6 +219,40 @@ def setup():
         usage(2, initialObj.formatOption)
 
     return initialObj
+
+# create format option will create the format option based on how many places are needed
+# left of decimal and right of decimal. The format option needed will also depend on whether 
+# --equal-width has been passed in
+def createFormatOption(numberStrings, startValue, stepValue, endValue, ewFlag):
+    # need this code so if start, step, and end are all fixed point
+    # arguments we can take the maximum number
+    # of zeros from the arguments to use for the right of decimal.
+    # This will return the maximum number of places behind the decimalpoint
+    formatOption = ""
+    fixedPointRightOfDecimal = getMaxFixedPointRightOfDecimal(numberStrings)
+        
+    if(fixedPointRightOfDecimal > 0):
+        rightOfDecimal = fixedPointRightOfDecimal
+    else:
+        rightOfDecimal = calculateRightOfDecimal(startValue, stepValue)
+            
+    leftOfDecimal = calculateLeftOfDecimal(startValue, endValue)
+
+    if(startValue <= 0 and endValue <= 0):
+        leftOfDecimal = leftOfDecimal + 1
+       
+    if(startValue > 0 and endValue < 0):
+        leftOfDecimal = leftOfDecimal + 1
+    elif(startValue < 0 and endValue > 0 or rightOfDecimal > 0):
+        leftOfDecimal = leftOfDecimal + 1
+        
+    if(ewFlag):
+        formatOption = "%0" + str(leftOfDecimal + rightOfDecimal + 1) + "." + str(rightOfDecimal) + "f"
+    else:
+        formatOption = "%0." + str(rightOfDecimal) + "f"
+
+    return formatOption
+
 
 # replace any occurrence of \ with a empty string
 def escapeInSeparator(parsedSeparator):
