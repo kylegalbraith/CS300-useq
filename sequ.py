@@ -236,7 +236,9 @@ def createFormatOption(numberStrings, startValue, stepValue, endValue, ewFlag):
         rightOfDecimal = calculateRightOfDecimal(startValue, stepValue)
         
     if(fixedPointLeftOfDecimal > 0):
-        leftOfDecimal = fixedPointLeftOfDecimal    
+        leftOfDecimal = fixedPointLeftOfDecimal
+        if(startValue < 0 and startValue > -1):
+            leftOfDecimal = leftOfDecimal + 1 
     else:
         leftOfDecimal = calculateLeftOfDecimal(startValue, endValue)
         if(startValue <= 0 and endValue <= 0):
