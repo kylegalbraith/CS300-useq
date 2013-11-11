@@ -206,9 +206,7 @@ def setup():
 
     # If -f/--format was used then the default value for format will not be present and this block of code will never run.
     if(initialObj.formatOption == "%g"):
-        # need this code so if start, step, and end are all fixed point arguments we can take the maximum number
-        # of zeros from the arguments to use for the right of decimal.
-        # This will return the maximum number of places behind the decimal point
+        # Create the format option needed based on the number of places to the left and right of the decimal
         initialObj.formatOption = createFormatOption(numberStrings, initialObj.startValue, initialObj.step, initialObj.endValue, initialObj.equalWidth)
 
     # double check the format option to make sure it is is valid. The likely case where
