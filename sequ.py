@@ -228,22 +228,24 @@ def createFormatOption(numberStrings, startValue, stepValue, endValue, ewFlag):
     # This will return the maximum number of places behind the decimalpoint
     formatOption = ""
     fixedPointRightOfDecimal = getMaxFixedPointRightOfDecimal(numberStrings)
-        
+    fixedPointLeftOfDecimal = getMaxFixedPointLeftOfDecimal(numberStrings)   
+     
     if(fixedPointRightOfDecimal > 0):
         rightOfDecimal = fixedPointRightOfDecimal
     else:
         rightOfDecimal = calculateRightOfDecimal(startValue, stepValue)
-            
-    leftOfDecimal = calculateLeftOfDecimal(startValue, endValue)
-
-    if(startValue <= 0 and endValue <= 0):
-        leftOfDecimal = leftOfDecimal + 1
-       
-    if(startValue > 0 and endValue < 0):
-        leftOfDecimal = leftOfDecimal + 1
-    elif(startValue < 0 and endValue > 0 or rightOfDecimal > 0):
-        leftOfDecimal = leftOfDecimal + 1
         
+    if(fixedPointLeftOfDecimal > 0):
+        leftOfDecimal = fixedPointLeftOfDecimal    
+    else:
+        leftOfDecimal = calculateLeftOfDecimal(startValue, endValue)
+        if(startValue <= 0 and endValue <= 0):
+            leftOfDecimal = leftOfDecimal + 1
+        if(startValue > 0 and endValue < 0):
+            leftOfDecimal = leftOfDecimal + 1
+        elif(startValue < 0 and endValue > 0 or rightOfDecimal > 0):
+            leftOfDecimal = leftOfDecimal + 1
+                
     if(ewFlag):
         formatOption = "%0" + str(leftOfDecimal + rightOfDecimal + 1) + "." + str(rightOfDecimal) + "f"
     else:
@@ -346,6 +348,15 @@ def getMaxFixedPointRightOfDecimal(numberStrings):
             if(decimalIndex >= 0):
                 maxRightOfDecimal = max(maxRightOfDecimal, (len(floatString) - 1) - decimalIndex)
     return maxRightOfDecimal
+
+def getMaxFixedPointLeftOfDecimal(numberStrings):
+    maxLOD = 0
+    if(len(numberStrings) > 1):
+        for floatString in numberStrings:
+            decimalIndex = floatString.find(".")
+            if(decimalIndex >= 0):
+                maxLOD = max(maxLOD, decimalIndex)
+    return maxLOD
 
 # check if the start value > end value, if it is then exit without any output
 def checkStartEnd (start, end):
