@@ -400,7 +400,7 @@ def outputSeq(sequObj):
             if(start != end):
                 sys.stdout.write(sequObj.formatOption % + start + sequObj.separator)
             else:
-                sys.stdout.write(sequObj.formatOption % + start)
+                sys.stdout.write(sequObj.formatOption % + start + '\n')
             start += step    
 
     # The program was successful
