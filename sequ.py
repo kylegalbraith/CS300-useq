@@ -51,7 +51,11 @@ def setup():
     initialObj = sequ_obj()
 
     assert initialObj.startValue == 1, "Start value was not initialized correctly"
+    assert initialObj.step == 1, "Step value was not initialized correctly" 
     assert initialObj.endValue == 0, "End value was not initialized correctly"
+    assert initialObj.equalWidth == False, "Equal width boolean was not initialized correctly"
+    assert initialObj.negativeStep == False, "Negative step was not initialized correctly"
+    assert initialObj.separator == '\n', "Default separator not set correctly"
 
     # Get the arguments that have been passed in, and ignore the first one since it is the invocation of the script
     arguments = sys.argv[1:len(sys.argv)]
