@@ -95,14 +95,20 @@ def setup():
             float(arguments[stringParse])
             break
         except ValueError:
+            formatVerboseSub = "--format" in arguments[stringParse]
+            formatSub = "-f" in arguments[stringParse]
+            format = formatVerboseSub or formatSub
+
+            separatorVerboseSub = "--separator" in arguments[stringParse]
+            separatorSub = "-s" in arguments[stringParse]
+            separator = separatorVerboseSub or separatorSub
+
             if arguments[stringParse] == "--help":
                 printHelp()
             elif arguments[stringParse] == "--version":
                 printVersion()
-
-            formatVerboseSub = "--format" in arguments[stringParse]
-            formatSub = "-f" in arguments[stringParse]
-            if formatVerboseSub or formatSub:               
+            
+            elif format:               
                 try:
                     if(seenEw == False):                       
                         verboseFormatLength = len("--format")
@@ -131,9 +137,7 @@ def setup():
                 except IndexError:
                     usage(4, "--format")
 
-            separatorVerboseSub = "--separator" in arguments[stringParse]
-            separatorSub = "-s" in arguments[stringParse]
-            if separatorVerboseSub or separatorSub:
+            elif separator:
                 if(initialObj.separator == '\n'):
                     try:
                         verboseSeparatorLength = len("--separator")
@@ -164,8 +168,8 @@ def setup():
                     initialObj.separator = ' '
                 else:
                     usage(8)
-            #else:
-                #usage(7, arguments[stringParse])
+            else:
+                usage(7, arguments[stringParse])
                       
             stringParse += 1   
   
