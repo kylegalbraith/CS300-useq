@@ -9,6 +9,7 @@ import math
 import string
 from types import *
 from sequ_obj import *
+import argparse
 
 # These are constants used throughout the program
 SEQU_VERSION = "1.0"
@@ -43,6 +44,9 @@ def usage(errorCode, error=""):
     elif(errorCode == 7):
         print 'sequ: unrecognized option ' + "'" + error + "'"
         exit(1)
+    elif(errorCode == 8):
+        print 'sequ: \'--separator\' cannot be used with \'--words\''
+        exit(1)
     else:
         print 'ERROR - An unexpected error has ocurred'
 
@@ -68,6 +72,21 @@ def setup():
     stringParse = 0
     seenFormat = False
     seenEw = False
+
+    #parser = argparse.ArgumentParser()
+    #parser.add_argument("--version", nargs='?', help="print version info")
+    #parser.add_argument("-f", "--format", nargs='?', help="format options" )
+    #parser.add_argument("-s", "--separator", nargs='?', help="separator info")
+    #parser.add_argument("-w", "--equal-width", nargs='?', help="equal width info")
+    #parser.add_argument("start", type=float, help="start value")
+    #parser.add_argument("increment", type=float, nargs='?', help="step value")
+    #parser.add_argument("end", type=float, nargs='?', help="end value")
+    #args = parser.parse_args()
+    #if(args.increment):
+     #   print args.increment
+    #if(args.end):
+     #   print args.end
+
 
     while stringParse < totalArgs:
         # Try to cast each argument to a float, if it works then we break out of the loop as we have hit the 
@@ -115,20 +134,23 @@ def setup():
             separatorVerboseSub = "--separator" in arguments[stringParse]
             separatorSub = "-s" in arguments[stringParse]
             if separatorVerboseSub or separatorSub:
-                try:
-                    verboseSeparatorLength = len("--separator")
-                    separatorFlagLength = len("-s")
-                    argumentLength = len(arguments[stringParse])
+                if(initialObj.separator == '\n'):
+                    try:
+                        verboseSeparatorLength = len("--separator")
+                        separatorFlagLength = len("-s")
+                        argumentLength = len(arguments[stringParse])
 
-                    if(argumentLength == verboseSeparatorLength or argumentLength == separatorFlagLength):
-                        stringParse += 1
-                        initialObj.separator = escapeInSeparator(arguments[stringParse])
-                    else:
-                        parsedEscapedSeparator = parseSeparator(arguments[stringParse], verboseSeparatorLength, separatorFlagLength)
-                        initialObj.separator = parsedEscapedSeparator
+                        if(argumentLength == verboseSeparatorLength or argumentLength == separatorFlagLength):
+                            stringParse += 1
+                            initialObj.separator = escapeInSeparator(arguments[stringParse])
+                        else:
+                            parsedEscapedSeparator = parseSeparator(arguments[stringParse], verboseSeparatorLength, separatorFlagLength)
+                            initialObj.separator = parsedEscapedSeparator
 
-                except IndexError:
-                    usage(4, "--separator")
+                    except IndexError:
+                        usage(4, "--separator")
+                else:
+                    usage(8)
 
             elif arguments[stringParse] == "--equal-width" or arguments[stringParse] == "-w":
                 if(seenFormat == False):
@@ -136,6 +158,12 @@ def setup():
                     seenEw = True
                 else:
                     usage(6)
+
+            elif arguments[stringParse] == "--words" or arguments[stringParse] == "-W":
+                if(initialObj.separator == '\n'):
+                    initialObj.separator = ' '
+                else:
+                    usage(8)
             #else:
                 #usage(7, arguments[stringParse])
                       

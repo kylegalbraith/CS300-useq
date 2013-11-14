@@ -11,7 +11,7 @@ If argument == -W or --words
 
 If argument == -p or --pad
 	If -P or --pad-spaces has not been seen
-		Do something
+
 		Set a flag that will prevent -P or --pad-spaces from being 		used
 	Else
 		Output error that -p and -P cannot be used together
