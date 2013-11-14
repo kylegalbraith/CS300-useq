@@ -1,3 +1,43 @@
+## Kyle Galbraith - CL2 - Pseudocode
+
+I am only really concerned about the new functionality being added, so my pseudocode only addresses new functionality that is going to be added.
+
+If argument == -W or --words
+	If -s or --separator has not been seen
+		Assign sequ.separator to be ' '
+		Set a flag that will prevent -s or --separator from being used
+	Else
+		Output error that -W and -s cannot be used together
+
+If argument == -p or --pad
+	If -P or --pad-spaces has not been seen
+		Do something
+		Set a flag that will prevent -P or --pad-spaces from being 		used
+	Else
+		Output error that -p and -P cannot be used together
+
+If argument == -P or --pad-spaces
+	If -p or --pad has not been seen
+		Do Something
+		Set a flag that will prevent -p or --pad from being used
+	Else
+		Output error that -P and -p cannot be used together
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 sequ compliance level 1 will read in flags --format/-f, --seperator/-s, --equal-width/-w,
 followed by 1, 2, or 3 floats. Or it can read in --version or --help.
 
