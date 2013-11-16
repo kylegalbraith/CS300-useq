@@ -103,6 +103,10 @@ def setup():
             separatorSub = "-s" in arguments[stringParse]
             separator = separatorVerboseSub or separatorSub
 
+            padVerboseSub = "--pad" in arguments[stringParse]
+            padSub = "-p" in arguments[stringParse]
+            pad = padVerboseSub or padSub
+
             if arguments[stringParse] == "--help":
                 printHelp()
             elif arguments[stringParse] == "--version":
