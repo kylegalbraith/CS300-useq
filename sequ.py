@@ -160,6 +160,17 @@ def setup():
                 else:
                     usage(8)
 
+            elif pad:
+                # Check the length of the single character passed in to make sure that
+                # it is a single character. Then Run equal-width check and then replace 
+                # the 0s with the single character passed in.
+                if(seenEw == False):
+                    try:
+                        print 'something'
+                    except IndexError:
+                        usage(4, "--pad")
+                else:
+                    print 'oops'
             elif arguments[stringParse] == "--equal-width" or arguments[stringParse] == "-w":
                 if(seenFormat == False):
                     initialObj.equalWidth = True
