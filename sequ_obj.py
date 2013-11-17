@@ -14,6 +14,7 @@ class sequ_obj:
         self.equalWidth = False
         self.step = 1
         self.negativeStep = False
+        self.padChar = "0"
 
 
 

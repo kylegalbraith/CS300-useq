@@ -72,6 +72,7 @@ def setup():
     stringParse = 0
     seenFormat = False
     seenEw = False
+    seenPad = False
 
     #parser = argparse.ArgumentParser()
     #parser.add_argument("--version", nargs='?', help="print version info")
@@ -114,7 +115,7 @@ def setup():
             
             elif format:               
                 try:
-                    if(seenEw == False):                       
+                    if(seenEw == False and seenPad == False):                       
                         verboseFormatLength = len("--format")
                         formatFlagLength = len("-f")
                         argumentLength = len(arguments[stringParse])            
@@ -150,7 +151,7 @@ def setup():
 
                         if(argumentLength == verboseSeparatorLength or argumentLength == separatorFlagLength):
                             stringParse += 1
-                            initialObj.separator = escapeInSeparator(arguments[stringParse])
+                            initialObj.separator = escapeBackslash(arguments[stringParse])
                         else:
                             parsedEscapedSeparator = parseSeparator(arguments[stringParse], verboseSeparatorLength, separatorFlagLength)
                             initialObj.separator = parsedEscapedSeparator
@@ -164,25 +165,39 @@ def setup():
                 # Check the length of the single character passed in to make sure that
                 # it is a single character. Then Run equal-width check and then replace 
                 # the 0s with the single character passed in.
-                if(seenEw == False):
+                if(seenEw == False and seenFormat == False):
                     try:
-                        padVerboseLength == len("--pad")
+                        padVerboseLength = len("--pad")
                         padFlagLength = len("-p")
                         argumentLength = len(arguments[stringParse])
 
                         if(argumentLength == padVerboseLength or argumentLength == 2):
                             stringParse += 1
+                            padCharacter = escapeBackslash(arguments[stringParse])
+                           
+                            if(len(padCharacter) == 1):
+                                initialObj.padChar = padCharacter
+                                seenPad = True
+                            else:
+                                print 'usage about pad character being too long'
                             # Check the pad character to escape / and to make sure its length == 1
                             # If that checks out then put the character on the sequ object and set seenPad to true
                         else:
-                            print 'nope'
+                            # need to parse what is behind the = sign
+                            parsedEscapedPad = parseSeparator(arguments[stringParse], padVerboseLength, padFlagLength)
+                            print parsedEscapedPad
+                            print len(parsedEscapedPad)
+                            if(len(parsedEscapedPad) == 1):
+                                initialObj.padChar = parsedEscapedPad
+                            else:
+                                print 'usage about pad character being too long'
 
                     except IndexError:
                         usage(4, "--pad")
                 else:
                     print 'oops'
             elif arguments[stringParse] == "--equal-width" or arguments[stringParse] == "-w":
-                if(seenFormat == False):
+                if(seenFormat == False and seenPad == False):
                     initialObj.equalWidth = True
                     seenEw = True
                 else:
@@ -312,9 +327,12 @@ def createFormatOption(numberStrings, startValue, stepValue, endValue, ewFlag):
 
 
 # replace any occurrence of \ with a empty string
-def escapeInSeparator(parsedSeparator):
-    escapedSeparator = parsedSeparator.replace("\\", "")
-    return escapedSeparator
+def escapeBackslash(parsedSeparator):
+    escapedBackslash = parsedSeparator.replace("\\", "")
+    return escapedBackslash
+
+#def parsePad(argumentString, verbosePadLength, padFlagLength):
+
 
 # parse the passed in separator argument into a valid format
 def parseSeparator(argumentString, verboseSepLength, sepFlagLength):
@@ -332,13 +350,13 @@ def parseSeparator(argumentString, verboseSepLength, sepFlagLength):
         if(greaterThanFlag and lessThanVerbose):
             for x in range(sepFlagLength, argumentLength):
                 appendString += passedSeparator[x]
-            parsedSeparator = escapeInSeparator(appendString)
+            parsedSeparator = escapeBackslash(appendString)
         else:
             usage(7, passedSeparator)
     else:
         for x in range(startHere + 1, argumentLength):
             appendString += passedSeparator[x]  
-        parsedSeparator = escapeInSeparator(appendString)
+        parsedSeparator = escapeBackslash(appendString)
         
     return parsedSeparator
 
