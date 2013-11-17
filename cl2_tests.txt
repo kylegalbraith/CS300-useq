@@ -237,7 +237,7 @@ T44. input: -f "%a" -1 1.1 11
 	output: t1 t2 t3
 
 	input: -p '\a\n' 1 4
-	output: an1 an2 an3 an4
+	output: Error - Pad string is greater than 1
 
 
 
