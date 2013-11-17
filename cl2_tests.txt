@@ -239,6 +239,12 @@ T44. input: -f "%a" -1 1.1 11
 	input: -p '\a\n' 1 4
 	output: Error - Pad string is greater than 1
 
+	input: -p 't' -w 1 4
+	output: Error - Cannot use --pad with --equal-width
+
+	input; -p 't' -f '%e' 1 3
+	output: Errpr - Cannot use the format flag with the pad flag
+
 
 
 

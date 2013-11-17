@@ -166,7 +166,17 @@ def setup():
                 # the 0s with the single character passed in.
                 if(seenEw == False):
                     try:
-                        print 'something'
+                        padVerboseLength == len("--pad")
+                        padFlagLength = len("-p")
+                        argumentLength = len(arguments[stringParse])
+
+                        if(argumentLength == padVerboseLength or argumentLength == 2):
+                            stringParse += 1
+                            # Check the pad character to escape / and to make sure its length == 1
+                            # If that checks out then put the character on the sequ object and set seenPad to true
+                        else:
+                            print 'nope'
+
                     except IndexError:
                         usage(4, "--pad")
                 else:
