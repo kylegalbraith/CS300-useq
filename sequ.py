@@ -284,8 +284,10 @@ def setup():
 
     # If -f/--format was used then the default value for format will not be present and this block of code will never run.
     if(initialObj.formatOption == "%g"):
+        initialObj.leftDecimal = getLeftOfDecimal(numberStrings, initialObj.startValue, initialObj.endValue)
+        initialObj.rightDecimal = getRightOfDecimal(numberStrings, initialObj.startValue, initialObj.step)
         # Create the format option needed based on the number of places to the left and right of the decimal
-        initialObj.formatOption = createFormatOption(numberStrings, initialObj.startValue, initialObj.step, initialObj.endValue, initialObj.equalWidth)
+        initialObj.formatOption = createFormatOption(initialObj.leftDecimal, initialObj.rightDecimal, initialObj.equalWidth)
 
     # double check the format option to make sure it is is valid. The likely case where
     # format option is invalid is when the user has used -f/--format
@@ -296,29 +298,57 @@ def setup():
 
     return initialObj
 
-# create format option will create the format option based on how many places are needed
-# left of decimal and right of decimal. The format option needed will also depend on whether 
-# --equal-width has been passed in
-def createFormatOption(numberStrings, startValue, stepValue, endValue, ewFlag):
-    # need this code so if start, step, and end are all fixed point
-    # arguments we can take the maximum number
-    # of zeros from the arguments to use for the right of decimal.
-    # This will return the maximum number of places behind the decimalpoint
-    formatOption = ""
-    fixedPointRightOfDecimal = getMaxFixedPointRightOfDecimal(numberStrings)
-    fixedPointLeftOfDecimal = getMaxFixedPointLeftOfDecimal(numberStrings)   
-     
-    if(fixedPointRightOfDecimal > 0):
-        rightOfDecimal = fixedPointRightOfDecimal
-    else:
-        rightOfDecimal = calculateRightOfDecimal(startValue, stepValue)
-        
+def getLeftOfDecimal(numberStrings, startValue, endValue):
+    fixedPointLeftOfDecimal = getMaxFixedPointLeftOfDecimal(numberStrings)
+
     if(fixedPointLeftOfDecimal > 0):
         leftOfDecimal = fixedPointLeftOfDecimal
     else:
         leftOfDecimal = calculateLeftOfDecimal(startValue, endValue)
         if(startValue <= 0 and endValue <= 0):
             leftOfDecimal = leftOfDecimal + 1
+        # 11/17/13 no longer need the checks below because I check for largest > 1 in calculateLeftOfDecimal
+        #if(startValue > 0 and endValue < 0):
+         #   leftOfDecimal = leftOfDecimal + 1
+        #elif(startValue < 0 and endValue > 0 or rightOfDecimal > 0):
+         #   leftOfDecimal = leftOfDecimal + 1
+    return leftOfDecimal
+
+def getRightOfDecimal(numberStrings, startValue, stepValue):
+    fixedPointRightOfDecimal = getMaxFixedPointRightOfDecimal(numberStrings)
+
+    if(fixedPointRightOfDecimal > 0):
+        rightOfDecimal = fixedPointRightOfDecimal
+    else:
+        rightOfDecimal = calculateRightOfDecimal(startValue, stepValue)
+
+    return rightOfDecimal
+     
+
+# create format option will create the format option based on how many places are needed
+# left of decimal and right of decimal. The format option needed will also depend on whether 
+# --equal-width has been passed in
+def createFormatOption(leftOfDecimal, rightOfDecimal, ewFlag):
+#def createFormatOption(numberStrings, startValue, stepValue, endValue, ewFlag):
+    # need this code so if start, step, and end are all fixed point
+    # arguments we can take the maximum number
+    # of zeros from the arguments to use for the right of decimal.
+    # This will return the maximum number of places behind the decimalpoint
+    formatOption = ""
+    #fixedPointRightOfDecimal = getMaxFixedPointRightOfDecimal(numberStrings)
+    #fixedPointLeftOfDecimal = getMaxFixedPointLeftOfDecimal(numberStrings)   
+     
+    #if(fixedPointRightOfDecimal > 0):
+     #   rightOfDecimal = fixedPointRightOfDecimal
+    #else:
+     #   rightOfDecimal = calculateRightOfDecimal(startValue, stepValue)
+        
+    #if(fixedPointLeftOfDecimal > 0):
+     #   leftOfDecimal = fixedPointLeftOfDecimal
+    #else:
+     #   leftOfDecimal = calculateLeftOfDecimal(startValue, endValue)
+      #  if(startValue <= 0 and endValue <= 0):
+       #     leftOfDecimal = leftOfDecimal + 1
         # 11/17/13 no longer need the checks below because I check for largest > 1 in calculateLeftOfDecimal
         #if(startValue > 0 and endValue < 0):
          #   leftOfDecimal = leftOfDecimal + 1
@@ -509,13 +539,16 @@ def outputSeqSlow(sequObj):
             else:
                 outputArray.append(sequObj.formatOption % + start + '\n')
             start += step
-            
+    
+    #print sequObj.formatOption        
     for output in outputArray:
+        # this is a good start but turns out bad results with -w -1.001 11
         count = 0
         for char in output:
-            if(char == "0" and count < len(output) - 2):
+            if(char == "0" and count < 2):
                 output = output.replace(char, initialObj.padChar, 1)
                 count = count + 1
+                continue
             elif(char == "-"):
                 continue
             else:
