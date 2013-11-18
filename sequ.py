@@ -154,7 +154,7 @@ def setup():
 
                         if(argumentLength == verboseSeparatorLength or argumentLength == separatorFlagLength):
                             stringParse += 1
-                            initialObj.separator = escapeBackslash(arguments[stringParse])
+                            initialObj.separator = arguments[stringParse] 
                         else:
                             parsedEscapedSeparator = parseSeparator(arguments[stringParse], verboseSeparatorLength, separatorFlagLength)
                             initialObj.separator = parsedEscapedSeparator
@@ -319,6 +319,7 @@ def getLeftOfDecimal(numberStrings, startValue, stepValue, endValue):
          #   leftOfDecimal = leftOfDecimal + 1
         #elif(startValue < 0 and endValue > 0 or rightOfDecimal > 0):
          #   leftOfDecimal = leftOfDecimal + 1
+    
     return leftOfDecimal
 
 def getRightOfDecimal(numberStrings, startValue, stepValue):
@@ -522,17 +523,22 @@ def outputSeqSlow(sequObj):
             else:
                 outputArray.append(sequObj.formatOption % + start + '\n')
             start += step
-    
-    #print sequObj.formatOption        
+      
     for output in outputArray:
         # this is a good start but turns out bad results with -w -1.001 11
         count = 0
+        dIndex = output.find('.')
+        if(dIndex == -1):
+            dIndex = len(output)
+        dIndex = dIndex - 1
         for char in output:
-            if(char == "0" and count < 2):
+            if(char == "0" and count < dIndex):
                 output = output.replace(char, initialObj.padChar, 1)
+                #print output
                 count = count + 1
                 continue
             elif(char == "-"):
+                dIndex = dIndex - 1
                 continue
             else:
                 break
@@ -548,7 +554,7 @@ if(initialObj.padChar != "0"):
     outputSeqSlow(initialObj)
 else:
     initialObj.outputQuick()
-    #outputSeq(initialObj)
+
 
 
 
