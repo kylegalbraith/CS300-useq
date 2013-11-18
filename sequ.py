@@ -438,6 +438,10 @@ def getMaxFixedPointLeftOfDecimal(numberStrings):
             decimalIndex = floatString.find(".")
             if(decimalIndex >= 0):
                 maxLOD = max(maxLOD, decimalIndex)
+            # If there is '.' then maxLOD is just the length of the string
+            else:
+                maxLOD = len(floatString)
+
     return maxLOD
 
 # check if the start value > end value, if it is then exit without any output
