@@ -22,20 +22,20 @@ class sequ_obj:
         end = self.endValue
         step = self.step
         negativeStep = self.negativeStep
-
+        sep = self.separator.decode("string_escape")
         if(negativeStep):
             while start >= end:
                 if(start != end):
-                    sys.stdout.write(self.formatOption % + start + self.separator)
+                    sys.stdout.write(self.formatOption % start + sep)
                 else:
-                    sys.stdout.write(self.formatOption % + start)
+                    sys.stdout.write(self.formatOption % start)
                 start += step
         else:
             while start <= end:
                 if(start != end):
-                    sys.stdout.write(self.formatOption % + start + self.separator)
+                    sys.stdout.write(self.formatOption % start + sep)
                 else:
-                    sys.stdout.write(self.formatOption % + start + '\n')
+                    sys.stdout.write(self.formatOption % start + '\n')
                 start += step    
         
         # The program was successful
