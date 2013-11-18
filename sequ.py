@@ -303,6 +303,7 @@ def getLeftOfDecimal(numberStrings, startValue, endValue):
 
     if(fixedPointLeftOfDecimal > 0):
         leftOfDecimal = fixedPointLeftOfDecimal
+        print 'lod = ' + str(leftOfDecimal)
     else:
         leftOfDecimal = calculateLeftOfDecimal(startValue, endValue)
         if(startValue <= 0 and endValue <= 0):
@@ -493,30 +494,6 @@ def printVersion():
     print 'sequ (CS300 Term Project) ' + SEQU_VERSION + '\n' + SEQU_COPYRIGHT + '\n' + SEQU_LICENSE + '\n\n' + 'Written by Kyle Galbraith.'
     exit(0)
 
-# outputSeq will output the sequence between the integers passed in
-def outputSeq(sequObj):
-    start = sequObj.startValue
-    end = sequObj.endValue
-    step = sequObj.step
-    negativeStep = sequObj.negativeStep
-
-    if(negativeStep):
-        while start >= end:
-            if(start != end):
-                sys.stdout.write(sequObj.formatOption % + start + sequObj.separator)
-            else:
-                sys.stdout.write(sequObj.formatOption % + start)
-            start += step
-    else:
-        while start <= end:
-            if(start != end):
-                sys.stdout.write(sequObj.formatOption % + start + sequObj.separator)
-            else:
-                sys.stdout.write(sequObj.formatOption % + start + '\n')
-            start += step    
-
-    # The program was successful
-    exit(0)
 
 def outputSeqSlow(sequObj):
     start = sequObj.startValue
@@ -564,7 +541,8 @@ initialObj = setup()
 if(initialObj.padChar != "0"):
     outputSeqSlow(initialObj)
 else:
-    outputSeq(initialObj)
+    initialObj.outputQuick()
+    #outputSeq(initialObj)
 
 
 
