@@ -320,8 +320,8 @@ def createFormatOption(numberStrings, startValue, stepValue, endValue, ewFlag):
             leftOfDecimal = leftOfDecimal + 1
         if(startValue > 0 and endValue < 0):
             leftOfDecimal = leftOfDecimal + 1
-        elif(startValue < 0 and endValue > 0 or rightOfDecimal > 0):
-            leftOfDecimal = leftOfDecimal + 1
+        #elif(startValue < 0 and endValue > 0 or rightOfDecimal > 0):
+         #   leftOfDecimal = leftOfDecimal + 1
                 
     if(ewFlag):
         formatOption = "%0" + str(leftOfDecimal + rightOfDecimal + 1) + "." + str(rightOfDecimal) + "f"
@@ -507,15 +507,17 @@ def outputSeqSlow(sequObj):
             start += step
             
     for output in outputArray:
-        if(output[0] != "0"):
-            sys.stdout.write(output)
-        else:
-            padLeft = output.replace("0", initialObj.padChar)
-            sys.stdout.write(padLeft) 
-
+        count = 0
         for char in output:
-            print char
-           
+            #print 'count = ' + str(count)
+            #print 'len = ' + str(len(output))
+            if(char == "0" and count < len(output) - 2):
+                output = output.replace(char, initialObj.padChar, 1)
+                count = count + 1
+            else:
+                break
+         
+        sys.stdout.write(output)        
 
     # The program was successful
     exit(0)
