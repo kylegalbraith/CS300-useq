@@ -318,8 +318,9 @@ def createFormatOption(numberStrings, startValue, stepValue, endValue, ewFlag):
         leftOfDecimal = calculateLeftOfDecimal(startValue, endValue)
         if(startValue <= 0 and endValue <= 0):
             leftOfDecimal = leftOfDecimal + 1
-        if(startValue > 0 and endValue < 0):
-            leftOfDecimal = leftOfDecimal + 1
+        # 11/17/13 no longer need the checks below because I check for largest > 1 in calculateLeftOfDecimal
+        #if(startValue > 0 and endValue < 0):
+         #   leftOfDecimal = leftOfDecimal + 1
         #elif(startValue < 0 and endValue > 0 or rightOfDecimal > 0):
          #   leftOfDecimal = leftOfDecimal + 1
                 
@@ -410,7 +411,8 @@ def calculateLeftOfDecimal(startValue, endValue):
     absoluteStart = abs(startValue)
     absoluteEnd = abs(endValue)
     largest = max(absoluteStart, absoluteEnd)
-    if(largest != 0):
+    # 11/17/13 Changed this to be largest > 1 to account for -w -1 1 1 and -w -1 10
+    if(largest > 1):
         logOfLargestValue = math.log(largest, 10)
     else:
         logOfLargestValue = 1
@@ -525,7 +527,6 @@ def outputSeqSlow(sequObj):
 # Create a new sequ_obj which will have all of the defaults set for normal sequ operation.
 initialObj = setup()
 if(initialObj.padChar != "0"):
-    print 'other output'
     outputSeqSlow(initialObj)
 else:
     outputSeq(initialObj)
