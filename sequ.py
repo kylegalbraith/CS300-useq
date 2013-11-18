@@ -47,6 +47,8 @@ def usage(errorCode, error=""):
     elif(errorCode == 8):
         print 'sequ: \'--separator\' cannot be used with \'--words\''
         exit(1)
+    elif(errorCode == 9):
+        print 'sequ: \'--pad\' requires a single character pad' 
     else:
         print 'ERROR - An unexpected error has ocurred'
 
@@ -176,10 +178,11 @@ def setup():
                             padCharacter = escapeBackslash(arguments[stringParse])
                            
                             if(len(padCharacter) == 1):
+                                initialObj.equalWidth = True
                                 initialObj.padChar = padCharacter
                                 seenPad = True
                             else:
-                                print 'usage about pad character being too long'
+                                usage(9)
                             # Check the pad character to escape / and to make sure its length == 1
                             # If that checks out then put the character on the sequ object and set seenPad to true
                         else:
@@ -188,9 +191,11 @@ def setup():
                             print parsedEscapedPad
                             print len(parsedEscapedPad)
                             if(len(parsedEscapedPad) == 1):
+                                initialObj.equalWidth = True
                                 initialObj.padChar = parsedEscapedPad
+                                seenPad = True
                             else:
-                                print 'usage about pad character being too long'
+                                usage(9)
 
                     except IndexError:
                         usage(4, "--pad")
@@ -479,9 +484,49 @@ def outputSeq(sequObj):
     # The program was successful
     exit(0)
 
+def outputSeqSlow(sequObj):
+    start = sequObj.startValue
+    end = sequObj.endValue
+    step = sequObj.step
+    negativeStep = sequObj.negativeStep
+    outputArray = []
+
+    if(negativeStep):
+        while start >= end:
+            if(start != end):
+                outputArray.append(sequObj.formatOption % + start + sequObj.separator)
+            else:
+                outputArray.append(sequObj.formatOption % + start)
+            start += step
+    else:
+        while start <= end:
+            if(start != end):
+                outputArray.append(sequObj.formatOption % + start + sequObj.separator)
+            else:
+                outputArray.append(sequObj.formatOption % + start + '\n')
+            start += step
+            
+    for output in outputArray:
+        if(output[0] != "0"):
+            sys.stdout.write(output)
+        else:
+            padLeft = output.replace("0", initialObj.padChar)
+            sys.stdout.write(padLeft) 
+
+        for char in output:
+            print char
+           
+
+    # The program was successful
+    exit(0)
+
 # Create a new sequ_obj which will have all of the defaults set for normal sequ operation.
 initialObj = setup()
-outputSeq(initialObj)
+if(initialObj.padChar != "0"):
+    print 'other output'
+    outputSeqSlow(initialObj)
+else:
+    outputSeq(initialObj)
 
 
 
