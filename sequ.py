@@ -48,7 +48,8 @@ def usage(errorCode, error=""):
         print 'sequ: \'--separator\' cannot be used with \'--words\''
         exit(1)
     elif(errorCode == 9):
-        print 'sequ: \'--pad\' requires a single character pad' 
+        print 'sequ: \'--pad\' requires a single character pad' + helpString
+        exit(1)
     else:
         print 'ERROR - An unexpected error has ocurred'
 
@@ -337,9 +338,6 @@ def escapeBackslash(parsedSeparator):
     escapedBackslash = parsedSeparator.replace("\\", "")
     return escapedBackslash
 
-#def parsePad(argumentString, verbosePadLength, padFlagLength):
-
-
 # parse the passed in separator argument into a valid format
 def parseSeparator(argumentString, verboseSepLength, sepFlagLength):
     argumentLength = len(argumentString)
@@ -515,11 +513,11 @@ def outputSeqSlow(sequObj):
     for output in outputArray:
         count = 0
         for char in output:
-            #print 'count = ' + str(count)
-            #print 'len = ' + str(len(output))
             if(char == "0" and count < len(output) - 2):
                 output = output.replace(char, initialObj.padChar, 1)
                 count = count + 1
+            elif(char == "-"):
+                continue
             else:
                 break
          
