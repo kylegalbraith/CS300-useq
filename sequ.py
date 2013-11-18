@@ -284,7 +284,7 @@ def setup():
 
     # If -f/--format was used then the default value for format will not be present and this block of code will never run.
     if(initialObj.formatOption == "%g"):
-        initialObj.leftDecimal = getLeftOfDecimal(numberStrings, initialObj.startValue, initialObj.endValue)
+        initialObj.leftDecimal = getLeftOfDecimal(numberStrings, initialObj.startValue, initialObj.step, initialObj.endValue)
         initialObj.rightDecimal = getRightOfDecimal(numberStrings, initialObj.startValue, initialObj.step)
         # Create the format option needed based on the number of places to the left and right of the decimal
         initialObj.formatOption = createFormatOption(initialObj.leftDecimal, initialObj.rightDecimal, initialObj.equalWidth)
@@ -298,14 +298,20 @@ def setup():
 
     return initialObj
 
-def getLeftOfDecimal(numberStrings, startValue, endValue):
+def getLeftOfDecimal(numberStrings, startValue, stepValue, endValue):
+    startRem = startValue % 1
+    stepRem = stepValue % 1
+    endRem = endValue % 1
+
     fixedPointLeftOfDecimal = getMaxFixedPointLeftOfDecimal(numberStrings)
 
     if(fixedPointLeftOfDecimal > 0):
         leftOfDecimal = fixedPointLeftOfDecimal
-        print 'lod = ' + str(leftOfDecimal)
+        checkRem = startRem > 0 or stepRem > 0 or endRem > 0
+        if(not checkRem):
+            leftOfDecimal = leftOfDecimal - 1
     else:
-        leftOfDecimal = calculateLeftOfDecimal(startValue, endValue)
+        leftOfDecimal = calculateLeftOfDecimal(startValue, endValue)   
         if(startValue <= 0 and endValue <= 0):
             leftOfDecimal = leftOfDecimal + 1
         # 11/17/13 no longer need the checks below because I check for largest > 1 in calculateLeftOfDecimal
@@ -469,7 +475,7 @@ def getMaxFixedPointLeftOfDecimal(numberStrings):
                 maxLOD = max(maxLOD, decimalIndex)
             # If there is '.' then maxLOD is just the length of the string
             else:
-                maxLOD = len(floatString)
+                maxLOD = max(maxLOD, len(floatString))
 
     return maxLOD
 
