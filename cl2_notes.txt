@@ -7,4 +7,9 @@ Link to repo: https://kgalb2@projects.cecs.pdx.edu/git/masseycs300-kgalb2
 
 - The --pad flag is mutually exclusive to -w since it is merely a interpretation of -w where the left pad is a single character instead of 0. It will require some extra checks to make sure that the parameter for --pad that is passed in is only a single character. 
 
+- Things left to do 11/19/13
+	- Clean up the backslash escaping for -s and --pad since I was doing 	the wrong thing before.
+	- Factor outputSlow and outputFast into the same function since they 	use the same idea. Probably need to add a function that does the array 	manipulating.
+	- Implement --pad-spaces functionality which should be rather simple 	once --pad is complete as they both follow the same idea.
+
 
