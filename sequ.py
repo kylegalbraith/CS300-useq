@@ -154,9 +154,9 @@ def setup():
 
                         if(argumentLength == verboseSeparatorLength or argumentLength == separatorFlagLength):
                             stringParse += 1
-                            initialObj.separator = arguments[stringParse] 
+                            initialObj.separator = arguments[stringParse].decode("string_escape") 
                         else:
-                            parsedEscapedSeparator = parseSeparator(arguments[stringParse], verboseSeparatorLength, separatorFlagLength)
+                            parsedEscapedSeparator = parseFlagWithEquals(arguments[stringParse], verboseSeparatorLength, separatorFlagLength)
                             initialObj.separator = parsedEscapedSeparator
 
                     except IndexError:
@@ -176,7 +176,7 @@ def setup():
 
                         if(argumentLength == padVerboseLength or argumentLength == 2):
                             stringParse += 1
-                            padCharacter = escapeBackslash(arguments[stringParse])
+                            padCharacter = arguments[stringParse].decode("string_escape")
                            
                             if(len(padCharacter) == 1):
                                 initialObj.equalWidth = True
@@ -188,7 +188,7 @@ def setup():
                             # If that checks out then put the character on the sequ object and set seenPad to true
                         else:
                             # need to parse what is behind the = sign
-                            parsedEscapedPad = parseSeparator(arguments[stringParse], padVerboseLength, padFlagLength)
+                            parsedEscapedPad = parseFlagWithEquals(arguments[stringParse], padVerboseLength, padFlagLength)
                             print parsedEscapedPad
                             print len(parsedEscapedPad)
                             if(len(parsedEscapedPad) == 1):
@@ -343,26 +343,7 @@ def createFormatOption(leftOfDecimal, rightOfDecimal, ewFlag):
     # of zeros from the arguments to use for the right of decimal.
     # This will return the maximum number of places behind the decimalpoint
     formatOption = ""
-    #fixedPointRightOfDecimal = getMaxFixedPointRightOfDecimal(numberStrings)
-    #fixedPointLeftOfDecimal = getMaxFixedPointLeftOfDecimal(numberStrings)   
-     
-    #if(fixedPointRightOfDecimal > 0):
-     #   rightOfDecimal = fixedPointRightOfDecimal
-    #else:
-     #   rightOfDecimal = calculateRightOfDecimal(startValue, stepValue)
-        
-    #if(fixedPointLeftOfDecimal > 0):
-     #   leftOfDecimal = fixedPointLeftOfDecimal
-    #else:
-     #   leftOfDecimal = calculateLeftOfDecimal(startValue, endValue)
-      #  if(startValue <= 0 and endValue <= 0):
-       #     leftOfDecimal = leftOfDecimal + 1
-        # 11/17/13 no longer need the checks below because I check for largest > 1 in calculateLeftOfDecimal
-        #if(startValue > 0 and endValue < 0):
-         #   leftOfDecimal = leftOfDecimal + 1
-        #elif(startValue < 0 and endValue > 0 or rightOfDecimal > 0):
-         #   leftOfDecimal = leftOfDecimal + 1
-                
+               
     if(ewFlag):
         formatOption = "%0" + str(leftOfDecimal + rightOfDecimal + 1) + "." + str(rightOfDecimal) + "f"
     else:
@@ -370,14 +351,8 @@ def createFormatOption(leftOfDecimal, rightOfDecimal, ewFlag):
 
     return formatOption
 
-
-# replace any occurrence of \ with a empty string
-def escapeBackslash(parsedSeparator):
-    escapedBackslash = parsedSeparator.replace("\\", "")
-    return escapedBackslash
-
 # parse the passed in separator argument into a valid format
-def parseSeparator(argumentString, verboseSepLength, sepFlagLength):
+def parseFlagWithEquals(argumentString, verboseSepLength, sepFlagLength):
     argumentLength = len(argumentString)
     passedSeparator = argumentString
     startHere = passedSeparator.find('=')
@@ -392,13 +367,13 @@ def parseSeparator(argumentString, verboseSepLength, sepFlagLength):
         if(greaterThanFlag and lessThanVerbose):
             for x in range(sepFlagLength, argumentLength):
                 appendString += passedSeparator[x]
-            parsedSeparator = escapeBackslash(appendString)
+            parsedSeparator = appendString.decode("string_escape")
         else:
             usage(7, passedSeparator)
     else:
         for x in range(startHere + 1, argumentLength):
             appendString += passedSeparator[x]  
-        parsedSeparator = escapeBackslash(appendString)
+        parsedSeparator = appendString.decode("string_escape")
         
     return parsedSeparator
 
