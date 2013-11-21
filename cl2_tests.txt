@@ -246,6 +246,9 @@ T44. input: -f "%a" -1 1.1 11
 
 	input: -p 't' -f '%e' 1 3
 	output: Errpr - Cannot use the format flag with the pad flag
+
+	input: -p \t 1 3
+	output: 1	2	3
 	
 	input: -p
 	output: Error - pad requires an argument 
