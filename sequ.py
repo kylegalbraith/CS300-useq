@@ -189,8 +189,6 @@ def setup():
                         else:
                             # need to parse what is behind the = sign
                             parsedEscapedPad = parseFlagWithEquals(arguments[stringParse], padVerboseLength, padFlagLength)
-                            print parsedEscapedPad
-                            print len(parsedEscapedPad)
                             if(len(parsedEscapedPad) == 1):
                                 initialObj.equalWidth = True
                                 initialObj.padChar = parsedEscapedPad
@@ -487,18 +485,18 @@ def outputSeqSlow(sequObj):
     if(negativeStep):
         while start >= end:
             if(start != end):
-                outputArray.append(sequObj.formatOption % + start + sequObj.separator)
+                outputArray.append(sequObj.formatOption % + start)
             else:
                 outputArray.append(sequObj.formatOption % + start)
             start += step
     else:
         while start <= end:
             if(start != end):
-                outputArray.append(sequObj.formatOption % + start + sequObj.separator)
+                outputArray.append(sequObj.formatOption % + start)
             else:
-                outputArray.append(sequObj.formatOption % + start + '\n')
+                outputArray.append(sequObj.formatOption % + start)
             start += step
-      
+    loopCount = 0  
     for output in outputArray:
         # this is a good start but turns out bad results with -w -1.001 11
         count = 0
@@ -509,7 +507,6 @@ def outputSeqSlow(sequObj):
         for char in output:
             if(char == "0" and count < dIndex):
                 output = output.replace(char, initialObj.padChar, 1)
-                #print output
                 count = count + 1
                 continue
             elif(char == "-"):
@@ -517,8 +514,11 @@ def outputSeqSlow(sequObj):
                 continue
             else:
                 break
-         
-        sys.stdout.write(output)        
+        if(loopCount < len(outputArray) - 1):
+            sys.stdout.write(output + sequObj.separator)
+            loopCount = loopCount + 1
+        else:
+            sys.stdout.write(output + '\n')        
 
     # The program was successful
     exit(0)

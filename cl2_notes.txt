@@ -12,4 +12,6 @@ Link to repo: https://kgalb2@projects.cecs.pdx.edu/git/masseycs300-kgalb2
 	- Factor outputSlow and outputFast into the same function since they 	use the same idea. Probably need to add a function that does the array 	manipulating.
 	- Implement --pad-spaces functionality which should be rather simple 	once --pad is complete as they both follow the same idea.
 
+- This case -p t -1 3 is still replacing to many zeroes.
+
 
