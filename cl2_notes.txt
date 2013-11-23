@@ -1,6 +1,8 @@
 # Kyle Galbraith	Compliance Level 2 - Notes
 Link to repo: https://kgalb2@projects.cecs.pdx.edu/git/masseycs300-kgalb2
 
+- GRADER: I merged my CL2 branch back into master for grading so link above is correct. I hope I did not interfere with your CL1 grading.
+
 - It may be better to make the switch to Python argparse for this compliance level as there are some additional flags to read in.
 
 - The --words flag is simply setting the separator object to be ' '. I believe it would be best to have the --words flag be mutually exclusive from the -s flag. So you cannot use the --separator flag with the --words flag.
