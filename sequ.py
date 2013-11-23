@@ -296,6 +296,8 @@ def setup():
 
     return initialObj
 
+# Get the number of places we need for left of the decimal. If fixed point > 0 then we will just use that for left of decimal.
+# Otherwise need to go calculate the number of places left of decimal
 def getLeftOfDecimal(numberStrings, startValue, stepValue, endValue):
     startRem = startValue % 1
     stepRem = stepValue % 1
@@ -320,6 +322,7 @@ def getLeftOfDecimal(numberStrings, startValue, stepValue, endValue):
     
     return leftOfDecimal
 
+# Get the number of decimal places to the right of the decimal. If fixed point > 0 then use that, otherwise go calculate the right of decimal
 def getRightOfDecimal(numberStrings, startValue, stepValue):
     fixedPointRightOfDecimal = getMaxFixedPointRightOfDecimal(numberStrings)
 
@@ -335,11 +338,6 @@ def getRightOfDecimal(numberStrings, startValue, stepValue):
 # left of decimal and right of decimal. The format option needed will also depend on whether 
 # --equal-width has been passed in
 def createFormatOption(leftOfDecimal, rightOfDecimal, ewFlag):
-#def createFormatOption(numberStrings, startValue, stepValue, endValue, ewFlag):
-    # need this code so if start, step, and end are all fixed point
-    # arguments we can take the maximum number
-    # of zeros from the arguments to use for the right of decimal.
-    # This will return the maximum number of places behind the decimalpoint
     formatOption = ""
                
     if(ewFlag):
@@ -414,7 +412,7 @@ def calculateRightOfDecimal(startValue, stepValue):
      
     return max(startRightOfDecimal, stepRightOfDecimal) 
 
-# calculate the number of places needed to the left of the decimal
+# calculate the number of places needed to the left of the decimal in case fixed point is not > 0
 def calculateLeftOfDecimal(startValue, endValue):
     
     absoluteStart = abs(startValue)
@@ -440,6 +438,8 @@ def getMaxFixedPointRightOfDecimal(numberStrings):
                 maxRightOfDecimal = max(maxRightOfDecimal, (len(floatString) - 1) - decimalIndex)
     return maxRightOfDecimal
 
+# need this code so if start, step, and end are all fixed point arguments we can take the maximum number
+# of zeros from the arguments to use for the left of decimal. This will return the maximum number of places behind the left of decimal point
 def getMaxFixedPointLeftOfDecimal(numberStrings):
     maxLOD = 0
     if(len(numberStrings) > 1):
