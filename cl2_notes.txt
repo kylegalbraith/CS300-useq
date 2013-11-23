@@ -14,4 +14,13 @@ Link to repo: https://kgalb2@projects.cecs.pdx.edu/git/masseycs300-kgalb2
 
 - This case -p t -1 3 is still replacing to many zeroes.
 
+- Resolved the replacing of zeros by looping through an output array and doing some math with the left of decimal and right of decimal.
+
+- Need to update --version info and --help info
+
+- Test Results
+- CL0 Tests check out
+- CL1 Tests (equal-width and separator as well as various start, step, end value) check out
+- CL2 Tests (--words, --pad, and --pad-spaces all work as expected).
+
 
