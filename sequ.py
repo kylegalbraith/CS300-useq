@@ -39,7 +39,7 @@ def usage(errorCode, error=""):
         print 'sequ: missing operand' + helpString
         exit(1)
     elif(errorCode == 6):
-        print 'sequ: format string may not be used when printing equal width strings' + helpString
+        print 'sequ: \'--equal-width\' and \'--format\' cannot be used with \'--pad\'' + helpString
         exit(1)
     elif(errorCode == 7):
         print 'sequ: unrecognized option ' + "'" + error + "'"
@@ -199,7 +199,7 @@ def setup():
                     except IndexError:
                         usage(4, "--pad")
                 else:
-                    print 'oops'
+                    usage(6)
             elif arguments[stringParse] == "--equal-width" or arguments[stringParse] == "-w":
                 if(seenFormat == False and seenPad == False):
                     initialObj.equalWidth = True
@@ -474,61 +474,9 @@ def printVersion():
     print 'sequ (CS300 Term Project) ' + SEQU_VERSION + '\n' + SEQU_COPYRIGHT + '\n' + SEQU_LICENSE + '\n\n' + 'Written by Kyle Galbraith.'
     exit(0)
 
-
-def outputSeqSlow(sequObj):
-    start = sequObj.startValue
-    end = sequObj.endValue
-    step = sequObj.step
-    negativeStep = sequObj.negativeStep
-    outputArray = []
-
-    if(negativeStep):
-        while start >= end:
-            if(start != end):
-                outputArray.append(sequObj.formatOption % + start)
-            else:
-                outputArray.append(sequObj.formatOption % + start)
-            start += step
-    else:
-        while start <= end:
-            if(start != end):
-                outputArray.append(sequObj.formatOption % + start)
-            else:
-                outputArray.append(sequObj.formatOption % + start)
-            start += step
-    loopCount = 0  
-    for output in outputArray:
-        # this is a good start but turns out bad results with -w -1.001 11
-        count = 0
-        dIndex = output.find('.')
-        if(dIndex == -1):
-            dIndex = len(output)
-        dIndex = dIndex - 1
-        for char in output:
-            if(char == "0" and count < dIndex):
-                output = output.replace(char, initialObj.padChar, 1)
-                count = count + 1
-                continue
-            elif(char == "-"):
-                dIndex = dIndex - 1
-                continue
-            else:
-                break
-        if(loopCount < len(outputArray) - 1):
-            sys.stdout.write(output + sequObj.separator)
-            loopCount = loopCount + 1
-        else:
-            sys.stdout.write(output + '\n')        
-
-    # The program was successful
-    exit(0)
-
 # Create a new sequ_obj which will have all of the defaults set for normal sequ operation.
 initialObj = setup()
-if(initialObj.padChar != "0"):
-    outputSeqSlow(initialObj)
-else:
-    initialObj.outputQuick()
+initialObj.outputQuick()
 
 
 
