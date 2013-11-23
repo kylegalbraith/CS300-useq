@@ -10,18 +10,23 @@ If argument == -W or --words
 		Output error that -W and -s cannot be used together
 
 If argument == -p or --pad
-	If -P or --pad-spaces has not been seen
-
-		Set a flag that will prevent -P or --pad-spaces from being 		used
+	If -P/--pad-spaces/-f/-w have not been seen
+		Grab the pad character and decode it
+		If decoded length > 1
+			Output error that you must select a pad character
+		Else
+			Set pad character on the sequ object
+ 
+		Set a flag that will prevent -P/--pad-spaces/-f/-w from being 			used
 	Else
-		Output error that -p and -P cannot be used together
+		Output error that -P/--pad-spaces/-f/-w cannot be used together
 
 If argument == -P or --pad-spaces
-	If -p or --pad has not been seen
-		Do Something
-		Set a flag that will prevent -p or --pad from being used
+	If -p/--pad/-f/-w has not been seen
+		Set pad character on the sequ object
+		Set a flag that will prevent -p/--pad/-f/-w from being used
 	Else
-		Output error that -P and -p cannot be used together
+		Output error that -p/--pad/-f/-w cannot be used together
 	
 
 
