@@ -114,6 +114,27 @@ def setup():
                 printHelp()
             elif arguments[stringParse] == "--version":
                 printVersion()
+
+            elif arguments[stringParse] == "--pad-spaces" or arguments[stringParse] == "-P":
+                if(seenFormat == False and seenEw == False):
+                    initialObj.equalWidth = True
+                    initialObj.padChar = ' '
+                    seenEw = True
+                else:
+                    usage(6)
+
+            elif arguments[stringParse] == "--equal-width" or arguments[stringParse] == "-w":
+                if(seenFormat == False and seenEw == False):
+                    initialObj.equalWidth = True
+                    seenEw = True
+                else:
+                    usage(6)
+
+            elif arguments[stringParse] == "--words" or arguments[stringParse] == "-W":
+                if(initialObj.separator == '\n'):
+                    initialObj.separator = ' '
+                else:
+                    usage(8)
             
             elif format:               
                 try:
@@ -197,26 +218,6 @@ def setup():
 
                     except IndexError:
                         usage(4, "--pad")
-                else:
-                    usage(6)
-            elif arguments[stringParse] == "--equal-width" or arguments[stringParse] == "-w":
-                if(seenFormat == False and seenEw == False):
-                    initialObj.equalWidth = True
-                    seenEw = True
-                else:
-                    usage(6)
-
-            elif arguments[stringParse] == "--words" or arguments[stringParse] == "-W":
-                if(initialObj.separator == '\n'):
-                    initialObj.separator = ' '
-                else:
-                    usage(8)
-
-            elif arguments[stringParse] == "--pad-spaces" or arguments[stringParse] == "-P":
-                if(seenFormat == False and seenEw == False):
-                    initialObj.equalWidth = True
-                    initialObj.padChar = ' '
-                    seenEw = True
                 else:
                     usage(6)
             else:
