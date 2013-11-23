@@ -39,7 +39,7 @@ def usage(errorCode, error=""):
         print 'sequ: missing operand' + helpString
         exit(1)
     elif(errorCode == 6):
-        print 'sequ: \'--equal-width\' and \'--format\' cannot be used with \'--pad\'' + helpString
+        print 'sequ: \'--equal-width\' flags (--pad, --pad-spaces) are distinct flags cannot be used with one another or with \'--format\'' + helpString
         exit(1)
     elif(errorCode == 7):
         print 'sequ: unrecognized option ' + "'" + error + "'"
@@ -75,7 +75,6 @@ def setup():
     stringParse = 0
     seenFormat = False
     seenEw = False
-    seenPad = False
 
     #parser = argparse.ArgumentParser()
     #parser.add_argument("--version", nargs='?', help="print version info")
@@ -118,7 +117,7 @@ def setup():
             
             elif format:               
                 try:
-                    if(seenEw == False and seenPad == False):                       
+                    if(seenEw == False):                       
                         verboseFormatLength = len("--format")
                         formatFlagLength = len("-f")
                         argumentLength = len(arguments[stringParse])            
@@ -181,18 +180,18 @@ def setup():
                             if(len(padCharacter) == 1):
                                 initialObj.equalWidth = True
                                 initialObj.padChar = padCharacter
-                                seenPad = True
+                                seenEw = True
                             else:
                                 usage(9)
                             # Check the pad character to escape / and to make sure its length == 1
-                            # If that checks out then put the character on the sequ object and set seenPad to true
+                            # If that checks out then put the character on the sequ object and set seenEw to true
                         else:
                             # need to parse what is behind the = sign
                             parsedEscapedPad = parseFlagWithEquals(arguments[stringParse], padVerboseLength, padFlagLength)
                             if(len(parsedEscapedPad) == 1):
                                 initialObj.equalWidth = True
                                 initialObj.padChar = parsedEscapedPad
-                                seenPad = True
+                                seenEw = True
                             else:
                                 usage(9)
 
@@ -201,7 +200,7 @@ def setup():
                 else:
                     usage(6)
             elif arguments[stringParse] == "--equal-width" or arguments[stringParse] == "-w":
-                if(seenFormat == False and seenPad == False):
+                if(seenFormat == False and seenEw == False):
                     initialObj.equalWidth = True
                     seenEw = True
                 else:
@@ -212,6 +211,14 @@ def setup():
                     initialObj.separator = ' '
                 else:
                     usage(8)
+
+            elif arguments[stringParse] == "--pad-spaces" or arguments[stringParse] == "-P":
+                if(seenFormat == False and seenEw == False):
+                    initialObj.equalWidth = True
+                    initialObj.padChar = ' '
+                    seenEw = True
+                else:
+                    usage(6)
             else:
                 usage(7, arguments[stringParse])
                       
@@ -403,8 +410,6 @@ def calculateRightOfDecimal(startValue, stepValue):
         # There is a bug here in that if step remainder is 0.1 it could be
         # interpreted as 0.09 which then causes startRightOfDecimal to be 2
         # instead of 1.
-        # To resolve the problem I am adding 1 to the floor of the log of
-        # startRemaider
         startRightOfDecimal = -int(math.floor(math.log(startRemainder, 10)))
     
     if(stepRemainder > 0):
