@@ -75,6 +75,7 @@ def setup():
     stringParse = 0
     seenFormat = False
     seenEw = False
+    seenFormatWord = False
 
     while stringParse < totalArgs:
         # Try to cast each argument to a float, if it works then we break out of the loop as we have hit the 
@@ -83,8 +84,8 @@ def setup():
             float(arguments[stringParse])
             break
         except ValueError:
-            formatVerboseSub = "--format" in arguments[stringParse]
-            formatSub = "-f" in arguments[stringParse]
+            formatVerboseSub = "--format" in arguments[stringParse] and "-word" not in arguments[stringParse]
+            formatSub = "-f" in arguments[stringParse] and "--f" not in arguments[stringParse]
             format = formatVerboseSub or formatSub
 
             separatorVerboseSub = "--separator" in arguments[stringParse]
@@ -95,7 +96,7 @@ def setup():
             padSub = "-p" in arguments[stringParse]
             pad = padVerboseSub or padSub
 
-            formatWordVerboseSub = "--format-word" in arguments[stringParse]
+            formatWordVerboseSub = "--format-word" in arguments[stringParse] and "-word" in arguments[stringParse]
             formatWordSub = "-F" in arguments[stringParse]
             formatWord = formatWordVerboseSub or formatWordSub
 
@@ -105,7 +106,7 @@ def setup():
                 printVersion()
 
             elif arguments[stringParse] == "--pad-spaces" or arguments[stringParse] == "-P":
-                if(seenFormat == False and seenEw == False):
+                if(seenFormat == False and seenEw == False and seenFormatWord == False):
                     initialObj.equalWidth = True
                     initialObj.padChar = ' '
                     seenEw = True
@@ -113,7 +114,7 @@ def setup():
                     usage(6)
 
             elif arguments[stringParse] == "--equal-width" or arguments[stringParse] == "-w":
-                if(seenFormat == False and seenEw == False):
+                if(seenFormat == False and seenEw == False and seenFormatWord == False):
                     initialObj.equalWidth = True
                     seenEw = True
                 else:
@@ -127,7 +128,7 @@ def setup():
             
             elif format:               
                 try:
-                    if(seenEw == False):                       
+                    if(seenEw == False and seenFormatWord == False):                       
                         verboseFormatLength = len("--format")
                         formatFlagLength = len("-f")
                         argumentLength = len(arguments[stringParse])            
@@ -177,7 +178,7 @@ def setup():
                 # Check the length of the single character passed in to make sure that
                 # it is a single character. Then Run equal-width check and then replace 
                 # the 0s with the single character passed in.
-                if(seenEw == False and seenFormat == False):
+                if(seenEw == False and seenFormat == False and seenFormatWord == False):
                     try:
                         padVerboseLength = len("--pad")
                         padFlagLength = len("-p")
@@ -211,7 +212,23 @@ def setup():
                     usage(6)
             
             elif formatWord:
-                print 'check format word'    
+                if(seenEw == False and seenFormat == False ):
+                    try:    
+                        formatWordVerboseLength = len("--format-word")
+                        formatWordFlagLength = len("-F")
+                        argumentLength = len(arguments[stringParse])
+
+                        if(argumentLength == formatWordVerboseLength or argumentLength == formatWordFlagLength):
+                            stringParse += 1
+                            
+                            seenFormatWord = True
+                        else:
+                            parsedFormatWord = parseFlagWithEquals(arguments[stringParse], formatWordVerboseLength, formatWordFlagLength)
+                            print parsedFormatWord
+                    except IndexError:
+                        usage(4, "--format-word")    
+                else:
+                    usage(6)
             
             else:
                 usage(7, arguments[stringParse])
