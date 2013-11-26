@@ -54,7 +54,8 @@ def usage(errorCode, error=""):
         print 'ERROR - An unexpected error has ocurred'
 
 def setup():
-    # Create a new sequ_obj which will have all of the defaults set for normal sequ operation.
+    # Create a new sequ_obj which will have all of the defaults set for normal
+    # sequ operation.
     initialObj = sequ_obj()
 
     assert initialObj.startValue == 1, "Start value was not initialized correctly"
@@ -64,12 +65,13 @@ def setup():
     assert initialObj.negativeStep == False, "Negative step was not initialized correctly"
     assert initialObj.separator == '\n', "Default separator not set correctly"
 
-    # Get the arguments that have been passed in, and ignore the first one since it is the invocation of the script
+    # Get the arguments that have been passed in, and ignore the first one
+    # since it is the invocation of the script
     arguments = sys.argv[1:len(sys.argv)]
 
     # Get the total args passed in as exactly 2 are required
     totalArgs = len(arguments)
-    # loop variables. 
+    # loop variables.
     # seenFormat = flag for we have seen the format flag
     # seenEw = flag for we have seen the equal-width
     stringParse = 0
@@ -77,163 +79,164 @@ def setup():
     seenEw = False
     seenFormatWord = False
 
-    while stringParse < totalArgs:
-        # Try to cast each argument to a float, if it works then we break out of the loop as we have hit the 
-        # numerical portion of the args. Else continue parsing to see if the arg matches a flag.
-        try:
-            float(arguments[stringParse])
-            break
-        except ValueError:
-            formatVerboseSub = "--format" in arguments[stringParse] and "-word" not in arguments[stringParse]
-            formatSub = "-f" in arguments[stringParse] and "--f" not in arguments[stringParse]
-            format = formatVerboseSub or formatSub
+    while "-" in arguments[stringParse]:
+        #parse '-' flags to assign them to the sequ object
+        formatVerboseSub = "--format" in arguments[stringParse] and "-word" not in arguments[stringParse]
+        formatSub = "-f" in arguments[stringParse] and "--f" not in arguments[stringParse]
+        format = formatVerboseSub or formatSub
 
-            separatorVerboseSub = "--separator" in arguments[stringParse]
-            separatorSub = "-s" in arguments[stringParse]
-            separator = separatorVerboseSub or separatorSub
+        separatorVerboseSub = "--separator" in arguments[stringParse]
+        separatorSub = "-s" in arguments[stringParse]
+        separator = separatorVerboseSub or separatorSub
 
-            padVerboseSub = "--pad" in arguments[stringParse]
-            padSub = "-p" in arguments[stringParse]
-            pad = padVerboseSub or padSub
+        padVerboseSub = "--pad" in arguments[stringParse]
+        padSub = "-p" in arguments[stringParse]
+        pad = padVerboseSub or padSub
 
-            formatWordVerboseSub = "--format-word" in arguments[stringParse] and "-word" in arguments[stringParse]
-            formatWordSub = "-F" in arguments[stringParse]
-            formatWord = formatWordVerboseSub or formatWordSub
+        formatWordVerboseSub = "--format-word" in arguments[stringParse] and "-word" in arguments[stringParse]
+        formatWordSub = "-F" in arguments[stringParse]
+        formatWord = formatWordVerboseSub or formatWordSub
 
-            if arguments[stringParse] == "--help":
-                printHelp()
-            elif arguments[stringParse] == "--version":
-                printVersion()
+        if arguments[stringParse] == "--help":
+            printHelp()
+        elif arguments[stringParse] == "--version":
+            printVersion()
 
-            elif arguments[stringParse] == "--pad-spaces" or arguments[stringParse] == "-P":
-                if(seenFormat == False and seenEw == False and seenFormatWord == False):
-                    initialObj.equalWidth = True
-                    initialObj.padChar = ' '
-                    seenEw = True
-                else:
-                    usage(6)
-
-            elif arguments[stringParse] == "--equal-width" or arguments[stringParse] == "-w":
-                if(seenFormat == False and seenEw == False and seenFormatWord == False):
-                    initialObj.equalWidth = True
-                    seenEw = True
-                else:
-                    usage(6)
-
-            elif arguments[stringParse] == "--words" or arguments[stringParse] == "-W":
-                if(initialObj.separator == '\n'):
-                    initialObj.separator = ' '
-                else:
-                    usage(8)
-            
-            elif format:               
-                try:
-                    if(seenEw == False and seenFormatWord == False):                       
-                        verboseFormatLength = len("--format")
-                        formatFlagLength = len("-f")
-                        argumentLength = len(arguments[stringParse])            
-                        
-                        # There is no = behind the flag so we can assume that the format is the next place on the command line
-                        if(argumentLength == verboseFormatLength or argumentLength == formatFlagLength):
-                            stringParse += 1
-                            if "%" in arguments[stringParse]:
-                                initialObj.formatOption = arguments[stringParse]
-                                seenFormat = True
-                            else:
-                                usage(1, arguments[stringParse])
-                        # Need to parse the flag to find where the actual
-                        # format is
-                        else:
-                            parsedFormat = parseFormat(arguments[stringParse])
-                            if "%" in parsedFormat:
-                                initialObj.formatOption = parsedFormat 
-                                seenFormat = True
-                            else:
-                                usage(1, parsedFormat)                                                                                                                     
-                    else:
-                        usage(6)
-                except IndexError:
-                    usage(4, "--format")
-
-            elif separator:
-                if(initialObj.separator == '\n'):
-                    try:
-                        verboseSeparatorLength = len("--separator")
-                        separatorFlagLength = len("-s")
-                        argumentLength = len(arguments[stringParse])
-
-                        if(argumentLength == verboseSeparatorLength or argumentLength == separatorFlagLength):
-                            stringParse += 1
-                            initialObj.separator = arguments[stringParse].decode("string_escape") 
-                        else:
-                            parsedEscapedSeparator = parseFlagWithEquals(arguments[stringParse], verboseSeparatorLength, separatorFlagLength)
-                            initialObj.separator = parsedEscapedSeparator
-
-                    except IndexError:
-                        usage(4, "--separator")
-                else:
-                    usage(8)
-
-            elif pad:
-                # Check the length of the single character passed in to make sure that
-                # it is a single character. Then Run equal-width check and then replace 
-                # the 0s with the single character passed in.
-                if(seenEw == False and seenFormat == False and seenFormatWord == False):
-                    try:
-                        padVerboseLength = len("--pad")
-                        padFlagLength = len("-p")
-                        argumentLength = len(arguments[stringParse])
-
-                        if(argumentLength == padVerboseLength or argumentLength == 2):
-                            stringParse += 1
-                            padCharacter = arguments[stringParse].decode("string_escape")
-                           
-                            if(len(padCharacter) == 1):
-                                initialObj.equalWidth = True
-                                initialObj.padChar = padCharacter
-                                seenEw = True
-                            else:
-                                usage(9)
-                            # Check the pad character to escape / and to make sure its length == 1
-                            # If that checks out then put the character on the sequ object and set seenEw to true
-                        else:
-                            # need to parse what is behind the = sign
-                            parsedEscapedPad = parseFlagWithEquals(arguments[stringParse], padVerboseLength, padFlagLength)
-                            if(len(parsedEscapedPad) == 1):
-                                initialObj.equalWidth = True
-                                initialObj.padChar = parsedEscapedPad
-                                seenEw = True
-                            else:
-                                usage(9)
-
-                    except IndexError:
-                        usage(4, "--pad")
-                else:
-                    usage(6)
-            
-            elif formatWord:
-                if(seenEw == False and seenFormat == False ):
-                    try:    
-                        formatWordVerboseLength = len("--format-word")
-                        formatWordFlagLength = len("-F")
-                        argumentLength = len(arguments[stringParse])
-
-                        if(argumentLength == formatWordVerboseLength or argumentLength == formatWordFlagLength):
-                            stringParse += 1
-                            validWordFormat = checkWordFormat(arguments[stringParse])
-                            print validWordFormat
-                        else:
-                            parsedFormatWord = parseFlagWithEquals(arguments[stringParse], formatWordVerboseLength, formatWordFlagLength)
-                            print parsedFormatWord
-                    except IndexError:
-                        usage(4, "--format-word")    
-                else:
-                    usage(6)
-            
+        elif arguments[stringParse] == "--pad-spaces" or arguments[stringParse] == "-P":
+            if(seenFormat == False and seenEw == False and seenFormatWord == False):
+                initialObj.equalWidth = True
+                initialObj.padChar = ' '
+                seenEw = True
             else:
-                usage(7, arguments[stringParse])
+                usage(6)
+
+        elif arguments[stringParse] == "--equal-width" or arguments[stringParse] == "-w":
+            if(seenFormat == False and seenEw == False and seenFormatWord == False):
+                initialObj.equalWidth = True
+                seenEw = True
+            else:
+                usage(6)
+
+        elif arguments[stringParse] == "--words" or arguments[stringParse] == "-W":
+            if(initialObj.separator == '\n'):
+                initialObj.separator = ' '
+            else:
+                usage(8)
+            
+        elif format:               
+            try:
+                if(seenEw == False and seenFormatWord == False):                       
+                    verboseFormatLength = len("--format")
+                    formatFlagLength = len("-f")
+                    argumentLength = len(arguments[stringParse])            
+                        
+                    # There is no = behind the flag so we can assume that
+                    # the format is the next place on the command line
+                    if(argumentLength == verboseFormatLength or argumentLength == formatFlagLength):
+                        stringParse += 1
+                        if "%" in arguments[stringParse]:
+                            initialObj.formatOption = arguments[stringParse]
+                            seenFormat = True
+                        else:
+                            usage(1, arguments[stringParse])
+                    # Need to parse the flag to find where the actual
+                    # format is
+                    else:
+                        parsedFormat = parseFormat(arguments[stringParse])
+                        if "%" in parsedFormat:
+                            initialObj.formatOption = parsedFormat 
+                            seenFormat = True
+                        else:
+                            usage(1, parsedFormat)                                                                                                                     
+                else:
+                    usage(6)
+            except IndexError:
+                usage(4, "--format")
+
+        elif separator:
+            if(initialObj.separator == '\n'):
+                try:
+                    verboseSeparatorLength = len("--separator")
+                    separatorFlagLength = len("-s")
+                    argumentLength = len(arguments[stringParse])
+
+                    if(argumentLength == verboseSeparatorLength or argumentLength == separatorFlagLength):
+                        stringParse += 1
+                        initialObj.separator = arguments[stringParse].decode("string_escape") 
+                    else:
+                        parsedEscapedSeparator = parseFlagWithEquals(arguments[stringParse], verboseSeparatorLength, separatorFlagLength)
+                        initialObj.separator = parsedEscapedSeparator
+
+                except IndexError:
+                    usage(4, "--separator")
+            else:
+                usage(8)
+
+        elif pad:
+            # Check the length of the single character passed in to make
+            # sure that
+            # it is a single character.  Then Run equal-width check and
+            # then replace
+            # the 0s with the single character passed in.
+            if(seenEw == False and seenFormat == False and seenFormatWord == False):
+                try:
+                    padVerboseLength = len("--pad")
+                    padFlagLength = len("-p")
+                    argumentLength = len(arguments[stringParse])
+
+                    if(argumentLength == padVerboseLength or argumentLength == 2):
+                        stringParse += 1
+                        padCharacter = arguments[stringParse].decode("string_escape")
+                           
+                        if(len(padCharacter) == 1):
+                            initialObj.equalWidth = True
+                            initialObj.padChar = padCharacter
+                            seenEw = True
+                        else:
+                            usage(9)
+                        # Check the pad character to escape / and to make
+                        # sure its length == 1
+                        # If that checks out then put the character on the
+                        # sequ object and set seenEw to true
+                    else:
+                        # need to parse what is behind the = sign
+                        parsedEscapedPad = parseFlagWithEquals(arguments[stringParse], padVerboseLength, padFlagLength)
+                        if(len(parsedEscapedPad) == 1):
+                            initialObj.equalWidth = True
+                            initialObj.padChar = parsedEscapedPad
+                            seenEw = True
+                        else:
+                            usage(9)
+
+                except IndexError:
+                    usage(4, "--pad")
+            else:
+                usage(6)
+            
+        elif formatWord:
+            if(seenEw == False and seenFormat == False):
+                try:    
+                    formatWordVerboseLength = len("--format-word")
+                    formatWordFlagLength = len("-F")
+                    argumentLength = len(arguments[stringParse])
+
+                    if(argumentLength == formatWordVerboseLength or argumentLength == formatWordFlagLength):
+                        stringParse += 1
+                        validWordFormat = checkWordFormat(arguments[stringParse])
+                        initialObj.formatWord = validWordFormat
+                    else:
+                        parsedFormatWord = parseFlagWithEquals(arguments[stringParse], formatWordVerboseLength, formatWordFlagLength)
+                        validWordFormat = checkWordFormat(parsedFormatWord)
+                        initialObj.formatWord = validWordFormat
+                except IndexError:
+                    usage(4, "--format-word")    
+            else:
+                usage(6)
+            
+        else:
+            usage(7, arguments[stringParse])
                       
-            stringParse += 1   
+        stringParse += 1   
   
     # Need to check that the number of args leftover is equal to or less than 3 but greater than 0
     totalNumberArgs = totalArgs - stringParse
