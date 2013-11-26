@@ -76,21 +76,6 @@ def setup():
     seenFormat = False
     seenEw = False
 
-    #parser = argparse.ArgumentParser()
-    #parser.add_argument("--version", nargs='?', help="print version info")
-    #parser.add_argument("-f", "--format", nargs='?', help="format options" )
-    #parser.add_argument("-s", "--separator", nargs='?', help="separator info")
-    #parser.add_argument("-w", "--equal-width", nargs='?', help="equal width info")
-    #parser.add_argument("start", type=float, help="start value")
-    #parser.add_argument("increment", type=float, nargs='?', help="step value")
-    #parser.add_argument("end", type=float, nargs='?', help="end value")
-    #args = parser.parse_args()
-    #if(args.increment):
-     #   print args.increment
-    #if(args.end):
-     #   print args.end
-
-
     while stringParse < totalArgs:
         # Try to cast each argument to a float, if it works then we break out of the loop as we have hit the 
         # numerical portion of the args. Else continue parsing to see if the arg matches a flag.
@@ -109,6 +94,10 @@ def setup():
             padVerboseSub = "--pad" in arguments[stringParse]
             padSub = "-p" in arguments[stringParse]
             pad = padVerboseSub or padSub
+
+            formatWordVerboseSub = "--format-word" in arguments[stringParse]
+            formatWordSub = "-F" in arguments[stringParse]
+            formatWord = formatWordVerboseSub or formatWordSub
 
             if arguments[stringParse] == "--help":
                 printHelp()
@@ -220,6 +209,10 @@ def setup():
                         usage(4, "--pad")
                 else:
                     usage(6)
+            
+            elif formatWord:
+                print 'check format word'    
+            
             else:
                 usage(7, arguments[stringParse])
                       
