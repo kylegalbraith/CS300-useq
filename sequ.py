@@ -220,8 +220,8 @@ def setup():
 
                         if(argumentLength == formatWordVerboseLength or argumentLength == formatWordFlagLength):
                             stringParse += 1
-                            
-                            seenFormatWord = True
+                            validWordFormat = checkWordFormat(arguments[stringParse])
+                            print validWordFormat
                         else:
                             parsedFormatWord = parseFlagWithEquals(arguments[stringParse], formatWordVerboseLength, formatWordFlagLength)
                             print parsedFormatWord
@@ -339,6 +339,13 @@ def getLeftOfDecimal(numberStrings, startValue, stepValue, endValue):
          #   leftOfDecimal = leftOfDecimal + 1
     
     return leftOfDecimal
+
+def checkWordFormat(wordFormat):
+    if(wordFormat == "arabic" or wordFormat == "floating" or wordFormat == "alpha" or wordFormat == "ALPHA" or wordFormat == "roman" or wordFormat == "ROMAN"):
+        return wordFormat
+    else:
+        print 'not valid format for --format-word'
+        exit(1)
 
 # Get the number of decimal places to the right of the decimal. If fixed point > 0 then use that, otherwise go calculate the right of decimal
 def getRightOfDecimal(numberStrings, startValue, stepValue):
