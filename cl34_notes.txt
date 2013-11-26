@@ -5,9 +5,17 @@ Link to repo: https://kgalb2@projects.cecs.pdx.edu/git/masseycs300-kgalb2
 
 - Start, end, and increment must be in the format that is consistent with the format specified in --format-word.
 
-- Arabic arguments for start, end, and increment can be promoted to roman numerals if --format-word=roman.
+- Arabic arguments for start, and end can be promoted to roman numerals if --format-word=roman.
 
 - When using the alpha format in --format-word, the increment argument must be arabic (integer). Otherwise, start and end must be in the same format as format-word.
 
 - If no format-word is given, the format must be inferred from the end argument. 
+
+- Various cases to look at
+	-F alpha one ten
+		one two three ... ten
+	-F alpha 1 ten
+		ERROR - start limit not in the alpha format
+	-F ten
+		one two three ... ten because we must infer from end=ten that 		the output should be alpha
 
