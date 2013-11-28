@@ -10,6 +10,7 @@ import string
 from types import *
 from sequ_obj import *
 import argparse
+import re
 
 # These are constants used throughout the program
 SEQU_VERSION = "2.0"
@@ -79,7 +80,7 @@ def setup():
     seenEw = False
     seenFormatWord = False
 
-    while "-" in arguments[stringParse]:
+    while checkArgumentFormat(arguments[stringParse]) == "cl_argument":
         #parse '-' flags to assign them to the sequ object
         formatVerboseSub = "--format" in arguments[stringParse] and "-word" not in arguments[stringParse]
         formatSub = "-f" in arguments[stringParse] and "--f" not in arguments[stringParse]
@@ -316,6 +317,14 @@ def setup():
         usage(2, initialObj.formatOption)
 
     return initialObj
+
+def checkArgumentFormat(clArg):
+    flagRegex = '^-+[a-zA-Z]'
+    isArgFlag = re.compile(flagRegex)
+
+    if(isArgFlag.match(clArg)):
+        return "cl_argument"
+
 
 # Get the number of places we need for left of the decimal. If fixed point > 0 then we will just use that for left of decimal.
 # Otherwise need to go calculate the number of places left of decimal

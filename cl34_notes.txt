@@ -17,5 +17,8 @@ Link to repo: https://kgalb2@projects.cecs.pdx.edu/git/masseycs300-kgalb2
 	-F alpha 1 ten
 		ERROR - start limit not in the alpha format
 	-F ten
-		one two three ... ten because we must infer from end=ten that 		the output should be alpha
-
+		one two three ... ten because we must infer from end=ten that 			the output should be alpha
+	-F alpha one 2 ten
+		one three five seven nine
+	-F alpha one 2.1 ten
+		ERROR - Step is not of type arabic (integer)
