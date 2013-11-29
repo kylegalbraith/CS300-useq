@@ -13,7 +13,7 @@ import argparse
 import re
 
 # These are constants used throughout the program
-SEQU_VERSION = "2.0"
+SEQU_VERSION = "4.0"
 SEQU_COPYRIGHT = "Copyright (C) 2013 Free Software Foundation, Inc."
 SEQU_LICENSE = "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>. \nThis is free software: you are free to change and redistribute it. \nThere is NO WARRANTY, to the extent permitted by law."
 SEQU_HELP = "Usage: \n\tsequ [OPTION]... LAST\n\tsequ [OPTION]... FIRST LAST\n\tsequ [OPTION]... FIRST INCREMENT LAST\nPrint numbers from FIRST to LAST, in steps of INCREMENT.\n\n\t-f, --format=FORMAT\tuse printf style floating-point FORMAT (%a is not supported)\n\t-s, --separator=STRING\tuse STRING to separate numbers (default: \\n)\n\t-w, --equal-width\tequalize width by padding with leading zeroes\n\t-p, --pad\t\toutput the sequence with elements padded on the left to be all of equal width: the pad character is given by the single-char pad string\n\t-W, --words\t\toutput the sequence as a single space-separated line\n\t-P, --pad-spaces\toutput the sequence with elements padded with spaces on the left to be all of equal width\n\t--help\t\t\tdisplay this help and exit\n\t--version\t\tdisplay version info and exit\n\nIf FIRST or INCREMENT is omitted, it defaults to 1. That is,\nan omitted INCREMENT defaults to 1 even when LAST is smaller than FIRST.\nFIRST, INCREMENT, and LAST are interpreted as floating point values.\nINCREMENT is usually positive if FIRST is smaller than LAST, and\nINCEREMENT is usually negative if FIRST is greater than LAST.\nFORMAT must be suitable for printing one argument of type 'float';\nit defaults to %.precf if FIRST, INCREMENT, and LAST are all fixed point\ndecimal numbers with maximum precision prec, and %g otherwise."
@@ -51,8 +51,18 @@ def usage(errorCode, error=""):
     elif(errorCode == 9):
         print 'sequ: \'--pad\' requires a single character pad' + helpString
         exit(1)
+    elif(errorCode == 10):
+        print 'sequ: one or more operands do not match the \'--format-word\' specified: ' + error + helpString
+        exit(1)
+    elif(errorCode == 11):
+        print 'sequ: increment option must be arabic when using alpha in \'--format-word\'' + helpString
+        exit(1)
+    elif(errorCode == 12):
+        print 'sequ: invalid format for \'--format-word\' ' + error + helpString
+        exit(1)
     else:
         print 'ERROR - An unexpected error has ocurred'
+        exit(1)
 
 def setup():
     # Create a new sequ_obj which will have all of the defaults set for normal
@@ -223,16 +233,25 @@ def setup():
 
                     if(argumentLength == formatWordVerboseLength or argumentLength == formatWordFlagLength):
                         stringParse += 1
-                        validWordFormat = checkWordFormat(arguments[stringParse])
-                        initialObj.formatWord = validWordFormat
+                        if(checkArgumentFormat(arguments[stringParse]) == "alpha"):
+                            validWordFormat = checkWordFormat(arguments[stringParse])
+                            initialObj.formatWord = validWordFormat
+                        else: 
+                            initialObj.formatWord = ""
+                            stringParse -= 1
+                        
                         initialObj.formatWordBool = True
                     else:
                         parsedFormatWord = parseFlagWithEquals(arguments[stringParse], formatWordVerboseLength, formatWordFlagLength)
-                        validWordFormat = checkWordFormat(parsedFormatWord)
-                        initialObj.formatWord = validWordFormat
+                        if(checkArgumentFormat(arguments[stringParse]) == "alpha"):
+                            validWordFormat = checkWordFormat(parsedFormatWord)
+                            initialObj.formatWord = validWordFormat
+                        else:
+                            initialObj.formatWord = ""
+
                         initialObj.formatWordBool = True
                 except IndexError:
-                    usage(4, "--format-word")    
+                    usage(4, "--format-word") 
             else:
                 usage(6)
             
@@ -283,13 +302,6 @@ def setup():
             startValueString = numberStrings[0]
             stepValueString = numberStrings[1]
             endValueString = numberStrings[2]
-        
-            if(initialObj.step < 0):
-                if(checkNegStepEnd(initialObj.startValue, initialObj.endValue)):
-                    initialObj.negativeStep = True
-            else:
-                # If start > end then just exit, nothing to output
-                checkStartEnd(initialObj.startValue, initialObj.endValue)
     
         if(lengthOfNumbers == 2):
             initialObj.startValue = numbers[0]
@@ -297,9 +309,6 @@ def setup():
             startValueString = numberStrings[0]
             endValueString = numberStrings[1]
                 
-            # If start > end then just exit, nothing to output
-            checkStartEnd(initialObj.startValue, initialObj.endValue)
-
         if(lengthOfNumbers == 1):
             initialObj.endValue = numbers[0]
             endValueString = numberStrings[0]
@@ -317,6 +326,7 @@ def setup():
             checkFormat = initialObj.formatOption % initialObj.endValue
         except ValueError:
             usage(2, initialObj.formatOption)
+    # TODO: Refactor this out into its own function(s) somehow because it is going to get ugly
     else:
         for x in range(stringParse, totalArgs):
             try:
@@ -333,37 +343,170 @@ def setup():
             stepFormat = checkArgumentFormat(numbers[1])
             endFormat = checkArgumentFormat(numbers[2])
 
+            if(initialObj.formatWord == ""):
+                initialObj.formatWord = endFormat
+
             # If the format is alpha, then the step format must be arabic
-            if(initialObj.formatWord == "alpha" or intialObj.formatWord == "ALPHA"):
+            if(initialObj.formatWord == "alpha" or initialObj.formatWord == "ALPHA"):
                 if(stepFormat == "arabic"):
-                    if(startFormat == initialObj.formatWord and endFormat == initialObj.formatWord):
+                    if(startFormat == initialObj.formatWord.lower() and endFormat == initialObj.formatWord.lower()):
                         initialObj.startValue = wordToInt(numbers[0])
-                        initialObj.step = numbers[1]
+                        initialObj.step = int(numbers[1])
                         initialObj.endValue = wordToInt(numbers[2])
                     else:
-                        print 'usage saying one or more operands do not match format word'
+                        usage(10, initialObj.formatWord)
                 else:
-                    print 'usage saying when alpha is used, step must be arabic'
+                    usage(11)
+            
             elif(initialObj.formatWord == "roman" or initialObj.formatWord == "ROMAN"):
                 # Boolean test, if start/step/end == roman we are good to go, however, if one or more of them == arabic we are still good to go because we
                 # can promote arabic to roman if roman output is requested.
-                formatEqualsRoman = (startFormat == initialObj.formatWord or startFormat == "arabic") and (stepFormat == initialObj.formatWord or stepFormat == "arabic") and (endFormat == initialObj.formatWord or endFormat == "arabic")
+                formatEqualsRoman = (startFormat == initialObj.formatWord.lower() or startFormat == "arabic") and (stepFormat == initialObj.formatWord.lower() or stepFormat == "arabic") and (endFormat == initialObj.formatWord.lower() or endFormat == "arabic")
                 if(formatEqualsRoman):
-                    print 'everything is in the correct format'
+                    if(startFormat == "arabic"):
+                        initialObj.startValue = int(numbers[0])
+                    else:
+                        initialObj.startValue = romanToNumber(numbers[0])
+                    if(stepFormat == "arabic"):
+                        initialObj.step = int(numbers[1])
+                    else:
+                        initialObj.step = romanToNumber(numbers[1])
+                    if(endFormat == "arabic"):
+                        initialObj.endValue = int(numbers[2])
+                    else:
+                        initialObj.endValue = romanToNumber(numbers[2])
                 else:
-                    print 'usage saying one or more operands do not match format word'
+                    usage(10, initialObj.formatWord)
+
+            elif(initialObj.formatWord == "arabic"):
+                print 'arabic format'
+                if(startFormat == initialObj.formatWord and stepFormat == initialObj.formatWord and endFormat == initialObj.formatWord):
+                    initialObj.startValue = int(numbers[0])
+                    initialObj.step = int(numbers[1])
+                    initialObj.endValue = int(numbers[2])
+                else:
+                    usage(10, initialObj.formatWord)
+
+            elif(initialObj.formatWord == "floating"):
+                print 'floating format'
+                if(startFormat == initialObj.formatWord and stepFormat == initialObj.formatWord and endFormat == initialObj.formatWord):
+                    initialObj.startValue = float(numbers[0])
+                    initialObj.step = float(numbers[1])
+                    initialObj.endValue = float(numbers[2])
+                else:
+                    usage(10, initialObj.formatWord)
+          
         #start, end
         if(lengthOfCl == 2):
             print '2 args to parse'
             startFormat = checkArgumentFormat(numbers[0])
             endFormat = checkArgumentFormat(numbers[1])
+
+            if(initialObj.formatWord == ""):
+                initialObj.formatWord = endFormat
+
+            if(initialObj.formatWord == "alpha" or initialObj.formatWord == "ALPHA"):
+                if(startFormat == initialObj.formatWord.lower() and endFormat == initialObj.formatWord.lower()):
+                    initialObj.startValue = wordToInt(numbers[0])
+                    initialObj.endValue = wordToInt(numbers[1])
+                else:
+                    usage(10, initialObj.formatWord)
+
+            elif(initialObj.formatWord == "roman" or initialObj.formatWord == "ROMAN"):
+                formatEqualsRoman = (startFormat == initialObj.formatWord.lower() or startFormat == "arabic") and (endFormat == initialObj.formatWord.lower() or endFormat == "arabic")
+                if(formatEqualsRoman):
+                    if(startFormat == "arabic"):
+                        initialObj.startValue = int(numbers[0])
+                    else:
+                        initialObj.startValue = romanToNumber(numbers[0])
+                    if(endFormat == "arabic"):
+                        initialObj.endValue = int(numbers[1])
+                    else:
+                        initialObj.endValue = romanToNumber(numbers[1])
+                else:
+                    usage(10, initialObj.formatWord)
+
+            elif(initialObj.formatWord == "arabic"):
+                if(startFormat == initialObj.formatWord and endFormat == initialObj.formatWord):
+                    initialObj.startValue = int(numbers[0])
+                    initialObj.endValue = int(numbers[1])
+                else:
+                    usage(10, initialObj.formatWord)
+
+            elif(initialObj.formatWord == "floating"):
+                if(startFormat == initialObj.formatWord and endFormat == initialObj.formatWord):
+                    initialObj.startValue = float(numbers[0])
+                    initialObj.endValue = float(numbers[1])
+                else:
+                    usage(10, initialObj.formatWord)
+
         #end
         if(lengthOfCl == 1):
             print '1 arg to parse'
             endFormat = checkArgumentFormat(numbers[0])
 
+            if(initialObj.formatWord == ""):
+                initialObj.formatWord = endFormat
+
+            if(initialObj.formatWord == "alpha" or initialObj.formatWord == "ALPHA"):
+                if(endFormat == initialObj.formatWord.lower()):
+                    initialObj.endValue = wordToInt(numbers[0])
+                else:
+                    usage(10, initialObj.formatWord)
+
+            elif(initialObj.formatWord == "roman" or initialObj.formatWord == "ROMAN"):
+                formatEqualsRoman = (endFormat == initialObj.formatWord.lower() or endFormat == "arabic")
+                if(formatEqualsRoman):
+                    if(endFormat == "arabic"):
+                        initialObj.endValue = int(numbers[0])
+                    else:
+                        initialObj.endValue = romanToNumber(numbers[0])
+                else:
+                    usage(10, initialObj.formatWord)
+
+            elif(initialObj.formatWord == "arabic"):
+                if(endFormat == initialObj.formatWord):
+                    initialObj.endValue = int(numbers[0])
+                else:
+                    usage(10, initialObj.formatWord)
+
+            elif(initialObj.formatWord == "floating"):
+                if(endFormat == initialObj.formatWord):
+                    initialObj.endValue = float(numbers[0])
+                else:
+                    usage(10, initialObj.formatWord)
+
+    if(initialObj.step < 0):
+        if(checkNegStepEnd(initialObj.startValue, initialObj.endValue)):
+            initialObj.negativeStep = True
+        else:
+            checkStartEnd(initialObj.startValue, initialObj.endValue)
+    else:
+        checkStartEnd(initialObj.startValue, initialObj.endValue)
 
     return initialObj
+
+# Roman numeral to integer
+def romanToNumber(string):
+    returnNumber = 0
+    table = [
+        ['M',1000],['CM',900],['D',500],['CD',400],['C',100],['XC',90],['L',50],['XL',40],['X',10],['IX',9],['V',5],['IV',4],['I',1],
+        ['m',1000],['cm',900],['d',500],['cd',400],['c',100],['xc',90],['l',50],['xl',40],['x',10],['ix',9],['v',5],['iv',4],['i',1]  
+    ] 
+
+    for pair in table:
+        keepGoing = True
+        while keepGoing:
+            if len(string) >= len(pair[0]):
+                if string[0:len(pair[0])] == pair[0]:
+                    returnNumber += pair[1]
+                    string = string[len(pair[0]):]
+                else:
+                    keepGoing = False
+            else:
+                keepGoing = False
+
+    return returnNumber
 
 # I found this implementation on stackoverflow: http://stackoverflow.com/questions/493174/is-there-a-way-to-convert-number-words-to-integers-python
 # My thinking is that you want to convert the alpha representation to a number and then convert it back
@@ -405,7 +548,7 @@ def checkArgumentFormat(clArg):
     flagRegex = '^-+[a-zA-Z]'
     isArgFlag = re.compile(flagRegex)
 
-    arabicRegex = '^\d+$'
+    arabicRegex = '^-?\d+$'
     isArgArabic = re.compile(arabicRegex)
 
     floatRegex = '^[-+]?[0-9]*\.[0-9]+$'
@@ -414,12 +557,17 @@ def checkArgumentFormat(clArg):
     alphaRegex = '^[a-zA-Z\s+]+$'
     isArgAlpha = re.compile(alphaRegex)
 
+    romanRegex = '^(M{0,4}|m{0,4})((CM|CD|D?C{0,3})|(cm|cd|d?c{0,3}))((XC|XL|L?X{0,3})|(xc|xl|l?x{0,3}))((IX|IV|V?I{0,3})(ix|iv|v?i{0,3}))$'
+    isArgRoman = re.compile(romanRegex)
+
     if(isArgFlag.match(clArg)):
         return "cl_argument"
     elif(isArgArabic.match(clArg)):
         return "arabic"
     elif(isArgFloat.match(clArg)):
         return "floating"
+    elif(isArgRoman.match(clArg)):
+        return "roman"
     elif(isArgAlpha.match(clArg)):
         return "alpha"
 
@@ -453,8 +601,7 @@ def checkWordFormat(wordFormat):
     if(wordFormat == "arabic" or wordFormat == "floating" or wordFormat == "alpha" or wordFormat == "ALPHA" or wordFormat == "roman" or wordFormat == "ROMAN"):
         return wordFormat
     else:
-        print 'not valid format for --format-word'
-        exit(1)
+        usage(12, wordFormat)
 
 # Get the number of decimal places to the right of the decimal. If fixed point > 0 then use that, otherwise go calculate the right of decimal
 def getRightOfDecimal(numberStrings, startValue, stepValue):
@@ -608,7 +755,15 @@ def printVersion():
 
 # Create a new sequ_obj which will have all of the defaults set for normal sequ operation.
 initialObj = setup()
-initialObj.outputQuick()
+if(initialObj.formatWordBool):
+    if(initialObj.formatWord == "alpha" or initialObj.formatWord == "ALPHA"):
+        initialObj.outputAlpha()
+    elif(initialObj.formatWord == "roman" or initialObj.formatWord == "ROMAN"):
+        initialObj.outputRoman()
+    elif(initialObj.formatWord == "arabic"  or initialObj.formatWord == "floating"):
+        initialObj.outputQuick()
+else:
+    initialObj.outputQuick()
 
 
 
