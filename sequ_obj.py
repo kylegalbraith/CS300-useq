@@ -119,15 +119,25 @@ class sequ_obj:
         start = self.startValue
         step = self.step
         end = self.endValue
+        negativeStep = self.negativeStep
         outputArray = []
 
-        while start <= end:
-            convert = self.numberToRoman(start)
-            if(start != end):
-                outputArray.append(convert)
-            else:
-                outputArray.append(convert)
-            start += step
+        if(negativeStep):
+            while start >= end:
+                convert = self.numberToRoman(start)
+                if(start != end):
+                    outputArray.append(convert)
+                else:
+                    outputArray.append(convert)
+                start += step
+        else:
+            while start <= end:
+                convert = self.numberToRoman(start)
+                if(start != end):
+                    outputArray.append(convert)
+                else:
+                    outputArray.append(convert)
+                start += step
         
         self.finalOutput(outputArray)
     

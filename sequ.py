@@ -589,11 +589,6 @@ def getLeftOfDecimal(numberStrings, startValue, stepValue, endValue):
         leftOfDecimal = calculateLeftOfDecimal(startValue, endValue)   
         if(startValue <= 0 and endValue <= 0):
             leftOfDecimal = leftOfDecimal + 1
-        # 11/17/13 no longer need the checks below because I check for largest > 1 in calculateLeftOfDecimal
-        #if(startValue > 0 and endValue < 0):
-         #   leftOfDecimal = leftOfDecimal + 1
-        #elif(startValue < 0 and endValue > 0 or rightOfDecimal > 0):
-         #   leftOfDecimal = leftOfDecimal + 1
     
     return leftOfDecimal
 
