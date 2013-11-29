@@ -2,6 +2,7 @@
 # Copyright (C) 2013 by Kyle Galbraith
 import sys
 # num2word is a python module that converts numbers to actual strings, it can be found here: https://pypi.python.org/pypi/num2words
+sys.path.append('python_num_to_word/')
 import num2word
 
 class sequ_obj:
