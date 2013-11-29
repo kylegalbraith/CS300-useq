@@ -322,9 +322,18 @@ def checkArgumentFormat(clArg):
     flagRegex = '^-+[a-zA-Z]'
     isArgFlag = re.compile(flagRegex)
 
+    arabicRegex = '^\d+$'
+    isArgArabic = re.compile(arabicRegex)
+
+    floatRegex = '^[-+]?[0-9]*\.[0-9]+$'
+    isArgFloat = re.compile(floatRegex)
+
     if(isArgFlag.match(clArg)):
         return "cl_argument"
-
+    elif(isArgArabic.match(clArg)):
+        return "arabic"
+    elif(isArgFloat.match(clArg)):
+        return "floating"
 
 # Get the number of places we need for left of the decimal. If fixed point > 0 then we will just use that for left of decimal.
 # Otherwise need to go calculate the number of places left of decimal
