@@ -225,10 +225,12 @@ def setup():
                         stringParse += 1
                         validWordFormat = checkWordFormat(arguments[stringParse])
                         initialObj.formatWord = validWordFormat
+                        initialObj.formatWordBool = True
                     else:
                         parsedFormatWord = parseFlagWithEquals(arguments[stringParse], formatWordVerboseLength, formatWordFlagLength)
                         validWordFormat = checkWordFormat(parsedFormatWord)
                         initialObj.formatWord = validWordFormat
+                        initialObj.formatWordBool = True
                 except IndexError:
                     usage(4, "--format-word")    
             else:
@@ -250,73 +252,154 @@ def setup():
     if(totalNumberArgs == 0):
         usage(5)
     
-    if(totalNumberArgs <= 3):
-        for x in range(stringParse, totalArgs):
-            try:
-                number = float(arguments[x])
-                # if the argument can be casted to a float, then push the string representation of the argument into the string array
-                numberStrings.append(arguments[x])
-                numbers.append(number)
-            except ValueError:
-                usage(3)
-    # There is more than 3 arguments, meaning there is an extra operand
-    else:
-        usage(3, arguments[4])
-
-    lengthOfNumbers = len(numbers)
-
-    # These will store the string representation of start, step, and end values so we can count the places in each
-    startValueString = ""
-    stepValueString = ""
-    endValueString = ""
-    # Three different cases to consider for the numbers array. 
-    # 3 numbers = start, step, and end need to be set
-    # 2 numbers = start and end value need to be set
-    # 1 number = just the end value needs to be set
-    if(lengthOfNumbers == 3):
-        initialObj.startValue = numbers[0]
-        initialObj.step = numbers[1]
-        initialObj.endValue = numbers[2]
-        startValueString = numberStrings[0]
-        stepValueString = numberStrings[1]
-        endValueString = numberStrings[2]
-        
-        if(initialObj.step < 0):
-            if(checkNegStepEnd(initialObj.startValue, initialObj.endValue)):
-                initialObj.negativeStep = True
+    if(initialObj.formatWord == "" and not initialObj.formatWordBool):
+        if(totalNumberArgs <= 3):
+            for x in range(stringParse, totalArgs):
+                try:
+                    number = float(arguments[x])
+                    # if the argument can be casted to a float, then push the string representation of the argument into the string array
+                    numberStrings.append(arguments[x])
+                    numbers.append(number)
+                except ValueError:
+                    usage(3)
+        # There is more than 3 arguments, meaning there is an extra operand
         else:
+            usage(3, arguments[4])
+
+        lengthOfNumbers = len(numbers)
+
+        # These will store the string representation of start, step, and end values so we can count the places in each
+        startValueString = ""
+        stepValueString = ""
+        endValueString = ""
+        # Three different cases to consider for the numbers array. 
+        # 3 numbers = start, step, and end need to be set
+        # 2 numbers = start and end value need to be set
+        # 1 number = just the end value needs to be set
+        if(lengthOfNumbers == 3):
+            initialObj.startValue = numbers[0]
+            initialObj.step = numbers[1]
+            initialObj.endValue = numbers[2]
+            startValueString = numberStrings[0]
+            stepValueString = numberStrings[1]
+            endValueString = numberStrings[2]
+        
+            if(initialObj.step < 0):
+                if(checkNegStepEnd(initialObj.startValue, initialObj.endValue)):
+                    initialObj.negativeStep = True
+            else:
+                # If start > end then just exit, nothing to output
+                checkStartEnd(initialObj.startValue, initialObj.endValue)
+    
+        if(lengthOfNumbers == 2):
+            initialObj.startValue = numbers[0]
+            initialObj.endValue = numbers[1]
+            startValueString = numberStrings[0]
+            endValueString = numberStrings[1]
+                
             # If start > end then just exit, nothing to output
             checkStartEnd(initialObj.startValue, initialObj.endValue)
-    
-    if(lengthOfNumbers == 2):
-        initialObj.startValue = numbers[0]
-        initialObj.endValue = numbers[1]
-        startValueString = numberStrings[0]
-        endValueString = numberStrings[1]
-                
-        # If start > end then just exit, nothing to output
-        checkStartEnd(initialObj.startValue, initialObj.endValue)
 
-    if(lengthOfNumbers == 1):
-        initialObj.endValue = numbers[0]
-        endValueString = numberStrings[0]
-    # end assigning start step end values
+        if(lengthOfNumbers == 1):
+            initialObj.endValue = numbers[0]
+            endValueString = numberStrings[0]
+        # end assigning start step end values
+        
+        # If -f/--format was used then the default value for format will not be present and this block of code will never run.
+        if(initialObj.formatOption == "%g"):
+            initialObj.leftDecimal = getLeftOfDecimal(numberStrings, initialObj.startValue, initialObj.step, initialObj.endValue)
+            initialObj.rightDecimal = getRightOfDecimal(numberStrings, initialObj.startValue, initialObj.step)
+            # Create the format option needed based on the number of places to the left and right of the decimal
+            initialObj.formatOption = createFormatOption(initialObj.leftDecimal, initialObj.rightDecimal, initialObj.equalWidth)
+        # double check the format option to make sure it is is valid. The likely case where
+        # format option is invalid is when the user has used -f/--format
+        try:
+            checkFormat = initialObj.formatOption % initialObj.endValue
+        except ValueError:
+            usage(2, initialObj.formatOption)
+    else:
+        for x in range(stringParse, totalArgs):
+            try:
+                numbers.append(arguments[x])
+            except ValueError:
+                usage(3)
+        
+        lengthOfCl = len(numbers)
+       
+        #start, step, end
+        if(lengthOfCl == 3):
+            print '3 args to parse'
+            startFormat = checkArgumentFormat(numbers[0])
+            stepFormat = checkArgumentFormat(numbers[1])
+            endFormat = checkArgumentFormat(numbers[2])
 
-    # If -f/--format was used then the default value for format will not be present and this block of code will never run.
-    if(initialObj.formatOption == "%g"):
-        initialObj.leftDecimal = getLeftOfDecimal(numberStrings, initialObj.startValue, initialObj.step, initialObj.endValue)
-        initialObj.rightDecimal = getRightOfDecimal(numberStrings, initialObj.startValue, initialObj.step)
-        # Create the format option needed based on the number of places to the left and right of the decimal
-        initialObj.formatOption = createFormatOption(initialObj.leftDecimal, initialObj.rightDecimal, initialObj.equalWidth)
+            # If the format is alpha, then the step format must be arabic
+            if(initialObj.formatWord == "alpha" or intialObj.formatWord == "ALPHA"):
+                if(stepFormat == "arabic"):
+                    if(startFormat == initialObj.formatWord and endFormat == initialObj.formatWord):
+                        initialObj.startValue = wordToInt(numbers[0])
+                        initialObj.step = numbers[1]
+                        initialObj.endValue = wordToInt(numbers[2])
+                    else:
+                        print 'usage saying one or more operands do not match format word'
+                else:
+                    print 'usage saying when alpha is used, step must be arabic'
+            elif(initialObj.formatWord == "roman" or initialObj.formatWord == "ROMAN"):
+                # Boolean test, if start/step/end == roman we are good to go, however, if one or more of them == arabic we are still good to go because we
+                # can promote arabic to roman if roman output is requested.
+                formatEqualsRoman = (startFormat == initialObj.formatWord or startFormat == "arabic") and (stepFormat == initialObj.formatWord or stepFormat == "arabic") and (endFormat == initialObj.formatWord or endFormat == "arabic")
+                if(formatEqualsRoman):
+                    print 'everything is in the correct format'
+                else:
+                    print 'usage saying one or more operands do not match format word'
+        #start, end
+        if(lengthOfCl == 2):
+            print '2 args to parse'
+            startFormat = checkArgumentFormat(numbers[0])
+            endFormat = checkArgumentFormat(numbers[1])
+        #end
+        if(lengthOfCl == 1):
+            print '1 arg to parse'
+            endFormat = checkArgumentFormat(numbers[0])
 
-    # double check the format option to make sure it is is valid. The likely case where
-    # format option is invalid is when the user has used -f/--format
-    try:
-        checkFormat = initialObj.formatOption % initialObj.endValue
-    except ValueError:
-        usage(2, initialObj.formatOption)
 
     return initialObj
+
+# I found this implementation on stackoverflow: http://stackoverflow.com/questions/493174/is-there-a-way-to-convert-number-words-to-integers-python
+# My thinking is that you want to convert the alpha representation to a number and then convert it back
+# when you actually output.
+def wordToInt(textNumber, numWordsDict={}):
+    if not numWordsDict:
+        units = [
+            "zero", "one", "two", "three", "four", "five", "six", "seven", "eight",
+            "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen",
+            "sixteen", "seventeen", "eighteen", "nineteen",
+        ]
+
+        tens = ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"]
+
+        scales = ["hundred", "thousand", "million", "billion", "trillion"]
+        numWordsDict["and"] = (1, 0)
+        for idx, word in enumerate(units):
+            numWordsDict[word] = (1, idx)
+        for idx, word in enumerate(tens):
+            numWordsDict[word] = (1, idx * 10)
+        for idx, word in enumerate(scales):
+            numWordsDict[word] = (10 ** (idx * 3 or 2), 0)
+
+    current = 0
+    result = 0
+    for word in textNumber.split():
+        if word not in numWordsDict:
+            print 'not a valid representation of a number'
+
+        scale, increment = numWordsDict[word]
+        current = current * scale + increment
+        if scale > 100:
+            result += current
+            current = 0
+
+    return result + current
 
 def checkArgumentFormat(clArg):
     flagRegex = '^-+[a-zA-Z]'
@@ -328,12 +411,17 @@ def checkArgumentFormat(clArg):
     floatRegex = '^[-+]?[0-9]*\.[0-9]+$'
     isArgFloat = re.compile(floatRegex)
 
+    alphaRegex = '^[a-zA-Z\s+]+$'
+    isArgAlpha = re.compile(alphaRegex)
+
     if(isArgFlag.match(clArg)):
         return "cl_argument"
     elif(isArgArabic.match(clArg)):
         return "arabic"
     elif(isArgFloat.match(clArg)):
         return "floating"
+    elif(isArgAlpha.match(clArg)):
+        return "alpha"
 
 # Get the number of places we need for left of the decimal. If fixed point > 0 then we will just use that for left of decimal.
 # Otherwise need to go calculate the number of places left of decimal

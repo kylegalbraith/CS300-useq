@@ -14,7 +14,8 @@ class sequ_obj:
         self.step = 1
         self.negativeStep = False
         self.padChar = "0"
-        self.formatWord = "floating"
+        self.formatWord = ""
+        self.formatWordBool = False
         self.leftDecimal = 0
         self.rightDecimal = 0
 
