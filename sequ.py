@@ -64,7 +64,7 @@ def usage(errorCode, error=""):
         print 'sequ: ' + "'" + error + "'" + ' is not a valid representation of a number'
         exit(1)
     else:
-        print 'ERROR - An unexpected error has ocurred'
+        print 'sequ: An unexpected error has ocurred'
         exit(1)
 
 def setup():
@@ -92,176 +92,178 @@ def setup():
     seenFormat = False
     seenEw = False
     seenFormatWord = False
+    try:
+        while checkArgumentFormat(arguments[stringParse]) == "cl_argument":
+            #parse '-' flags to assign them to the sequ object
+            formatVerboseSub = "--format" in arguments[stringParse] and "-word" not in arguments[stringParse]
+            formatSub = "-f" in arguments[stringParse] and "--f" not in arguments[stringParse]
+            format = formatVerboseSub or formatSub
 
-    while checkArgumentFormat(arguments[stringParse]) == "cl_argument":
-        #parse '-' flags to assign them to the sequ object
-        formatVerboseSub = "--format" in arguments[stringParse] and "-word" not in arguments[stringParse]
-        formatSub = "-f" in arguments[stringParse] and "--f" not in arguments[stringParse]
-        format = formatVerboseSub or formatSub
+            separatorVerboseSub = "--separator" in arguments[stringParse]
+            separatorSub = "-s" in arguments[stringParse]
+            separator = separatorVerboseSub or separatorSub
 
-        separatorVerboseSub = "--separator" in arguments[stringParse]
-        separatorSub = "-s" in arguments[stringParse]
-        separator = separatorVerboseSub or separatorSub
+            padVerboseSub = "--pad" in arguments[stringParse]
+            padSub = "-p" in arguments[stringParse]
+            pad = padVerboseSub or padSub
 
-        padVerboseSub = "--pad" in arguments[stringParse]
-        padSub = "-p" in arguments[stringParse]
-        pad = padVerboseSub or padSub
+            formatWordVerboseSub = "--format-word" in arguments[stringParse] and "-word" in arguments[stringParse]
+            formatWordSub = "-F" in arguments[stringParse]
+            formatWord = formatWordVerboseSub or formatWordSub
 
-        formatWordVerboseSub = "--format-word" in arguments[stringParse] and "-word" in arguments[stringParse]
-        formatWordSub = "-F" in arguments[stringParse]
-        formatWord = formatWordVerboseSub or formatWordSub
+            if arguments[stringParse] == "--help":
+                printHelp()
+            elif arguments[stringParse] == "--version":
+                printVersion()
 
-        if arguments[stringParse] == "--help":
-            printHelp()
-        elif arguments[stringParse] == "--version":
-            printVersion()
-
-        elif arguments[stringParse] == "--pad-spaces" or arguments[stringParse] == "-P":
-            if(seenFormat == False and seenEw == False and seenFormatWord == False):
-                initialObj.equalWidth = True
-                initialObj.padChar = ' '
-                seenEw = True
-            else:
-                usage(6)
-
-        elif arguments[stringParse] == "--equal-width" or arguments[stringParse] == "-w":
-            if(seenFormat == False and seenEw == False and seenFormatWord == False):
-                initialObj.equalWidth = True
-                seenEw = True
-            else:
-                usage(6)
-
-        elif arguments[stringParse] == "--words" or arguments[stringParse] == "-W":
-            if(initialObj.separator == '\n'):
-                initialObj.separator = ' '
-            else:
-                usage(8)
-            
-        elif format:               
-            try:
-                if(seenEw == False and seenFormatWord == False):                       
-                    verboseFormatLength = len("--format")
-                    formatFlagLength = len("-f")
-                    argumentLength = len(arguments[stringParse])            
-                        
-                    # There is no = behind the flag so we can assume that
-                    # the format is the next place on the command line
-                    if(argumentLength == verboseFormatLength or argumentLength == formatFlagLength):
-                        stringParse += 1
-                        if "%" in arguments[stringParse]:
-                            initialObj.formatOption = arguments[stringParse]
-                            seenFormat = True
-                        else:
-                            usage(1, arguments[stringParse])
-                    # Need to parse the flag to find where the actual
-                    # format is
-                    else:
-                        parsedFormat = parseFormat(arguments[stringParse])
-                        if "%" in parsedFormat:
-                            initialObj.formatOption = parsedFormat 
-                            seenFormat = True
-                        else:
-                            usage(1, parsedFormat)                                                                                                                     
+            elif arguments[stringParse] == "--pad-spaces" or arguments[stringParse] == "-P":
+                if(seenFormat == False and seenEw == False and seenFormatWord == False):
+                    initialObj.equalWidth = True
+                    initialObj.padChar = ' '
+                    seenEw = True
                 else:
                     usage(6)
-            except IndexError:
-                usage(4, "--format")
 
-        elif separator:
-            if(initialObj.separator == '\n'):
-                try:
-                    verboseSeparatorLength = len("--separator")
-                    separatorFlagLength = len("-s")
-                    argumentLength = len(arguments[stringParse])
+            elif arguments[stringParse] == "--equal-width" or arguments[stringParse] == "-w":
+                if(seenFormat == False and seenEw == False and seenFormatWord == False):
+                    initialObj.equalWidth = True
+                    seenEw = True
+                else:
+                    usage(6)
 
-                    if(argumentLength == verboseSeparatorLength or argumentLength == separatorFlagLength):
-                        stringParse += 1
-                        initialObj.separator = arguments[stringParse].decode("string_escape") 
-                    else:
-                        parsedEscapedSeparator = parseFlagWithEquals(arguments[stringParse], verboseSeparatorLength, separatorFlagLength)
-                        initialObj.separator = parsedEscapedSeparator
-
-                except IndexError:
-                    usage(4, "--separator")
-            else:
-                usage(8)
-
-        elif pad:
-            # Check the length of the single character passed in to make
-            # sure that
-            # it is a single character.  Then Run equal-width check and
-            # then replace
-            # the 0s with the single character passed in.
-            if(seenEw == False and seenFormat == False and seenFormatWord == False):
-                try:
-                    padVerboseLength = len("--pad")
-                    padFlagLength = len("-p")
-                    argumentLength = len(arguments[stringParse])
-
-                    if(argumentLength == padVerboseLength or argumentLength == 2):
-                        stringParse += 1
-                        padCharacter = arguments[stringParse].decode("string_escape")
-                           
-                        if(len(padCharacter) == 1):
-                            initialObj.equalWidth = True
-                            initialObj.padChar = padCharacter
-                            seenEw = True
-                        else:
-                            usage(9)
-                        # Check the pad character to escape / and to make
-                        # sure its length == 1
-                        # If that checks out then put the character on the
-                        # sequ object and set seenEw to true
-                    else:
-                        # need to parse what is behind the = sign
-                        parsedEscapedPad = parseFlagWithEquals(arguments[stringParse], padVerboseLength, padFlagLength)
-                        if(len(parsedEscapedPad) == 1):
-                            initialObj.equalWidth = True
-                            initialObj.padChar = parsedEscapedPad
-                            seenEw = True
-                        else:
-                            usage(9)
-
-                except IndexError:
-                    usage(4, "--pad")
-            else:
-                usage(6)
+            elif arguments[stringParse] == "--words" or arguments[stringParse] == "-W":
+                if(initialObj.separator == '\n'):
+                    initialObj.separator = ' '
+                else:
+                    usage(8)
             
-        elif formatWord:
-            if(seenEw == False and seenFormat == False):
-                try:    
-                    formatWordVerboseLength = len("--format-word")
-                    formatWordFlagLength = len("-F")
-                    argumentLength = len(arguments[stringParse])
-
-                    if(argumentLength == formatWordVerboseLength or argumentLength == formatWordFlagLength):
-                        stringParse += 1
-                        if(checkArgumentFormat(arguments[stringParse]) == "alpha"):
-                            validWordFormat = checkWordFormat(arguments[stringParse])
-                            initialObj.formatWord = validWordFormat
-                        else: 
-                            initialObj.formatWord = ""
-                            stringParse -= 1
+            elif format:               
+                try:
+                    if(seenEw == False and seenFormatWord == False):                       
+                        verboseFormatLength = len("--format")
+                        formatFlagLength = len("-f")
+                        argumentLength = len(arguments[stringParse])            
                         
-                        initialObj.formatWordBool = True
-                    else:
-                        parsedFormatWord = parseFlagWithEquals(arguments[stringParse], formatWordVerboseLength, formatWordFlagLength)
-                        if(checkArgumentFormat(parsedFormatWord) == "alpha"):
-                            validWordFormat = checkWordFormat(parsedFormatWord)
-                            initialObj.formatWord = validWordFormat
+                        # There is no = behind the flag so we can assume that
+                        # the format is the next place on the command line
+                        if(argumentLength == verboseFormatLength or argumentLength == formatFlagLength):
+                            stringParse += 1
+                            if "%" in arguments[stringParse]:
+                                initialObj.formatOption = arguments[stringParse]
+                                seenFormat = True
+                            else:
+                                usage(1, arguments[stringParse])
+                        # Need to parse the flag to find where the actual
+                        # format is
                         else:
-                            initialObj.formatWord = ""
-
-                        initialObj.formatWordBool = True
+                            parsedFormat = parseFormat(arguments[stringParse])
+                            if "%" in parsedFormat:
+                                initialObj.formatOption = parsedFormat 
+                                seenFormat = True
+                            else:
+                                usage(1, parsedFormat)                                                                                                                     
+                    else:
+                        usage(6)
                 except IndexError:
-                    usage(4, "--format-word") 
-            else:
-                usage(6)
+                    usage(4, "--format")
+
+            elif separator:
+                if(initialObj.separator == '\n'):
+                    try:
+                        verboseSeparatorLength = len("--separator")
+                        separatorFlagLength = len("-s")
+                        argumentLength = len(arguments[stringParse])
+
+                        if(argumentLength == verboseSeparatorLength or argumentLength == separatorFlagLength):
+                            stringParse += 1
+                            initialObj.separator = arguments[stringParse].decode("string_escape") 
+                        else:
+                            parsedEscapedSeparator = parseFlagWithEquals(arguments[stringParse], verboseSeparatorLength, separatorFlagLength)
+                            initialObj.separator = parsedEscapedSeparator
+
+                    except IndexError:
+                        usage(4, "--separator")
+                else:
+                    usage(8)
+
+            elif pad:
+                # Check the length of the single character passed in to make
+                # sure that
+                # it is a single character.  Then Run equal-width check and
+                # then replace
+                # the 0s with the single character passed in.
+                if(seenEw == False and seenFormat == False and seenFormatWord == False):
+                    try:
+                        padVerboseLength = len("--pad")
+                        padFlagLength = len("-p")
+                        argumentLength = len(arguments[stringParse])
+
+                        if(argumentLength == padVerboseLength or argumentLength == 2):
+                            stringParse += 1
+                            padCharacter = arguments[stringParse].decode("string_escape")
+                           
+                            if(len(padCharacter) == 1):
+                                initialObj.equalWidth = True
+                                initialObj.padChar = padCharacter
+                                seenEw = True
+                            else:
+                                usage(9)
+                            # Check the pad character to escape / and to make
+                            # sure its length == 1
+                            # If that checks out then put the character on the
+                            # sequ object and set seenEw to true
+                        else:
+                            # need to parse what is behind the = sign
+                            parsedEscapedPad = parseFlagWithEquals(arguments[stringParse], padVerboseLength, padFlagLength)
+                            if(len(parsedEscapedPad) == 1):
+                                initialObj.equalWidth = True
+                                initialObj.padChar = parsedEscapedPad
+                                seenEw = True
+                            else:
+                                usage(9)
+
+                    except IndexError:
+                        usage(4, "--pad")
+                else:
+                    usage(6)
             
-        else:
-            usage(7, arguments[stringParse])
+            elif formatWord:
+                if(seenEw == False and seenFormat == False):
+                    try:    
+                        formatWordVerboseLength = len("--format-word")
+                        formatWordFlagLength = len("-F")
+                        argumentLength = len(arguments[stringParse])
+
+                        if(argumentLength == formatWordVerboseLength or argumentLength == formatWordFlagLength):
+                            stringParse += 1
+                            if(checkArgumentFormat(arguments[stringParse]) == "alpha"):
+                                validWordFormat = checkWordFormat(arguments[stringParse])
+                                initialObj.formatWord = validWordFormat
+                            else: 
+                                initialObj.formatWord = ""
+                                stringParse -= 1
+                        
+                            initialObj.formatWordBool = True
+                        else:
+                            parsedFormatWord = parseFlagWithEquals(arguments[stringParse], formatWordVerboseLength, formatWordFlagLength)
+                            if(checkArgumentFormat(parsedFormatWord) == "alpha"):
+                                validWordFormat = checkWordFormat(parsedFormatWord)
+                                initialObj.formatWord = validWordFormat
+                            else:
+                                initialObj.formatWord = ""
+
+                            initialObj.formatWordBool = True
+                    except IndexError:
+                        usage(4, "--format-word") 
+                else:
+                    usage(6)
+            
+            else:
+                usage(7, arguments[stringParse])
                       
-        stringParse += 1   
+            stringParse += 1 
+    except IndexError:
+        usage(5) 
   
     # Need to check that the number of args leftover is equal to or less than 3 but greater than 0
     totalNumberArgs = totalArgs - stringParse
@@ -329,159 +331,35 @@ def setup():
             checkFormat = initialObj.formatOption % initialObj.endValue
         except ValueError:
             usage(2, initialObj.formatOption)
-    # TODO: Refactor this out into its own function(s) somehow because it is going to get ugly
+    ##########################
+    # start --format-word code
     else:
         for x in range(stringParse, totalArgs):
             try:
                 numbers.append(arguments[x])
             except ValueError:
                 usage(3)
-        
-        lengthOfCl = len(numbers)
-
-        # TODO: Refactor the code below this into setupFormatWordOutput function, it will return an array object that we will then check
-        #limitArguments = setupFormatWordOutput(numbers, lengthOfCl, initialObj.formatWord)
-       
-        #start, step, end
-        if(lengthOfCl == 3):
-            print '3 args to parse'
-            startFormat = checkArgumentFormat(numbers[0])
-            stepFormat = checkArgumentFormat(numbers[1])
-            endFormat = checkArgumentFormat(numbers[2])
-
-            if(initialObj.formatWord == ""):
-                initialObj.formatWord = endFormat
-
-            # If the format is alpha, then the step format must be arabic
-            if(initialObj.formatWord == "alpha" or initialObj.formatWord == "ALPHA"):
-                if(stepFormat == "arabic"):
-                    if(startFormat == initialObj.formatWord.lower() and endFormat == initialObj.formatWord.lower()):
-                        initialObj.startValue = wordToInt(numbers[0])
-                        initialObj.step = int(numbers[1])
-                        initialObj.endValue = wordToInt(numbers[2])
-                    else:
-                        usage(10, initialObj.formatWord)
-                else:
-                    usage(11)
+        if(len(numbers) <= 3 and len(numbers) >= 1):
+            # TODO: Refactor the code below this into setupFormatWordOutput function, it will return an array object that we will then check
+            limitArguments = setupFormatWordOutput(numbers, initialObj.formatWord)
+            if(checkArgumentFormat(limitArguments[0]) == "alpha"):
+                initialObj.formatWord = limitArguments[0]
+                limitArguments.remove(limitArguments[0])
             
-            elif(initialObj.formatWord == "roman" or initialObj.formatWord == "ROMAN"):
-                # Boolean test, if start/step/end == roman we are good to go, however, if one or more of them == arabic we are still good to go because we
-                # can promote arabic to roman if roman output is requested.
-                formatEqualsRoman = (startFormat == initialObj.formatWord.lower() or startFormat == "arabic") and (stepFormat == initialObj.formatWord.lower() or stepFormat == "arabic") and (endFormat == initialObj.formatWord.lower() or endFormat == "arabic")
-                if(formatEqualsRoman):
-                    if(startFormat == "arabic"):
-                        initialObj.startValue = int(numbers[0])
-                    else:
-                        initialObj.startValue = romanToNumber(numbers[0])
-                    if(stepFormat == "arabic"):
-                        initialObj.step = int(numbers[1])
-                    else:
-                        initialObj.step = romanToNumber(numbers[1])
-                    if(endFormat == "arabic"):
-                        initialObj.endValue = int(numbers[2])
-                    else:
-                        initialObj.endValue = romanToNumber(numbers[2])
-                else:
-                    usage(10, initialObj.formatWord)
-
-            elif(initialObj.formatWord == "arabic"):
-                print 'arabic format'
-                if(startFormat == initialObj.formatWord and stepFormat == initialObj.formatWord and endFormat == initialObj.formatWord):
-                    initialObj.startValue = int(numbers[0])
-                    initialObj.step = int(numbers[1])
-                    initialObj.endValue = int(numbers[2])
-                else:
-                    usage(10, initialObj.formatWord)
-
-            elif(initialObj.formatWord == "floating"):
-                print 'floating format'
-                if(startFormat == initialObj.formatWord and stepFormat == initialObj.formatWord and endFormat == initialObj.formatWord):
-                    initialObj.startValue = float(numbers[0])
-                    initialObj.step = float(numbers[1])
-                    initialObj.endValue = float(numbers[2])
-                else:
-                    usage(10, initialObj.formatWord)
-          
-        #start, end
-        if(lengthOfCl == 2):
-            print '2 args to parse'
-            startFormat = checkArgumentFormat(numbers[0])
-            endFormat = checkArgumentFormat(numbers[1])
-
-            if(initialObj.formatWord == ""):
-                initialObj.formatWord = endFormat
-
-            if(initialObj.formatWord == "alpha" or initialObj.formatWord == "ALPHA"):
-                if(startFormat == initialObj.formatWord.lower() and endFormat == initialObj.formatWord.lower()):
-                    initialObj.startValue = wordToInt(numbers[0])
-                    initialObj.endValue = wordToInt(numbers[1])
-                else:
-                    usage(10, initialObj.formatWord)
-
-            elif(initialObj.formatWord == "roman" or initialObj.formatWord == "ROMAN"):
-                formatEqualsRoman = (startFormat == initialObj.formatWord.lower() or startFormat == "arabic") and (endFormat == initialObj.formatWord.lower() or endFormat == "arabic")
-                if(formatEqualsRoman):
-                    if(startFormat == "arabic"):
-                        initialObj.startValue = int(numbers[0])
-                    else:
-                        initialObj.startValue = romanToNumber(numbers[0])
-                    if(endFormat == "arabic"):
-                        initialObj.endValue = int(numbers[1])
-                    else:
-                        initialObj.endValue = romanToNumber(numbers[1])
-                else:
-                    usage(10, initialObj.formatWord)
-
-            elif(initialObj.formatWord == "arabic"):
-                if(startFormat == initialObj.formatWord and endFormat == initialObj.formatWord):
-                    initialObj.startValue = int(numbers[0])
-                    initialObj.endValue = int(numbers[1])
-                else:
-                    usage(10, initialObj.formatWord)
-
-            elif(initialObj.formatWord == "floating"):
-                if(startFormat == initialObj.formatWord and endFormat == initialObj.formatWord):
-                    initialObj.startValue = float(numbers[0])
-                    initialObj.endValue = float(numbers[1])
-                else:
-                    usage(10, initialObj.formatWord)
-
-        #end
-        if(lengthOfCl == 1):
-            print '1 arg to parse'
-            endFormat = checkArgumentFormat(numbers[0])
-
-            if(initialObj.formatWord == ""):
-                initialObj.formatWord = endFormat
-
-            if(initialObj.formatWord == "alpha" or initialObj.formatWord == "ALPHA"):
-                if(endFormat == initialObj.formatWord.lower()):
-                    initialObj.endValue = wordToInt(numbers[0])
-                else:
-                    usage(10, initialObj.formatWord)
-
-            elif(initialObj.formatWord == "roman" or initialObj.formatWord == "ROMAN"):
-                formatEqualsRoman = (endFormat == initialObj.formatWord.lower() or endFormat == "arabic")
-                if(formatEqualsRoman):
-                    if(endFormat == "arabic"):
-                        initialObj.endValue = int(numbers[0])
-                    else:
-                        initialObj.endValue = romanToNumber(numbers[0])
-                else:
-                    usage(10, initialObj.formatWord)
-
-            elif(initialObj.formatWord == "arabic"):
-                if(endFormat == initialObj.formatWord):
-                    initialObj.endValue = int(numbers[0])
-                else:
-                    usage(10, initialObj.formatWord)
-
-            elif(initialObj.formatWord == "floating"):
-                if(endFormat == initialObj.formatWord):
-                    initialObj.endValue = float(numbers[0])
-                else:
-                    usage(10, initialObj.formatWord)
-
+            numberOfArgs = len(limitArguments)
+            if(numberOfArgs == 3):
+                initialObj.startValue = limitArguments[0]
+                initialObj.step = limitArguments[1]
+                initialObj.endValue = limitArguments[2]
+            elif(numberOfArgs == 2):
+                initialObj.startValue = limitArguments[0]
+                initialObj.endValue = limitArguments[1]
+            elif(numberOfArgs == 1):
+                initialObj.endValue = limitArguments[0]
+        else:
+            usage(7, numbers[0])           
+    # end --format-word code
+    ########################
     if(initialObj.step < 0):
         if(checkNegStepEnd(initialObj.startValue, initialObj.endValue)):
             initialObj.negativeStep = True
@@ -491,6 +369,166 @@ def setup():
         checkStartEnd(initialObj.startValue, initialObj.endValue)
 
     return initialObj
+
+def setupFormatWordOutput(numbers, formatWord):
+    limitArray = []
+    lengthOfCl = len(numbers)
+    #start, step, end
+    if(lengthOfCl == 3):
+        print '3 args to parse'
+        startFormat = checkArgumentFormat(numbers[0])
+        stepFormat = checkArgumentFormat(numbers[1])
+        endFormat = checkArgumentFormat(numbers[2])
+
+        if(formatWord == ""):
+            formatWord = endFormat
+            limitArray.append(formatWord)
+        
+        # If the format is alpha, then the step format must be arabic
+        if(formatWord == "alpha" or formatWord == "ALPHA"):
+            if(stepFormat == "arabic"):
+                if(startFormat == formatWord.lower() and endFormat == formatWord.lower()):
+                    limitArray.append(wordToInt(numbers[0]))
+                    limitArray.append(int(numbers[1]))
+                    limitArray.append(wordToInt(numbers[2]))
+                    return limitArray
+                else:
+                    usage(10, formatWord)
+            else:
+                usage(11)
+            
+        elif(formatWord == "roman" or formatWord == "ROMAN"):
+            # Boolean test, if start/step/end == roman we are good to go, however, if one or more of them == arabic we are still good to go because we
+            # can promote arabic to roman if roman output is requested.
+            formatEqualsRoman = (startFormat == formatWord.lower() or startFormat == "arabic") and (stepFormat == formatWord.lower() or stepFormat == "arabic") and (endFormat == formatWord.lower() or endFormat == "arabic")
+            if(formatEqualsRoman):
+                if(startFormat == "arabic"):
+                    limitArray.append(int(numbers[0]))
+                else:
+                    limitArray.append(romanToNumber(numbers[0]))
+                if(stepFormat == "arabic"):
+                    limitArray.append(int(numbers[1]))
+                else:
+                    limitArray.append(romanToNumber(numbers[1]))
+                if(endFormat == "arabic"):
+                    limitArray.append(int(numbers[2]))
+                else:
+                    limitArray.append(romanToNumber(numbers[2]))
+                return limitArray
+            else:
+                usage(10, formatWord)
+
+        elif(formatWord == "arabic"):
+            print 'arabic format'
+            if(startFormat == formatWord and stepFormat == formatWord and endFormat == formatWord):
+                limitArray.append(int(numbers[0]))
+                limitArray.append(int(numbers[1]))
+                limitArray.append(int(numbers[2]))
+                return limitArray
+            else:
+                usage(10, formatWord)
+
+        elif(formatWord == "floating"):
+            print 'floating format'
+            if(startFormat == formatWord and stepFormat == formatWord and endFormat == formatWord):
+                limitArray.append(float(numbers[0]))
+                limitArray.append(float(numbers[1]))
+                limitArray.append(float(numbers[2]))
+                return limitArray
+            else:
+                usage(10, formatWord)
+          
+        #start, end
+    elif(lengthOfCl == 2):
+        print '2 args to parse'
+        startFormat = checkArgumentFormat(numbers[0])
+        endFormat = checkArgumentFormat(numbers[1])
+
+        if(formatWord == ""):
+            formatWord = endFormat
+            limitArray.append(formatWord)
+
+        if(formatWord == "alpha" or formatWord == "ALPHA"):
+            if(startFormat == formatWord.lower() and endFormat == formatWord.lower()):
+                limitArray.append(wordToInt(numbers[0]))
+                limitArray.append(wordToInt(numbers[1]))
+                return limitArray
+            else:
+                usage(10, formatWord)
+
+        elif(formatWord == "roman" or formatWord == "ROMAN"):
+            formatEqualsRoman = (startFormat == formatWord.lower() or startFormat == "arabic") and (endFormat == formatWord.lower() or endFormat == "arabic")
+            if(formatEqualsRoman):
+                if(startFormat == "arabic"):
+                    limitArray.append(int(numbers[0]))
+                else:
+                    limitArray.append(romanToNumber(numbers[0]))
+                if(endFormat == "arabic"):
+                    limitArray.append(int(numbers[1]))
+                else:
+                    limitArray.append(romanToNumber(numbers[1]))
+                return limitArray
+            else:
+                usage(10, formatWord)
+
+        elif(formatWord == "arabic"):
+            if(startFormat == formatWord and endFormat == formatWord):
+                 limitArray.append(int(numbers[0]))
+                 limitArray.append(int(numbers[1]))
+                 return limitArray
+            else:
+                 usage(10, formatWord)
+
+        elif(formatWord == "floating"):
+            if(startFormat == formatWord and endFormat == formatWord):
+                limitArray.append(float(numbers[0]))
+                limitArray.append(float(numbers[1]))
+                return limitArray
+            else:
+                usage(10, formatWord)
+
+    #end
+    elif(lengthOfCl == 1):
+        print '1 arg to parse'
+        endFormat = checkArgumentFormat(numbers[0])
+
+        if(formatWord == ""):
+            formatWord = endFormat
+            limitArray.append(formatWord)
+
+        if(formatWord == "alpha" or formatWord == "ALPHA"):
+            if(endFormat == formatWord.lower()):
+                limitArray.append(wordToInt(numbers[0]))
+                return limitArray
+            else:
+                usage(10, formatWord)
+
+        elif(formatWord == "roman" or formatWord == "ROMAN"):
+            formatEqualsRoman = (endFormat == formatWord.lower() or endFormat == "arabic")
+            if(formatEqualsRoman):
+                if(endFormat == "arabic"):
+                    limitArray.append(int(numbers[0]))
+                else:
+                    limitArray.append(romanToNumber(numbers[0]))
+                return limitArray
+            else:
+                usage(10, formatWord)
+
+        elif(formatWord == "arabic"):
+            if(endFormat == formatWord):
+                limitArray.append(int(numbers[0]))
+                return limitArray
+            else:
+                usage(10, formatWord)
+
+        elif(formatWord == "floating"):
+            if(endFormat == formatWord):
+                limitArray.append(float(numbers[0]))
+                return limitArray
+            else:
+                usage(10, formatWord)
+    else:
+        usage(10, formatWord)
 
 # Roman numeral to integer
 def romanToNumber(string):
@@ -566,15 +604,15 @@ def checkArgumentFormat(clArg):
     romanRegex = '^(M{0,4}|m{0,4})((CM|CD|D?C{0,3})|(cm|cd|d?c{0,3}))((XC|XL|L?X{0,3})|(xc|xl|l?x{0,3}))((IX|IV|V?I{0,3})(ix|iv|v?i{0,3}))$'
     isArgRoman = re.compile(romanRegex)
 
-    if(isArgFlag.match(clArg)):
+    if(isArgFlag.match(str(clArg))):
         return "cl_argument"
-    elif(isArgArabic.match(clArg)):
+    elif(isArgArabic.match(str(clArg))):
         return "arabic"
-    elif(isArgFloat.match(clArg)):
+    elif(isArgFloat.match(str(clArg))):
         return "floating"
-    elif(isArgRoman.match(clArg)):
+    elif(isArgRoman.match(str(clArg))):
         return "roman"
-    elif(isArgAlpha.match(clArg)):
+    elif(isArgAlpha.match(str(clArg))):
         return "alpha"
 
 # Get the number of places we need for left of the decimal. If fixed point > 0 then we will just use that for left of decimal.
