@@ -294,6 +294,177 @@ T44. input: -f "%a" -1 1.1 11
 	 2
 	 3
 
+## -F/--format-word Tests ##
+	input: -F 1 2 10
+	output: 1 3 5 7 9
+
+	input: -F -2 5
+	output: -2 -1 0 1 2 3 4 5
+
+	input: -F 5
+	output: 1 2 3 4 5
+
+	input: -F arabic 1 3 10
+	output: 1 4 7 10
+
+	input: --format-word=arabic 1 5 20
+	output: 1 6 11 16
+
+	input: --format-word arabic 1 4 8
+	output: 1 5
+
+	input: -F arabic 5
+	output: 1 2 3 4 5
+
+	input: -F 1.0 2 6
+	output: ERROR - Not all args are arabic
+
+	input: -F 1.1 6
+	output: ERROR - Not all args are arabic
+
+	input: -F arabic i 5
+	output: ERROR - Not all args are arabic
+
+	input: -F arabic one 5
+	output: ERROR - Not all args are arabic
+
+	input: --format-word= arabic 1 5 20
+	output: ERROR - unrecognized option
+
+	input: -F bang 6
+	output: ERROR - invalid format for --format-word
+
+	input: -F 1.0 2.0 10.0
+	output: 1 3 5 7 9
+
+	input: -F 1.1 2.0 10.1
+	output: 1.1 3.1 5.1 7.1 9.1
+
+	input: -F 1.1 6.1
+	output: 1.1 2.1 3.1 4.1 5.1 6.1
+
+	input: -F 4.338
+	output: 1 2 3 4
+
+	input: -F floating 1.1 3.1 9.1
+	output: 1.1 4.2 7.3
+
+	input: --format-word=floating 1.3 6.2
+	output: 1.3 2.3 3.3 4.3 5.3
+
+	input: --format-word= floating 1.1 3.1
+	output: ERROR - unrecognized option
+
+	input: -F alpha four
+	output: one two three four
+
+	input: -F ALPHA four
+	output: ONE TWO THREE FOUR
+
+	input: -F ALPHA one three
+	output: ONE TWO THREE
+
+	input: -F ALPHA three 2 five
+	output: THREE FIVE
+
+	input: -F alpha four 2 eight
+	output: four six eight
+
+	input: -F alpha twenty -2 fifteen
+	output: twenty eighteen sixteen
+
+	input: -F alpha "twenty one" "twenty three"
+	output: twenty-one twenty-two twenty-three
+
+	input: --format-word=alpha six 2 ten
+	output: six eight ten
+
+	input: -F ten
+	output: STILL NEED TO WORK ON SOLVING DETERMING FORMAT FROM END THAT IS ALPHA
+
+	input: --format-word= alpha six
+	output: ERROR
+
+	input: -F alpha one two six
+	output: ERROR - Increment must be of type arabic
+
+	input: -F alpha 1 2 six
+	output: ERROR - One or more operands do not match the format option
+
+	input: -F alpha
+	output: ERROR - Missing operand
+
+	input: -F alpha twenty one 2 twenty three
+	output: ERROR - Unrecognized option
+
+	input: -F roman i ii xi
+	output: i iii v vii ix xi
+
+	input: -F ROMAN i ii xi
+	output: I III V VII IX XI
+
+	input: -F roman ci cv
+	ouput: ci cii ciii civ cv
+
+	input: -F roman v
+	output: i ii iii iv v
+
+	input: -F v
+	output: i ii iii iv v
+
+	input: -F v 2 x
+	output: v vii ix
+
+	input: -F roman 1 2 5
+	output: i iii iv
+
+	input: -F roman 1 ii v
+	output: i iii iv
+
+	input: -F roman 1000 1002
+	output: m mi mii
+
+	input: -F roman mii
+	ouput: i ii iii ...... mii
+
+	input: -F x
+	output: i ii iii iv v vi vii viii ix x
+
+	input: -F roman 10 -4 1
+	output: x vi ii
+
+	input: -F x -4 i
+	output: x vi ii
+
+	input: --format-word=roman v
+	output: i ii iii iv v
+
+	input: --format-word=ROMAN v
+	output: I II III IV V
+
+	input: -F i 1.1 5
+	output: ERROR - One or more operands do not match the format option
+
+	input: -F roman 5.1
+	output: ERROR - One or more operands do not match the format option
+
+	input: -F roman xfive
+	output: ERROR - One or more operands do not match the format option
+
+	input: -F roman i -2 -i
+	output: ERROR - One or more operands do not match the format option
+
+	input: --format-word= roman x
+	output: ERROR - Unrecognized option
+
+	input: --format-word=
+	output: ERROR - Missing operand
+
+	input: -F
+	output: ERROR - Missing operand
+
+
+	
 
 
 
