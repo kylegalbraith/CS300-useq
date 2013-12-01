@@ -22,3 +22,5 @@ Link to repo: https://kgalb2@projects.cecs.pdx.edu/git/masseycs300-kgalb2
 		one three five seven nine
 	-F alpha one 2.1 ten
 		ERROR - Step is not of type arabic (integer)
+
+- The case where you have to determine the format for format word from the end argument has an edge case where the format you are trying to determine is alpha. Need to come up with a way to catch this case without exiting.
