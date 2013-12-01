@@ -60,6 +60,9 @@ def usage(errorCode, error=""):
     elif(errorCode == 12):
         print 'sequ: invalid format for \'--format-word\' ' + error + helpString
         exit(1)
+    elif(errorCode == 13):
+        print 'sequ: ' + "'" + error + "'" + ' is not a valid representation of a number'
+        exit(1)
     else:
         print 'ERROR - An unexpected error has ocurred'
         exit(1)
@@ -243,7 +246,7 @@ def setup():
                         initialObj.formatWordBool = True
                     else:
                         parsedFormatWord = parseFlagWithEquals(arguments[stringParse], formatWordVerboseLength, formatWordFlagLength)
-                        if(checkArgumentFormat(arguments[stringParse]) == "alpha"):
+                        if(checkArgumentFormat(parsedFormatWord) == "alpha"):
                             validWordFormat = checkWordFormat(parsedFormatWord)
                             initialObj.formatWord = validWordFormat
                         else:
@@ -335,6 +338,9 @@ def setup():
                 usage(3)
         
         lengthOfCl = len(numbers)
+
+        # TODO: Refactor the code below this into setupFormatWordOutput function, it will return an array object that we will then check
+        #limitArguments = setupFormatWordOutput(numbers, lengthOfCl, initialObj.formatWord)
        
         #start, step, end
         if(lengthOfCl == 3):
@@ -534,7 +540,7 @@ def wordToInt(textNumber, numWordsDict={}):
     result = 0
     for word in textNumber.split():
         if word not in numWordsDict:
-            print 'not a valid representation of a number'
+            usage(13, word)
 
         scale, increment = numWordsDict[word]
         current = current * scale + increment
