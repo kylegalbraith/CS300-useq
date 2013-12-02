@@ -334,6 +334,15 @@ T44. input: -f "%a" -1 1.1 11
 	input: -F bang 6
 	output: ERROR - invalid format for --format-word
 
+	input: -F haha 6 12
+	output: ERROR - invalid format for --format-word
+
+	input: -F haha 6 12 36
+	output: ERROR - unrecognized option 'haha'
+
+	input: --format-word=bang 6 12
+	output: ERROR - invalid format for --format-word
+
 	input: -F 1.0 2.0 10.0
 	output: 1 3 5 7 9
 
@@ -348,6 +357,15 @@ T44. input: -f "%a" -1 1.1 11
 
 	input: -F floating 1.1 3.1 9.1
 	output: 1.1 4.2 7.3
+
+	input: -F bang 6.1
+	output: ERROR - invalid format for --format-word
+
+	input: -F bang 6.1 10.4
+	output: ERROR - invalid format for --format-word
+
+	input: -F bang 6.1 10.4 40.6
+	output: ERROR - unrecognized option
 
 	input: --format-word=floating 1.3 6.2
 	output: 1.3 2.3 3.3 4.3 5.3
@@ -382,8 +400,23 @@ T44. input: -f "%a" -1 1.1 11
 	input: -F alpha "one million and one" "one million and five"
 	output: one million and one one million and two .... one million and five
 
-	input: -F ten
-	output: STILL NEED TO WORK ON SOLVING DETERMING FORMAT FROM END THAT IS ALPHA
+	input: -F five
+	output: one two three four five
+
+	input: -F five 2 ten
+	output: five seven nine
+
+	input: -F bang five
+	output: ERROR - bang is not a valid representation of a number
+
+	input: -F bang five ten
+	output: ERROR - increment option must be arabic when using alpha
+
+	input: -F bang five 2 ten
+	output: ERROR - Unrecognized option
+
+	input: --format-word=bang five 2 ten
+	output: ERROR - invalid format for bang
 
 	input: --format-word= alpha six
 	output: ERROR
@@ -456,6 +489,15 @@ T44. input: -f "%a" -1 1.1 11
 
 	input: -F roman i -2 -i
 	output: ERROR - One or more operands do not match the format option
+
+	input: -F bang x
+	output: ERROR - One or more operands do not match the format option
+
+	input: -F bang x xx
+	output: ERROR - One or more operands do not match the format option
+
+	input: -F bang x ii xx
+	output: ERROR - unrecognized option 'bang'	
 
 	input: --format-word= roman x
 	output: ERROR - Unrecognized option
