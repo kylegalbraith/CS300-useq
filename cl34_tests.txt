@@ -379,6 +379,9 @@ T44. input: -f "%a" -1 1.1 11
 	input: --format-word=alpha six 2 ten
 	output: six eight ten
 
+	input: -F alpha "one million and one" "one million and five"
+	output: one million and one one million and two .... one million and five
+
 	input: -F ten
 	output: STILL NEED TO WORK ON SOLVING DETERMING FORMAT FROM END THAT IS ALPHA
 
