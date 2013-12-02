@@ -478,6 +478,21 @@ T44. input: -f "%a" -1 1.1 11
 	input: --format-word=ROMAN v
 	output: I II III IV V
 
+	input: --format-word -s , four
+	output: one,two,three,four
+
+	input: -F -s, x ii xx
+	output: x,xii,xiv,xvi,xviii,xx
+
+	input: -F -W x ii xx
+	output: x xii xiv xvi xviii xx
+
+	input: -F --words one 2 ten
+	output: one three five seven nine
+
+	input: --format-word alpha --words one 2 ten
+ 	output: one three five seven nine
+
 	input: -F i 1.1 5
 	output: ERROR - One or more operands do not match the format option
 
@@ -507,6 +522,58 @@ T44. input: -f "%a" -1 1.1 11
 
 	input: -F
 	output: ERROR - Missing operand
+
+	input: -F -w 1 5
+	output: ERROR - Cannot use --equal-width with --format-word
+
+	input: -F --equal-width sixteen
+	output: ERROR - Cannot use --equal-width with --format-word
+
+	input: --format-word -w x xx
+	output: ERROR - Cannot use --equal-width with --format-word
+
+	input: --format-word --equal-width x ii xx
+	output: ERROR - Cannot use --equal-width with --format-word
+
+	input: -F -p t 3.1 8.2
+	output: ERROR - Cannot use --pad with --format-word
+
+	input: -p t -F sixteen
+	output: ERROR - Cannot use --pad with --format-word
+
+	input: -F --pad \t 1 5
+	output: ERROR - Cannot use --pad with --format-word
+
+	input: --pad \t -F five
+	output: ERROR - Cannot use --pad with --format-word
+
+	input: --format-word -p t sixteen
+	output: ERROR - Cannot use --pad with --format-word
+
+	input: --format-word --pad \t 1 3 23
+	output: ERROR - Cannot use --pad with --format-word
+
+	input: -F -P 3.1 8.2
+	output: ERROR - Cannot use --pad-spaces with --format-word
+
+	input: -P -F sixteen
+	output: ERROR - Cannot use --pad-spaces with --format-word
+
+	input: -F --pad-spaces 1 5
+	output: ERROR - Cannot use --pad-spaces with --format-word
+
+	input: --pad-spaces -F five
+	output: ERROR - Cannot use --pad-spaces with --format-word
+
+	input: --format-word -P sixteen
+	output: ERROR - Cannot use --pad-spaces with --format-word
+
+	input: --format-word --pad-spaces 1 3 23
+	output: ERROR - Cannot use --pad-spaces with --format-word
+
+
+
+	 
 
 
 	
