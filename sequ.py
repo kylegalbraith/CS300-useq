@@ -238,7 +238,14 @@ def setup():
                             stringParse += 1
                             if(checkArgumentFormat(arguments[stringParse]) == "alpha"):
                                 validWordFormat = checkWordFormat(arguments[stringParse])
-                                initialObj.formatWord = validWordFormat
+                                # If we come back with undefined then we need to assume the args on the command line are valid
+                                # Set formatWord to "" and set it later based on the end limit arg
+                                # If junk is on the command line then it will be caught later on during conversions
+                                if(validWordFormat == "undefined"):
+                                    initialObj.formatWord = ""
+                                    stringParse -= 1
+                                else:
+                                    initialObj.formatWord = validWordFormat
                             else: 
                                 initialObj.formatWord = ""
                                 stringParse -= 1
@@ -248,7 +255,12 @@ def setup():
                             parsedFormatWord = parseFlagWithEquals(arguments[stringParse], formatWordVerboseLength, formatWordFlagLength)
                             if(checkArgumentFormat(parsedFormatWord) == "alpha"):
                                 validWordFormat = checkWordFormat(parsedFormatWord)
-                                initialObj.formatWord = validWordFormat
+                                # This is different then the case above because the user used --format-word= then they should know to enter in a valid format
+                                # If they do not enter a valid format then undefined will be returned and we need to throw an error and exit
+                                if(validWordFormat == "undefined"):
+                                    usage(12, parsedFormatWord)
+                                else:
+                                    initialObj.formatWord = validWordFormat
                             else:
                                 initialObj.formatWord = ""
 
@@ -375,7 +387,6 @@ def setupFormatWordOutput(numbers, formatWord):
     lengthOfCl = len(numbers)
     #start, step, end
     if(lengthOfCl == 3):
-        print '3 args to parse'
         startFormat = checkArgumentFormat(numbers[0])
         stepFormat = checkArgumentFormat(numbers[1])
         endFormat = checkArgumentFormat(numbers[2])
@@ -419,7 +430,6 @@ def setupFormatWordOutput(numbers, formatWord):
                 usage(10, formatWord)
 
         elif(formatWord == "arabic"):
-            print 'arabic format'
             if(startFormat == formatWord and stepFormat == formatWord and endFormat == formatWord):
                 limitArray.append(int(numbers[0]))
                 limitArray.append(int(numbers[1]))
@@ -429,7 +439,6 @@ def setupFormatWordOutput(numbers, formatWord):
                 usage(10, formatWord)
 
         elif(formatWord == "floating"):
-            print 'floating format'
             if(startFormat == formatWord and stepFormat == formatWord and endFormat == formatWord):
                 limitArray.append(float(numbers[0]))
                 limitArray.append(float(numbers[1]))
@@ -440,7 +449,6 @@ def setupFormatWordOutput(numbers, formatWord):
           
         #start, end
     elif(lengthOfCl == 2):
-        print '2 args to parse'
         startFormat = checkArgumentFormat(numbers[0])
         endFormat = checkArgumentFormat(numbers[1])
 
@@ -489,7 +497,6 @@ def setupFormatWordOutput(numbers, formatWord):
 
     #end
     elif(lengthOfCl == 1):
-        print '1 arg to parse'
         endFormat = checkArgumentFormat(numbers[0])
 
         if(formatWord == ""):
@@ -530,7 +537,7 @@ def setupFormatWordOutput(numbers, formatWord):
     else:
         usage(10, formatWord)
 
-# Roman numeral to integer
+# Roman numeral (1 - 4000) to integer
 def romanToNumber(string):
     returnNumber = 0
     table = [
@@ -588,7 +595,9 @@ def wordToInt(textNumber, numWordsDict={}):
 
     return result + current
 
+# Use regex to check and see what the type is of the current argument on the command line
 def checkArgumentFormat(clArg):
+    # flag being things like -F, --format, -w, etc
     flagRegex = '^-+[a-zA-Z]'
     isArgFlag = re.compile(flagRegex)
 
@@ -640,7 +649,8 @@ def checkWordFormat(wordFormat):
     if(wordFormat == "arabic" or wordFormat == "floating" or wordFormat == "alpha" or wordFormat == "ALPHA" or wordFormat == "roman" or wordFormat == "ROMAN"):
         return wordFormat
     else:
-        usage(12, wordFormat)
+        #usage(12, wordFormat)
+        return "undefined"
 
 # Get the number of decimal places to the right of the decimal. If fixed point > 0 then use that, otherwise go calculate the right of decimal
 def getRightOfDecimal(numberStrings, startValue, stepValue):
