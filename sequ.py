@@ -40,7 +40,7 @@ def usage(errorCode, error=""):
         print 'sequ: missing operand' + helpString
         exit(1)
     elif(errorCode == 6):
-        print 'sequ: \'--equal-width\' flags (--pad, --pad-spaces) are distinct flags cannot be used with one another or with \'--format\'' + helpString
+        print 'sequ: \'--equal-width\' flags (--pad, --pad-spaces) are distinct flags cannot be used with one another or with \'--format\' or \'--format-word\'' + helpString
         exit(1)
     elif(errorCode == 7):
         print 'sequ: unrecognized option ' + "'" + error + "'"
@@ -313,9 +313,6 @@ def setup():
 
         lengthOfNumbers = len(numbers)
 
-        if(lengthOfNumbers == 3 and initialObj.numberLines):
-            print 'error: no end arg allowed'
-
         # These will store the string representation of start, step, and end values so we can count the places in each
         startValueString = ""
         stepValueString = ""
@@ -342,6 +339,8 @@ def setup():
             if(lengthOfNumbers == 1):
                 initialObj.endValue = numbers[0]
                 endValueString = numberStrings[0]
+        # If numberLines then we MUST NOT accept an end argument, so if we see one (i.e. lengthOfNumber == 3) we output an error.
+        # Otherwise we set the start and increment values or just the start value.
         else:
             if(lengthOfNumbers == 3):
                 usage(14)
@@ -356,6 +355,10 @@ def setup():
         # end assigning start step end values
         
         # If -f/--format was used then the default value for format will not be present and this block of code will never run.
+        # 12/3/13
+        # Currently, you cannot use --format with --format-word so the code to create a format option is nested in here.
+        # However, a case could be made that if the --format-word=arabic or floating then you should be able to set a format option
+        # This is not in the spec for CL4 so I am going to stick with my current decision
         if(initialObj.formatOption == "%g"):
             initialObj.leftDecimal = getLeftOfDecimal(numberStrings, initialObj.startValue, initialObj.step, initialObj.endValue)
             initialObj.rightDecimal = getRightOfDecimal(numberStrings, initialObj.startValue, initialObj.step)
@@ -404,7 +407,7 @@ def setup():
             usage(7, numbers[0])           
     # end --format-word code
     ########################
-    # This can now be bypassed when using --number-lines because there is no 'end' limit in that case
+    # This can now be bypassed when using --number-lines because there is no 'end' limit in that case, these is just a start and increment limit
     if(not initialObj.numberLines):
         if(initialObj.step < 0):
             if(checkNegStepEnd(initialObj.startValue, initialObj.endValue)):
