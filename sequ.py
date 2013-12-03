@@ -63,6 +63,9 @@ def usage(errorCode, error=""):
     elif(errorCode == 13):
         print 'sequ: ' + "'" + error + "'" + ' is not a valid representation of a number'
         exit(1)
+    elif(errorCode == 14):
+        print 'sequ: end argument is prohibited when using \'--number-lines\'' + helpString
+        exit(1)
     else:
         print 'sequ: An unexpected error has ocurred'
         exit(1)
@@ -82,7 +85,7 @@ def setup():
     # Get the arguments that have been passed in, and ignore the first one
     # since it is the invocation of the script
     arguments = sys.argv[1:len(sys.argv)]
-
+ 
     # Get the total args passed in as exactly 2 are required
     totalArgs = len(arguments)
     # loop variables.
@@ -136,6 +139,10 @@ def setup():
                     initialObj.separator = ' '
                 else:
                     usage(8)
+
+            elif arguments[stringParse] == "--number-lines" or arguments[stringParse] == "-n":
+                initialObj.numberLines = True
+                initialObj.separator = ' '
             
             elif format:               
                 try:
@@ -251,6 +258,7 @@ def setup():
                                 stringParse -= 1
                         
                             initialObj.formatWordBool = True
+                            seenFormatWord = True
                         else:
                             parsedFormatWord = parseFlagWithEquals(arguments[stringParse], formatWordVerboseLength, formatWordFlagLength)
                             if(checkArgumentFormat(parsedFormatWord) == "alpha"):
@@ -265,6 +273,7 @@ def setup():
                                 initialObj.formatWord = ""
 
                             initialObj.formatWordBool = True
+                            seenFormatWord = True
                     except IndexError:
                         usage(4, "--format-word") 
                 else:
@@ -304,6 +313,9 @@ def setup():
 
         lengthOfNumbers = len(numbers)
 
+        if(lengthOfNumbers == 3 and initialObj.numberLines):
+            print 'error: no end arg allowed'
+
         # These will store the string representation of start, step, and end values so we can count the places in each
         startValueString = ""
         stepValueString = ""
@@ -312,23 +324,35 @@ def setup():
         # 3 numbers = start, step, and end need to be set
         # 2 numbers = start and end value need to be set
         # 1 number = just the end value needs to be set
-        if(lengthOfNumbers == 3):
-            initialObj.startValue = numbers[0]
-            initialObj.step = numbers[1]
-            initialObj.endValue = numbers[2]
-            startValueString = numberStrings[0]
-            stepValueString = numberStrings[1]
-            endValueString = numberStrings[2]
+        if(not initialObj.numberLines):
+            if(lengthOfNumbers == 3):
+                initialObj.startValue = numbers[0]
+                initialObj.step = numbers[1]
+                initialObj.endValue = numbers[2]
+                startValueString = numberStrings[0]
+                stepValueString = numberStrings[1]
+                endValueString = numberStrings[2]
     
-        if(lengthOfNumbers == 2):
-            initialObj.startValue = numbers[0]
-            initialObj.endValue = numbers[1]
-            startValueString = numberStrings[0]
-            endValueString = numberStrings[1]
+            if(lengthOfNumbers == 2):
+                initialObj.startValue = numbers[0]
+                initialObj.endValue = numbers[1]
+                startValueString = numberStrings[0]
+                endValueString = numberStrings[1]
                 
-        if(lengthOfNumbers == 1):
-            initialObj.endValue = numbers[0]
-            endValueString = numberStrings[0]
+            if(lengthOfNumbers == 1):
+                initialObj.endValue = numbers[0]
+                endValueString = numberStrings[0]
+        else:
+            if(lengthOfNumbers == 3):
+                usage(14)
+            if(lengthOfNumbers == 2):
+                initialObj.startValue = numbers[0]
+                initialObj.step = numbers[1]
+                startValueString = numberStrings[0]
+                stepValueString = numberStrings[1]
+            if(lengthOfNumbers == 1):
+                initialObj.startValue = numbers[0]
+                startValueString = numberStrings[0]
         # end assigning start step end values
         
         # If -f/--format was used then the default value for format will not be present and this block of code will never run.
@@ -352,33 +376,43 @@ def setup():
             except ValueError:
                 usage(3)
         if(len(numbers) <= 3 and len(numbers) >= 1):
-            # TODO: Refactor the code below this into setupFormatWordOutput function, it will return an array object that we will then check
             limitArguments = setupFormatWordOutput(numbers, initialObj.formatWord)
             if(checkArgumentFormat(limitArguments[0]) == "alpha"):
                 initialObj.formatWord = limitArguments[0]
                 limitArguments.remove(limitArguments[0])
             
             numberOfArgs = len(limitArguments)
-            if(numberOfArgs == 3):
-                initialObj.startValue = limitArguments[0]
-                initialObj.step = limitArguments[1]
-                initialObj.endValue = limitArguments[2]
-            elif(numberOfArgs == 2):
-                initialObj.startValue = limitArguments[0]
-                initialObj.endValue = limitArguments[1]
-            elif(numberOfArgs == 1):
-                initialObj.endValue = limitArguments[0]
+            if(not initialObj.numberLines): 
+                if(numberOfArgs == 3):
+                    initialObj.startValue = limitArguments[0]
+                    initialObj.step = limitArguments[1]
+                    initialObj.endValue = limitArguments[2]
+                elif(numberOfArgs == 2):
+                    initialObj.startValue = limitArguments[0]
+                    initialObj.endValue = limitArguments[1]
+                elif(numberOfArgs == 1):
+                    initialObj.endValue = limitArguments[0]
+            else:
+                if(numberOfArgs == 3):
+                    usage(14)
+                elif(numberOfArgs == 2):
+                    initialObj.startValue = limitArguments[0]
+                    initialObj.step = limitArguments[1]
+                elif(numberOfArgs == 1):
+                    initialObj.startValue = limitArguments[0]
         else:
             usage(7, numbers[0])           
     # end --format-word code
     ########################
-    if(initialObj.step < 0):
-        if(checkNegStepEnd(initialObj.startValue, initialObj.endValue)):
-            initialObj.negativeStep = True
+    # This can now be bypassed when using --number-lines because there is no 'end' limit in that case
+    if(not initialObj.numberLines):
+        if(initialObj.step < 0):
+            if(checkNegStepEnd(initialObj.startValue, initialObj.endValue)):
+                initialObj.negativeStep = True
+            else:
+                checkStartEnd(initialObj.startValue, initialObj.endValue)
         else:
             checkStartEnd(initialObj.startValue, initialObj.endValue)
-    else:
-        checkStartEnd(initialObj.startValue, initialObj.endValue)
 
     return initialObj
 

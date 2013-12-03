@@ -20,6 +20,8 @@ class sequ_obj:
         self.padChar = "0"
         self.formatWord = ""
         self.formatWordBool = False
+        self.numberLines = False
+        #self.inputFile = []
         self.leftDecimal = 0
         self.rightDecimal = 0
 
@@ -57,7 +59,16 @@ class sequ_obj:
                 loopCount = loopCount + 1
             else:
                 sys.stdout.write(output + '\n') 
-          
+    
+    def readFile(self):
+        start = self.startValue
+        step = self.step
+
+        for line in sys.stdin:
+            lineNumber = self.formatOption % + start
+            sys.stdout.write(lineNumber + self.separator + line)
+            start += step
+              
     # Should factor outputSlow into this function so they are both in the same place
     def outputQuick(self):
         start = self.startValue
@@ -73,12 +84,16 @@ class sequ_obj:
                     outputArray.append(self.formatOption % + start)
                 start += step
         else:
-            while start <= end:
-                if(start != end):
-                    outputArray.append(self.formatOption % + start)
-                else:
-                    outputArray.append(self.formatOption % + start)
-                start += step
+            if(not self.numberLines):
+                while start <= end:
+                    if(start != end):
+                        outputArray.append(self.formatOption % + start)
+                    else:
+                        outputArray.append(self.formatOption % + start)
+                    start += step
+            else:
+                print 'called'
+                self.readFile()
              
         if(self.padChar != "0"):
             formattedOutput = self.replaceZero(outputArray)
