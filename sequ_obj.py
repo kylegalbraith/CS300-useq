@@ -21,36 +21,38 @@ class sequ_obj:
         self.formatWord = ""
         self.formatWordBool = False
         self.numberLines = False
-        #self.inputFile = []
         self.leftDecimal = 0
         self.rightDecimal = 0
 
     def replaceZero(self, outputArray):
         formattedOutput = []
         for output in outputArray:
-            # this is a good start but turns out bad results with -w -1.001 11
-            count = 0
-            dIndex = output.find('.')
-            
-            if(dIndex == -1):
-                dIndex = len(output)
-            dIndex = dIndex - 1
-        
-            for char in output:
-                if(char == "0" and count < dIndex):
-                    output = output.replace(char, self.padChar, 1)
-                    count = count + 1
-                    continue
-                elif(char == "-"):
-                    dIndex = dIndex - 1
-                    continue
-                else:
-                    break
-
-            formattedOutput.append(output)
+            zeroReplaced = self.replaceZeroSingleLine(output)
+            formattedOutput.append(zeroReplaced)
                 
         return formattedOutput
-    
+
+    def replaceZeroSingleLine(self, string):
+        count = 0
+        returnString = ""
+        dIndex = string.find('.')
+        if(dIndex == -1):
+            dIndex = len(string)
+        dIndex = dIndex - 1
+
+        for char in string:
+            if(char == "0" and count < dIndex):
+                string = string.replace(char, self.padChar, 1)
+                count = count + 1
+                continue
+            elif(char == "-"):
+                dIndex = dIndex - 1
+                continue
+            else:
+                break
+        returnString = string
+        return returnString
+
     def finalOutput(self, formattedOutput):
         loopCount = 0
         for output in formattedOutput:
@@ -58,16 +60,49 @@ class sequ_obj:
                 sys.stdout.write(output + self.separator)
                 loopCount = loopCount + 1
             else:
-                sys.stdout.write(output + '\n') 
-    
+                sys.stdout.write(output + '\n')
+        #program was successful        
+        exit(0) 
+ 
+    # readFile() is used when --number-lines/-n is used where we read in a file from stdin and then output each line preceeded with a line number
+    # that we create using sequ.    
     def readFile(self):
         start = self.startValue
         step = self.step
 
-        for line in sys.stdin:
-            lineNumber = self.formatOption % + start
-            sys.stdout.write(lineNumber + self.separator + line)
-            start += step
+        if(not self.formatWordBool):
+            for line in sys.stdin:
+                lineNumber = self.formatOption % + start
+                if(self.padChar != "0"):
+                    paddedNonZeroLineNumber = self.replaceZeroSingleLine(lineNumber)
+                    sys.stdout.write(str(paddedNonZeroLineNumber) + self.separator + line)
+                else:
+                    sys.stdout.write(str(lineNumber) + self.separator + line)
+                start += step
+        else:
+            lineNumber = ""
+            isAlpha = (self.formatWord.lower() == "alpha")
+            isRoman = (self.formatWord.lower() == "roman")
+            isArabic = (self.formatWord == "arabic")
+            isFloat = (self.formatWord == "floating")
+
+            if(isAlpha):
+                for line in sys.stdin:
+                    lineNumber = self.numberToWord(start)
+                    sys.stdout.write(lineNumber + self.separator + line)
+                    start += step
+            elif(isRoman):
+                for line in sys.stdin:
+                    lineNumber = self.numberToRoman(start)
+                    sys.stdout.write(lineNumber + self.separator + line)
+                    start += step
+            elif(isArabic or isFloat):
+                for line in sys.stdin:
+                    sys.stdout.write(str(start) + self.separator + line)
+                    start += step
+                
+        #program was successful
+        exit(0)
               
     # Should factor outputSlow into this function so they are both in the same place
     def outputQuick(self):
@@ -101,9 +136,6 @@ class sequ_obj:
         else:
             self.finalOutput(outputArray)            
         
-        # The program was successful
-        exit(0)
-
     def outputAlpha(self):
         start = self.startValue
         step = self.step
@@ -120,15 +152,19 @@ class sequ_obj:
                     outputArray.append(convert)
                 start += step
         else:
-            while start <= end:
-                convert = self.numberToWord(start)
-                if(start != end):
-                    outputArray.append(convert)
-                else:
-                    outputArray.append(convert)
-                start += step
-        
-        self.finalOutput(outputArray)
+            if(not self.numberLines):
+                while start <= end:
+                    convert = self.numberToWord(start)
+                    if(start != end):
+                        outputArray.append(convert)
+                    else:
+                        outputArray.append(convert)
+                    start += step      
+                self.finalOutput(outputArray)
+            else:
+                print 'called alpha'
+                self.readFile()
+
 
     def outputRoman(self):
         start = self.startValue
@@ -146,15 +182,17 @@ class sequ_obj:
                     outputArray.append(convert)
                 start += step
         else:
-            while start <= end:
-                convert = self.numberToRoman(start)
-                if(start != end):
-                    outputArray.append(convert)
-                else:
-                    outputArray.append(convert)
-                start += step
-        
-        self.finalOutput(outputArray)
+            if(not self.numberLines):
+                while start <= end:
+                    convert = self.numberToRoman(start)
+                    if(start != end):
+                        outputArray.append(convert)
+                    else:
+                        outputArray.append(convert)
+                    start += step
+                self.finalOutput(outputArray)
+            else:
+                self.readFile()
     
     # Use num2word to convert a number to a word representation.
     def numberToWord(self, number):
