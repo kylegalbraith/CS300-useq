@@ -143,30 +143,22 @@ class sequ_obj:
         negativeStep = self.negativeStep
         outputArray = []
 
-        if(negativeStep):
-            while start >= end:
+        if(not self.numberLines):
+            while start <= end:
                 convert = self.numberToWord(start)
                 if(start != end):
                     outputArray.append(convert)
                 else:
                     outputArray.append(convert)
-                start += step
+                start += step      
+            self.finalOutput(outputArray)
         else:
-            if(not self.numberLines):
-                while start <= end:
-                    convert = self.numberToWord(start)
-                    if(start != end):
-                        outputArray.append(convert)
-                    else:
-                        outputArray.append(convert)
-                    start += step      
-                self.finalOutput(outputArray)
-            else:
                 print 'called alpha'
                 self.readFile()
 
 
     def outputRoman(self):
+        print 'roman'
         start = self.startValue
         step = self.step
         end = self.endValue
@@ -181,6 +173,7 @@ class sequ_obj:
                 else:
                     outputArray.append(convert)
                 start += step
+            self.finalOutput(outputArray)
         else:
             if(not self.numberLines):
                 while start <= end:
