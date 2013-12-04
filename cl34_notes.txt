@@ -26,3 +26,10 @@ Link to repo: https://kgalb2@projects.cecs.pdx.edu/git/masseycs300-kgalb2
 - The case where you have to determine the format for format word from the end argument has an edge case where the format you are trying to determine is alpha. Need to come up with a way to catch this case without exiting.
 
 - CL4 syntax cat filename.txt | sequ .... > myoutput.txt
+
+- Technically you could use --format with --format-word if the arguments are arabic or floating. However, since this is not mentioned in the spec I am making the decision to not allow this as it would increase the complexity of that code even more then it already is.
+
+- The spec is a little unclear where it says "Each line "number" will be in the 
+format specified by the "--format-word" argument, or 
+inferred from the *start* or *increment* limit argument if 
+the "--format-word" argument is not supplied". I am takine this to mean that you cannot do something like this: 'cat filename.txt | sequ -n one two' because you can only use alpha arguments with --format-word. Furthermore, I am assuming that when the spec says "infer from the *start* or *increment* argument when --format-word arg is not supplied" that this means that --format-word is used but no argument (i.e. floating, arabic, alpha, or roman) is specified. So this case 'cat filename.txt | sequ -n -F one two' would work and we infer the format by the increment argument.
