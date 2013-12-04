@@ -127,7 +127,6 @@ class sequ_obj:
                         outputArray.append(self.formatOption % + start)
                     start += step
             else:
-                print 'called'
                 self.readFile()
              
         if(self.padChar != "0"):
@@ -153,12 +152,10 @@ class sequ_obj:
                 start += step      
             self.finalOutput(outputArray)
         else:
-                print 'called alpha'
                 self.readFile()
 
 
     def outputRoman(self):
-        print 'roman'
         start = self.startValue
         step = self.step
         end = self.endValue
