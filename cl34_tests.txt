@@ -523,6 +523,12 @@ T44. input: -f "%a" -1 1.1 11
 	input: -F
 	output: ERROR - Missing operand
 
+	input: -F -2 ii xi
+	output: ERROR - cannot use negative arabic with roman numerals
+
+	input: -F xi -2 ii
+	output: ERROR - cannot use negative arabic with roman numerals
+
 	input: -F -w 1 5
 	output: ERROR - Cannot use --equal-width with --format-word
 
@@ -582,6 +588,17 @@ T44. input: -f "%a" -1 1.1 11
 		2 ever
 		3 sdfsdf
 		4 junk 123
+
+	input: cat testfile.txt | -n 4
+	output:
+		4 Foobar
+		5 text
+		6 goes right here
+		7 forever
+		8 and
+		9 ever
+		10 sdfsdf
+		11 junk 123
 
 
 

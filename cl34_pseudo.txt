@@ -54,17 +54,29 @@ Else
 			If startFormat = roman or arabic and incrementFormat = roman or
 			arabic and endFormat = roman or arabic
 				If startFormat = arabic
-					Assign startValue on sequ obj
+					If start > 0 
+						Assign startValue on sequ obj
+					Else
+						Output error that you cannot use negative arabic with roman numberals
 				Else
 					Convert the startValue from roman to number
 					Assign startValue on sequ obj
+				
 				If incrementFormat = arabic
-					Assign step on sequ obj
+					If increment > 0
+						Assign step on sequ obj
+					Else 
+						Output error that you cannot use negative arabic with roman numberals
+					
 				Else
 					Convert the step from roman to number
 					Assign step on sequ obj
+
 				If endFormat = arabic
-					Assign endValue on sequ obj
+					If end > 0
+						Assign endValue on sequ obj
+					Else
+						Output error that you cannot use negative arabic with roman numberals
 				Else
 					Convert endValue from roman to number
 					Assign the endValue on sequ obj
@@ -99,3 +111,7 @@ If formatWord is True
 		Convert each number to a roman numeral
 	If formatWord is arabic or floating
 		Do our normal output from CL1 and CL2
+
+
+###### CL4 Pseudo ######
+If argument == --number-lines or -n
