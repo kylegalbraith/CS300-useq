@@ -66,6 +66,9 @@ def usage(errorCode, error=""):
     elif(errorCode == 14):
         print 'sequ: end argument is prohibited when using \'--number-lines\'' + helpString
         exit(1)
+    elif(errorCode == 15):
+        print 'sequ: start and end argument must be roman or non-negative arabic when using roman output'
+        exit(1)
     else:
         print 'sequ: An unexpected error has ocurred'
         exit(1)
@@ -451,7 +454,10 @@ def setupFormatWordOutput(numbers, formatWord):
             formatEqualsRoman = (startFormat == formatWord.lower() or startFormat == "arabic") and (stepFormat == formatWord.lower() or stepFormat == "arabic") and (endFormat == formatWord.lower() or endFormat == "arabic")
             if(formatEqualsRoman):
                 if(startFormat == "arabic"):
-                    limitArray.append(int(numbers[0]))
+                    if(int(numbers[0]) < 0):
+                        usage(15)
+                    else:
+                        limitArray.append(int(numbers[0]))
                 else:
                     limitArray.append(romanToNumber(numbers[0]))
                 if(stepFormat == "arabic"):
@@ -459,7 +465,10 @@ def setupFormatWordOutput(numbers, formatWord):
                 else:
                     limitArray.append(romanToNumber(numbers[1]))
                 if(endFormat == "arabic"):
-                    limitArray.append(int(numbers[2]))
+                    if(int(numbers[2]) < 0):
+                        usage(15)
+                    else:
+                        limitArray.append(int(numbers[2]))
                 else:
                     limitArray.append(romanToNumber(numbers[2]))
                 return limitArray
@@ -505,11 +514,17 @@ def setupFormatWordOutput(numbers, formatWord):
             formatEqualsRoman = (startFormat == formatWord.lower() or startFormat == "arabic") and (endFormat == formatWord.lower() or endFormat == "arabic")
             if(formatEqualsRoman):
                 if(startFormat == "arabic"):
-                    limitArray.append(int(numbers[0]))
+                    if(int(numbers[0]) < 0):
+                        usage(15)
+                    else:
+                        limitArray.append(int(numbers[0]))
                 else:
                     limitArray.append(romanToNumber(numbers[0]))
                 if(endFormat == "arabic"):
-                    limitArray.append(int(numbers[1]))
+                    if(int(numbers[1]) < 0):
+                        usage(15)
+                    else:
+                        limitArray.append(int(numbers[1]))
                 else:
                     limitArray.append(romanToNumber(numbers[1]))
                 return limitArray
@@ -551,7 +566,10 @@ def setupFormatWordOutput(numbers, formatWord):
             formatEqualsRoman = (endFormat == formatWord.lower() or endFormat == "arabic")
             if(formatEqualsRoman):
                 if(endFormat == "arabic"):
-                    limitArray.append(int(numbers[0]))
+                    if(int(numbers[0]) < 0):
+                        usage(15)
+                    else:
+                        limitArray.append(int(numbers[0]))
                 else:
                     limitArray.append(romanToNumber(numbers[0]))
                 return limitArray
