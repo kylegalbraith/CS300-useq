@@ -627,14 +627,14 @@ T44. input: -f "%a" -1 1.1 11
 		
 	input: cat testfile.txt | -P -n 6
 	output:
-		1.000 Foobar
-		1.002 text
-		1.004 goes right here
-		1.006 forever
-		1.008 and
-		1.010 ever
-		1.012 sdfsdf
-		1.014 junk 123
+		 6 Foobar
+		 7 text
+		 8 right here
+		 9 forever
+		10 and
+		11 ever
+		12 sdfsdf
+		13 junk 123
 		
 		
 
