@@ -23,6 +23,8 @@ Link to repo: https://kgalb2@projects.cecs.pdx.edu/git/masseycs300-kgalb2
 	-F alpha one 2.1 ten
 		ERROR - Step is not of type arabic (integer)
 
+- Since we are using unsigned romans then the start and end limits can not be less than 0 when they are in the arabic format. Arabic numerals can be used when roman output is specified but they must be non negative. The increment, however, can be negative so that you can count backwards, again as long as the end argument is greater than 0 we will not run into a problem.
+
 - The case where you have to determine the format for format word from the end argument has an edge case where the format you are trying to determine is alpha. Need to come up with a way to catch this case without exiting.
 
 - CL4 syntax cat filename.txt | sequ .... > myoutput.txt

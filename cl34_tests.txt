@@ -524,10 +524,13 @@ T44. input: -f "%a" -1 1.1 11
 	output: ERROR - Missing operand
 
 	input: -F -2 ii xi
-	output: ERROR - cannot use negative arabic with roman numerals
-
-	input: -F xi -2 ii
-	output: ERROR - cannot use negative arabic with roman numerals
+	output: ERROR - cannot use negative arabic for start or end with roman numerals
+	
+	input: -F -10 xx
+	output: ERROR - cannot use negative arabic for start or end with roman numerals
+	
+	inputL -F x -1
+	output: ERROR - Format-word is arabic and x is not so fail
 
 	input: -F -w 1 5
 	output: ERROR - Cannot use --equal-width with --format-word

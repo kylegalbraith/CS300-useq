@@ -63,11 +63,7 @@ Else
 					Assign startValue on sequ obj
 				
 				If incrementFormat = arabic
-					If increment > 0
-						Assign step on sequ obj
-					Else 
-						Output error that you cannot use negative arabic with roman numberals
-					
+					Assign step on sequ obj				
 				Else
 					Convert the step from roman to number
 					Assign step on sequ obj
