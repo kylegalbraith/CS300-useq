@@ -84,6 +84,9 @@ def setup():
     assert initialObj.equalWidth == False, "Equal width boolean was not initialized correctly"
     assert initialObj.negativeStep == False, "Negative step was not initialized correctly"
     assert initialObj.separator == '\n', "Default separator not set correctly"
+    assert initialObj.formatWordBool == False, "Format word not initialized correctly"
+    assert initialObj.formatWord == "", "Format word not initialized correctly"
+    assert initialObj.numberLines == False, "Number lines not initialized correctly"
 
     # Get the arguments that have been passed in, and ignore the first one
     # since it is the invocation of the script

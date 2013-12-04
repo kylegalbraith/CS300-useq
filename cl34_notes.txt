@@ -35,3 +35,9 @@ Link to repo: https://kgalb2@projects.cecs.pdx.edu/git/masseycs300-kgalb2
 format specified by the "--format-word" argument, or 
 inferred from the *start* or *increment* limit argument if 
 the "--format-word" argument is not supplied". I am takine this to mean that you cannot do something like this: 'cat filename.txt | sequ -n one two' because you can only use alpha arguments with --format-word. Furthermore, I am assuming that when the spec says "infer from the *start* or *increment* argument when --format-word arg is not supplied" that this means that --format-word is used but no argument (i.e. floating, arabic, alpha, or roman) is specified. So this case 'cat filename.txt | sequ -n -F one two' would work and we infer the format by the increment argument.
+
+- I was originally doing CL4 by going line by line but it has dawned on me that if you want to be able to accurately use 
+-w, -p, and -P with -n then you need to read in the whole file so that you can essentially
+have your end value which is (# of lines x increment - (increment - start)). If you do not do it this way
+then you will end up with unexpected results when you do something like:
+	'cat testfile.txt | ./sequ.py -n -P 50 20'

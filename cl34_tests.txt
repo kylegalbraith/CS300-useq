@@ -602,6 +602,41 @@ T44. input: -f "%a" -1 1.1 11
 		9 ever
 		10 sdfsdf
 		11 junk 123
+		
+	input: cat testfile.txt | -n 1 0.2
+	output:
+		1 Foobar
+		1.2 text
+		1.4 goes right here
+		1.6 forever
+		1.8 and
+		2.0 ever
+		2.2 sdfsdf
+		2.4 junk 123
+		
+	input: cat testfile.txt | -n 1 0.002
+	output:
+		1.000 Foobar
+		1.002 text
+		1.004 goes right here
+		1.006 forever
+		1.008 and
+		1.010 ever
+		1.012 sdfsdf
+		1.014 junk 123
+		
+	input: cat testfile.txt | -P -n 6
+	output:
+		1.000 Foobar
+		1.002 text
+		1.004 goes right here
+		1.006 forever
+		1.008 and
+		1.010 ever
+		1.012 sdfsdf
+		1.014 junk 123
+		
+		
 
 
 
