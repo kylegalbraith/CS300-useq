@@ -1,7 +1,11 @@
 ## Kyle Galbraith - CL3 & CL4 - Pseudocode
 
-I am only really concerned about the new functionality being added, so my pseudocode only addresses new functionality that is going to be added.
-
+If argument == --number-lines or -n
+	Read in the file from stdin and assign it to a file object on the sequ object
+	Set a bool on the sequ obj that tells you that you have seen --number-lines
+	If you have not seen a separator
+		Set the default separator to be ' '
+		
 If argument == -F or --format-word
 	If equal width and format flags have not been seen
 		If argument length == length of --format-word or -F
@@ -24,90 +28,184 @@ If argument == -F or --format-word
 				Set formatWord to ""
 			Set formatWord to true (i.e. seen it)
 	Else
-		Output an Error that format word cannot be used with equal 					width and format
+		Output an Error that format word cannot be used with equal width and format
 
 If formatWord == "" and formatWord is False
-	Do our normal calculations that were implemented in previous compliance levels
+	If --number-lines has not been seen
+		Do our normal calculations that were implemented in previous compliance levels
+		Assign *start* *increment* and *end* as need be
+	Else
+		If there are three numbers on the command line
+			Output an error that *end* cannot be specified when using --number-lines
+		If there are two numbers on the command line
+			Set the *start* and *increment* values on sequ obj
+		If there is one number on the command line
+			Set the *start* value on sequ obj
+		
+		Calculate the endValue by using this formula
+			(number of lines in the file * increment value) - (increment value - start value)
+			This will allow us to use -w, -p, and -P with --number-lines
+		Assign the end value on the sequ obj to be the solution to that formula
 Else
 	Loop through the remaning arguments and push them onto an array, numbers.
-	If the length of numbers = 3
-		Check the format of the start value using regex
-		Check the format of the increment value using regex
-		Check the format of the end value using regex
+	If --number-lines has not been seen
+		If the length of numbers = 3
+			Check the format of the start value using regex
+			Check the format of the increment value using regex
+			Check the format of the end value using regex
 
-		If formatWord is the emptystring
-			Set the format to be the format of the end argument
+			If formatWord is the emptystring
+				Set the format to be the format of the end argument
 
-		If formatWord is alpha or ALPHA
-			If increment format is arabic
-				If start format == formatWord and end format == formatWord
-					Convert the start value to a number
-					Assign it to startValue of sequ obj
-					Assign the increment argument to the sequ obj
-					Convert the end value to a number
-					Assign it to the endValue of sequ obj
+			If formatWord is alpha or ALPHA
+				If increment format is arabic
+					If start format == formatWord and end format == formatWord
+						Convert the start value to a number
+						Assign it to startValue of sequ obj
+						Assign the increment argument to the sequ obj
+						Convert the end value to a number
+						Assign it to the endValue of sequ obj
+					Else
+						Output error that an operand is not in correct format
 				Else
-					Output error that an operand is not in correct 							format
-			Else
-				Output error that when using alpha the increment arg must 					be of type arabic
-		If formatWord is roman or ROMAN
-			If startFormat = roman or arabic and incrementFormat = roman or
-			arabic and endFormat = roman or arabic
-				If startFormat = arabic
-					If start > 0 
+					Output error that when using alpha the increment arg must be of type arabic
+			If formatWord is roman or ROMAN
+				If startFormat = roman or arabic and incrementFormat = roman or
+				arabic and endFormat = roman or arabic
+					If startFormat = arabic
+						If start > 0 
+							Assign startValue on sequ obj
+						Else
+							Output error that you cannot use negative arabic with roman numberals
+					Else
+						Convert the startValue from roman to number
 						Assign startValue on sequ obj
+					
+					If incrementFormat = arabic
+						Assign step on sequ obj				
 					Else
-						Output error that you cannot use negative arabic with roman numberals
-				Else
-					Convert the startValue from roman to number
-					Assign startValue on sequ obj
-				
-				If incrementFormat = arabic
-					Assign step on sequ obj				
-				Else
-					Convert the step from roman to number
-					Assign step on sequ obj
+						Convert the step from roman to number
+						Assign step on sequ obj
 
-				If endFormat = arabic
-					If end > 0
-						Assign endValue on sequ obj
+					If endFormat = arabic
+						If end > 0
+							Assign endValue on sequ obj
+						Else
+							Output error that you cannot use negative arabic with roman numberals
 					Else
-						Output error that you cannot use negative arabic with roman numberals
+						Convert endValue from roman to number
+						Assign the endValue on sequ obj
 				Else
-					Convert endValue from roman to number
-					Assign the endValue on sequ obj
-			Else
-				Output error that an operand is not in correct format
-		If formatWord is arabic
-			If start, step, and end are arabic as well
-				Assign start value on sequ obj
-				Assign step value on sequ obj
-				Assign end value on sequ obj
-			Else
-				Output error that an operand is not in correct format
-		If formatWord is floating 	
-			If start, step, and end are floating as well
-				Assign start value on sequ obj
-				Assign step value on sequ obj
-				Assign end value on sequ obj
-			Else
-				Output error that an operand is not in correct format
+					Output error that an operand is not in correct format
+			If formatWord is arabic
+				If start, step, and end are arabic as well
+					Assign start value on sequ obj
+					Assign step value on sequ obj
+					Assign end value on sequ obj
+				Else
+					Output error that an operand is not in correct format
+			If formatWord is floating 	
+				If start, step, and end are floating as well
+					Assign start value on sequ obj
+					Assign step value on sequ obj
+					Assign end value on sequ obj
+				Else
+					Output error that an operand is not in correct format
 
-	If the length of numbers = 2
-		Do the same checks as above only deal with start and end value
-	If the length of numbers = 1
-		Do the same checks as above only deal with end value
+		If the length of numbers = 2
+			Do the same checks as above only deal with start and end value
+		If the length of numbers = 1
+			Do the same checks as above only deal with end value
+	Else
+		If the length of numbers = 3
+			Output an error that you cannot use *end* with --number-lines
 
-If formatWord is True
+		If the length of numbers = 2
+			Check the format of the start value using regex
+			Check the format of the increment value using regex
+
+			If formatWord is the emptystring
+				Set the format to be the format of the start or increment argument
+
+			If formatWord is alpha or ALPHA
+				If increment format is arabic
+					If start format == formatWord
+						Convert the start value to a number
+						Assign it to startValue of sequ obj
+						Assign the increment argument to the sequ obj
+					Else
+						Output error that an operand is not in correct format
+				Else
+					Output error that when using alpha the increment arg must be of type arabic
+			If formatWord is roman or ROMAN
+				If startFormat = roman or arabic and incrementFormat = roman or arabic
+					If startFormat = arabic
+						If start > 0 
+							Assign startValue on sequ obj
+						Else
+							Output error that you cannot use negative arabic with roman numberals
+					Else
+						Convert the startValue from roman to number
+						Assign startValue on sequ obj
+					
+					If incrementFormat = arabic
+						Assign step on sequ obj				
+					Else
+						Convert the step from roman to number
+						Assign step on sequ obj
+				Else
+					Output error that an operand is not in correct format
+			If formatWord is arabic
+				If start and step are arabic
+					Assign start value on sequ obj
+					Assign step value on sequ obj
+				Else
+					Output error that an operand is not in correct format
+			If formatWord is floating 	
+				If start and step are floating 
+					Assign start value on sequ obj
+					Assign step value on sequ obj
+				Else
+					Output error that an operand is not in correct format
+		If the length of numbers = 1
+			Do the same checks as above only deal with the start value	
+		
+
+In output function if formatWord is True
 	If formatWord is alpha
-		Output from start to end on increment steps
-		Convert each number to a word
+		If --number-lines has not been seen
+			Output from start to end on increment steps
+			Convert each number to a word
+		Else
+			Output from start to the end of the file array
+			Convert each number to a word
+			Prepend each line in the file with your formatted line number
 	If formatWord is roman
-		Output from start to end on increment steps
-		Convert each number to a roman numeral
+		If --number-lines has not been seen
+			Output from start to end on increment steps
+			Convert each number to a roman 
+		Else
+			Output from start to end on increment steps
+			Convert each number to a roman
+			Prepend each line in the file with your formatted line number
 	If formatWord is arabic or floating
-		Do our normal output from CL1 and CL2
+		If --number-lines has not been seen
+			Do our normal output from CL1 and CL2
+		Else
+			Output from start to end on increment steps
+			Prepend each line in the file with your formatted line number
+			
+In output function if formatWord is False
+		If --number-lines has not been seen
+			Do our normal output as we have no file to look at
+		Else
+			Loop through the file array
+			If --pad has been seen
+				Replace the 0 in the line number with the pad character
+				Output the line number followed by the line in the file
+			Else
+				Output the line number followed by the line number in the file
+			Move to the next line in the file
 
 
-###### CL4 Pseudo ######
-If argument == --number-lines or -n
+
