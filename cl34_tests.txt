@@ -546,6 +546,9 @@ T44. input: -f "%a" -1 1.1 11
 
 	input: -F -p t 3.1 8.2
 	output: ERROR - Cannot use --pad with --format-word
+	
+	input: -F -f %e 3.1 8.2
+	output: ERROR - Cannot use --format with --format-word
 
 	input: -p t -F sixteen
 	output: ERROR - Cannot use --pad with --format-word
@@ -571,7 +574,7 @@ T44. input: -f "%a" -1 1.1 11
 	input: -F --pad-spaces 1 5
 	output: ERROR - Cannot use --pad-spaces with --format-word
 
-	input: --pad-spaces -F five
+	input: --pad-spaces -F v
 	output: ERROR - Cannot use --pad-spaces with --format-word
 
 	input: --format-word -P sixteen
@@ -625,6 +628,28 @@ T44. input: -f "%a" -1 1.1 11
 		1.012 sdfsdf
 		1.014 junk 123
 		
+	input: cat testfile.txt | -n -f %e 1 0.002
+	output:
+		1.000000e+00 Foobar
+		1.002000e+00 text
+		1.004000e+00 goes right here
+		1.006000e+00 forever
+		1.008000e+00 and
+		1.010000e+00 ever
+		1.012000e+00 sdfsdf
+		1.014000e+00 junk 123
+
+	input: cat testfile.txt | -n -f %0.1e 1 0.002
+	output:
+		1.0e+00 Foobar
+		1.0e+00 text
+		1.0e+00 goes right here
+		1.0e+00 forever
+		1.0e+00 and
+		1.0e+00 ever
+		1.0e+00 sdfsdf
+		1.0e+00 junk 123
+		
 	input: cat testfile.txt | -P -n 6
 	output:
 		 6 Foobar
@@ -657,17 +682,144 @@ T44. input: -f "%a" -1 1.1 11
 		-16 ever
 		-20 sdfsdf
 		-24 junk 123
-		
-	input: cat testfile.txt | --number-lines -p t 10001
+			
+	input: cat testfile.txt | --number-lines -s t 10001
 	output:
-		10001 Foobar
-		10002 text
-		10003 right here
-		10004 forever
-		10005 and
-		10006 ever
-		10007 sdfsdf
-		10008 junk 123
+		10001tFoobar
+		10002ttext
+		10003tright here
+		10004tforever
+		10005tand
+		10006tever
+		10007tsdfsdf
+		10008tjunk 123
+		
+	input: cat testfile.txt | --number-lines -s '\t' 10001
+	output:
+		10001	Foobar
+		10002	text
+		10003	right here
+		10004	forever
+		10005	and
+		10006	ever
+		10007	sdfsdf
+		10008	junk 123
+		
+	input: cat testfile.txt | --number-lines -p t -1
+	output:
+		-1 Foobar
+		t0 text
+		t1 goes right here
+		t2 forever
+		t3 and
+		t4 ever
+		t5 sdfsdf
+		t6 junk 
+		
+	input: cat testfile.txt | --number-lines -p t -1
+	output:
+		-1 Foobar
+			0 text
+			1 goes right here
+			2 forever
+			3 and
+			4 ever
+			5 sdfsdf
+			6 junk 123
+			
+	input: cat testfile.txt | --number-lines 1.4
+	output:
+		1.4 Foobar
+		2.4 text
+		3.4 goes right here
+		4.4 forever
+		5.4 and
+		6.4 ever
+		7.4 sdfsdf
+		8.4 junk
+
+	input: cat testfile.txt | --number-lines 1.4 -.2
+	output:
+		1.4 Foobar
+		1.2 text
+		1.0 goes right here
+		0.8 forever
+		0.6 and
+		0.4 ever
+		0.2 sdfsdf
+		0.0 junk
+
+	input: cat testfile.txt | --number-lines -F 1.5 -1.2
+	output:
+		1.5 Foobar
+		0.3 text
+		-0.9 goes right here
+		-2.1 forever
+		-3.3 and
+		-4.5 ever
+		-5.7 sdfsdf
+		-6.9 junk
+
+	input: cat testfile.txt | --number-lines -F 15 12
+	output:
+		15 Foobar
+		27 text
+		39 goes right here
+		51 forever
+		63 and
+		75 ever
+		87 sdfsdf
+		99 junk 		
+
+	input: cat testfile.txt | --number-lines -F one three
+	output:
+		one Foobar
+		four text
+		seven goes right here
+		ten forever
+		thirteen and
+		sixteen ever
+		nineteen sdfsdf
+		twenty-two junk 	
+
+	input: cat testfile.txt | --number-lines -F x ii
+	output:
+		x Foobar
+		xii text
+		xiv goes right here
+		xvi forever
+		xviii and
+		xx ever
+		xxii sdfsdf
+		xxiv junk 
+
+	input: cat testfile.txt | --number-lines 1 2 5
+	output: ERROR - End arg not allowed
+	
+	input: cat testfile.txt | --number-lines 1.2 2.1 5.6
+	output: ERROR - End arg not allowed
+	
+	input: cat testfile.txt | --number-lines -F 1 2 5
+	output: ERROR - End arg not allowed
+	
+	input: cat testfile.txt | --number-lines -F 1.2 2.1 5.6
+	output: ERROR - End arg not allowed
+	
+	input: cat testfile.txt | --number-lines -F one 2 five
+	output: ERROR - End arg not allowed
+	
+	input: cat testfile.txt | --number-lines -F x ii xxi
+	output: ERROR - End arg not allowed
+	
+	input: --number-lines -F x
+	output: This is NOT an error. It will output whatever you type in preceeded with the line number
+	
+	
+
+		
+		
+		
+
 		
 	
 		
