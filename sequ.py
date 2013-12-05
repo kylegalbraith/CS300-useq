@@ -147,6 +147,8 @@ def setup():
                     usage(8)
 
             elif arguments[stringParse] == "--number-lines" or arguments[stringParse] == "-n":
+                for line in sys.stdin:
+                    initialObj.numberLinesFile.append(line)
                 initialObj.numberLines = True
                 initialObj.separator = ' '
             

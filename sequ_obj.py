@@ -21,6 +21,7 @@ class sequ_obj:
         self.formatWord = ""
         self.formatWordBool = False
         self.numberLines = False
+        self.numberLinesFile = []
         self.leftDecimal = 0
         self.rightDecimal = 0
 
@@ -69,9 +70,10 @@ class sequ_obj:
     def readFile(self):
         start = self.startValue
         step = self.step
+        fileArray = self.numberLinesFile
 
         if(not self.formatWordBool):
-            for line in sys.stdin:
+            for line in fileArray:
                 lineNumber = self.formatOption % + start
                 if(self.padChar != "0"):
                     paddedNonZeroLineNumber = self.replaceZeroSingleLine(lineNumber)
