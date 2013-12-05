@@ -199,7 +199,8 @@ class sequ_obj:
     
         for pair in table:
             if pair not in table:
-                print 'not a valid roman numeral'
+                print pair + ' is not a valid roman numeral'
+                exit(1)
             while integer - pair[1] >= 0:
                 integer -= pair[1]
                 returnString += pair[0]
