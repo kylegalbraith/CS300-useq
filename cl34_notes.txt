@@ -27,6 +27,9 @@ Link to repo: https://kgalb2@projects.cecs.pdx.edu/git/masseycs300-kgalb2
 
 - The case where you have to determine the format for format word from the end argument has an edge case where the format you are trying to determine is alpha. Need to come up with a way to catch this case without exiting.
 
+- NOTE: I am using a library created for Python called num_to_word that will convert a number to its word representation. This library can be found
+at the following url: https://pypi.python.org/pypi/num2words/0.5.0
+
 - CL4 syntax cat filename.txt | sequ .... > myoutput.txt
 
 - Technically you could use --format with --format-word if the arguments are arabic or floating. However, since this is not mentioned in the spec I am making the decision to not allow this as it would increase the complexity of that code even more then it already is.

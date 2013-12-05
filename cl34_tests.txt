@@ -463,6 +463,15 @@ T44. input: -f "%a" -1 1.1 11
 	input: -F roman mii
 	ouput: i ii iii ...... mii
 
+	input: -F roman mii ii mxvi
+	ouput: mii miv mvi mviii mx mxii mxiv mxvi
+	
+	input: -F ROMAN 2095 2100
+	output: MMXCV MMXCVI MMXCVII MMXCVIII MMXCIX MMC
+	
+	input: -F ROMAN 4995 5000
+	output: MMMMCMXCV MMMMCMXCVI MMMMCMXCVII MMMMCMXCVIII MMMMCMXCIX MMMMM
+	
 	input: -F x
 	output: i ii iii iv v vi vii viii ix x
 
