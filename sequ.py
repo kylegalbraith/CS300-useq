@@ -101,6 +101,8 @@ def setup():
     seenFormat = False
     seenEw = False
     seenFormatWord = False
+    seenSeparator = False
+    seenWords = False
     try:
         while checkArgumentFormat(arguments[stringParse]) == "cl_argument":
             #parse '-' flags to assign them to the sequ object
@@ -141,8 +143,9 @@ def setup():
                     usage(6)
 
             elif arguments[stringParse] == "--words" or arguments[stringParse] == "-W":
-                if(initialObj.separator == '\n'):
+                if(not seenSeparator):
                     initialObj.separator = ' '
+                    seenWords = True
                 else:
                     usage(8)
 
@@ -150,7 +153,8 @@ def setup():
                 for line in sys.stdin:
                     initialObj.numberLinesFile.append(line)
                 initialObj.numberLines = True
-                initialObj.separator = ' '
+                if(not seenSeparator):
+                    initialObj.separator = ' '
             
             elif format:               
                 try:
@@ -183,7 +187,7 @@ def setup():
                     usage(4, "--format")
 
             elif separator:
-                if(initialObj.separator == '\n'):
+                if(not seenSeparator and not seenWords):
                     try:
                         verboseSeparatorLength = len("--separator")
                         separatorFlagLength = len("-s")
@@ -195,6 +199,8 @@ def setup():
                         else:
                             parsedEscapedSeparator = parseFlagWithEquals(arguments[stringParse], verboseSeparatorLength, separatorFlagLength)
                             initialObj.separator = parsedEscapedSeparator
+
+                        seenSeparator = True
 
                     except IndexError:
                         usage(4, "--separator")
@@ -364,7 +370,8 @@ def setup():
                 startValueString = numberStrings[0]
 
             # you are not allowed to pass in an end argument because you do not know the end of the file. However, we can figure out the end
-            # by using the length of the initialObj.fileArray. This will allow us to be able to accurately use the --format --pad and --pad-spaces as expected
+            # by using the length of the initialObj.fileArray. This will allow us to be able to accurately create the formatOption
+            # and thus use --pad and --pad-spaces as expected
             endArg = int((len(initialObj.numberLinesFile) * initialObj.step) - (initialObj.step - initialObj.startValue))
             initialObj.endValue = endArg
             numberStrings.append(str(endArg))

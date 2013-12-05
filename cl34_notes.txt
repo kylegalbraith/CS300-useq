@@ -44,5 +44,11 @@ then you will end up with unexpected results when you do something like:
 	
 - With my current method of line by line and a 2MB file it takes about
 	1.1s real
+
 - With the revised way of reading in the whole file first it takes about
-	1.2s real, therefore I am going to make the change and read the entire file in first into an array.
+	1.2s real, therefore I am going to make the change and read the entire 
+	file in first into an array. 
+
+- Using the array method instead of line by line allows me to correctly create 
+the format option needed when --format is not used. This means that --pad and --pad-spaces
+will work correctly when using --number-lines.

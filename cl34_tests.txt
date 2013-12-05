@@ -636,6 +636,43 @@ T44. input: -f "%a" -1 1.1 11
 		12 sdfsdf
 		13 junk 123
 		
+	input: cat testfile.txt | -w --number-lines 6
+	output:
+		06 Foobar
+		07 text
+		08 right here
+		09 forever
+		10 and
+		11 ever
+		12 sdfsdf
+		13 junk 123
+		
+	input: cat testfile.txt | --number-lines --equal-width 4 -4
+	output:
+		004 Foobar
+		000 text
+		-04 right here
+		-08 forever
+		-12 and
+		-16 ever
+		-20 sdfsdf
+		-24 junk 123
+		
+	input: cat testfile.txt | --number-lines -p t 10001
+	output:
+		10001 Foobar
+		10002 text
+		10003 right here
+		10004 forever
+		10005 and
+		10006 ever
+		10007 sdfsdf
+		10008 junk 123
+		
+	
+		
+	
+		
 		
 
 
