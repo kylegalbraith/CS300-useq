@@ -880,15 +880,18 @@ def printVersion():
 
 # Create a new sequ_obj which will have all of the defaults set for normal sequ operation.
 initialObj = setup()
-if(initialObj.formatWordBool):
-    if(initialObj.formatWord == "alpha" or initialObj.formatWord == "ALPHA"):
-        initialObj.outputAlpha()
-    elif(initialObj.formatWord == "roman" or initialObj.formatWord == "ROMAN"):
-        initialObj.outputRoman()
-    elif(initialObj.formatWord == "arabic"  or initialObj.formatWord == "floating"):
+if(not initialObj.numberLines):
+    if(initialObj.formatWordBool):
+        if(initialObj.formatWord == "alpha" or initialObj.formatWord == "ALPHA"):
+            initialObj.outputAlpha()
+        elif(initialObj.formatWord == "roman" or initialObj.formatWord == "ROMAN"):
+            initialObj.outputRoman()
+        elif(initialObj.formatWord == "arabic"  or initialObj.formatWord == "floating"):
+            initialObj.outputQuick()
+    else:
         initialObj.outputQuick()
 else:
-    initialObj.outputQuick()
+    initialObj.readFile()
 
 
 

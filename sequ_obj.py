@@ -121,15 +121,12 @@ class sequ_obj:
                     outputArray.append(self.formatOption % + start)
                 start += step
         else:
-            if(not self.numberLines):
-                while start <= end:
-                    if(start != end):
-                        outputArray.append(self.formatOption % + start)
-                    else:
-                        outputArray.append(self.formatOption % + start)
-                    start += step
-            else:
-                self.readFile()
+            while start <= end:
+                if(start != end):
+                    outputArray.append(self.formatOption % + start)
+                else:
+                    outputArray.append(self.formatOption % + start)
+                start += step
              
         if(self.padChar != "0"):
             formattedOutput = self.replaceZero(outputArray)
@@ -144,19 +141,16 @@ class sequ_obj:
         negativeStep = self.negativeStep
         outputArray = []
 
-        if(not self.numberLines):
-            while start <= end:
-                convert = self.numberToWord(start)
-                if(start != end):
-                    outputArray.append(convert)
-                else:
-                    outputArray.append(convert)
-                start += step      
-            self.finalOutput(outputArray)
-        else:
-                self.readFile()
-
-
+        while start <= end:
+            convert = self.numberToWord(start)
+            if(start != end):
+                outputArray.append(convert)
+            else:
+                outputArray.append(convert)
+            start += step    
+              
+        self.finalOutput(outputArray)
+        
     def outputRoman(self):
         start = self.startValue
         step = self.step
@@ -174,19 +168,19 @@ class sequ_obj:
                 start += step
             self.finalOutput(outputArray)
         else:
-            if(not self.numberLines):
-                while start <= end:
-                    convert = self.numberToRoman(start)
-                    if(start != end):
-                        outputArray.append(convert)
-                    else:
-                        outputArray.append(convert)
-                    start += step
-                self.finalOutput(outputArray)
-            else:
-                self.readFile()
+            while start <= end:
+                convert = self.numberToRoman(start)
+                if(start != end):
+                    outputArray.append(convert)
+                else:
+                    outputArray.append(convert)
+                start += step
+                
+            self.finalOutput(outputArray)
+
     
-    # Use num2word to convert a number to a word representation.
+    # Use num2word to convert a number to a word representation. I am using the module num2word which can be found here: https://pypi.python.org/pypi/num2words/0.5.0
+    # This makes converting a number to its word representation simple, so there is no sense in recreating the wheel.
     def numberToWord(self, number):
         convertedWord = num2word.to_card(number)
         if(self.formatWord == "ALPHA"):
