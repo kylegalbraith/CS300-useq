@@ -89,17 +89,17 @@ class sequ_obj:
             isFloat = (self.formatWord == "floating")
 
             if(isAlpha):
-                for line in sys.stdin:
+                for line in fileArray:
                     lineNumber = self.numberToWord(start)
                     sys.stdout.write(lineNumber + self.separator + line)
                     start += step
             elif(isRoman):
-                for line in sys.stdin:
+                for line in fileArray:
                     lineNumber = self.numberToRoman(start)
                     sys.stdout.write(lineNumber + self.separator + line)
                     start += step
             elif(isArabic or isFloat):
-                for line in sys.stdin:
+                for line in fileArray:
                     sys.stdout.write(str(start) + self.separator + line)
                     start += step
                 

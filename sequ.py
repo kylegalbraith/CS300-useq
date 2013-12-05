@@ -352,6 +352,8 @@ def setup():
         else:
             if(lengthOfNumbers == 3):
                 usage(14)
+            # you are not allowed to pass in an end argument because you do not know the end of the file. However, we can figure out the end
+            # by using the length of the initialObj.fileArray. This will allow us to be able to accurately use the --format --pad and --pad-spaces as expected
             if(lengthOfNumbers == 2):
                 initialObj.startValue = numbers[0]
                 initialObj.step = numbers[1]
@@ -360,6 +362,13 @@ def setup():
             if(lengthOfNumbers == 1):
                 initialObj.startValue = numbers[0]
                 startValueString = numberStrings[0]
+
+            # you are not allowed to pass in an end argument because you do not know the end of the file. However, we can figure out the end
+            # by using the length of the initialObj.fileArray. This will allow us to be able to accurately use the --format --pad and --pad-spaces as expected
+            endArg = int((len(initialObj.numberLinesFile) * initialObj.step) - (initialObj.step - initialObj.startValue))
+            initialObj.endValue = endArg
+            numberStrings.append(str(endArg))
+            
         # end assigning start step end values
         
         # If -f/--format was used then the default value for format will not be present and this block of code will never run.
