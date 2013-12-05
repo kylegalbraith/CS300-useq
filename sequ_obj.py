@@ -71,6 +71,7 @@ class sequ_obj:
         start = self.startValue
         step = self.step
         fileArray = self.numberLinesFile
+        lineNumber = ""
 
         if(not self.formatWordBool):
             for line in fileArray:
@@ -82,7 +83,6 @@ class sequ_obj:
                     sys.stdout.write(str(lineNumber) + self.separator + line)
                 start += step
         else:
-            lineNumber = ""
             isAlpha = (self.formatWord.lower() == "alpha")
             isRoman = (self.formatWord.lower() == "roman")
             isArabic = (self.formatWord == "arabic")
