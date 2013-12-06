@@ -55,3 +55,7 @@ then you will end up with unexpected results when you do something like:
 - Using the array method instead of line by line allows me to correctly create 
 the format option needed when --format is not used. This means that --pad and --pad-spaces
 will work correctly when using --number-lines.
+
+- I have ran through my test for the variou compliance levels and everything appears to be working as expected.
+
+- I have also stepped through my new code through the debugger to be sure the correct things are being assigned where required
