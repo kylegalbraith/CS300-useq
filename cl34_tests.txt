@@ -780,7 +780,7 @@ T44. input: -f "%a" -1 1.1 11
 		87 sdfsdf
 		99 junk 		
 
-	input: cat testfile.txt | --number-lines -F one three
+	input: cat testfile.txt | --number-lines -F one 3
 	output:
 		one Foobar
 		four text
@@ -792,6 +792,28 @@ T44. input: -f "%a" -1 1.1 11
 		twenty-two junk 	
 
 	input: cat testfile.txt | --number-lines -F x ii
+	output:
+		x Foobar
+		xii text
+		xiv goes right here
+		xvi forever
+		xviii and
+		xx ever
+		xxii sdfsdf
+		xxiv junk 
+		
+	input: cat testfile.txt | --number-lines -F x 2
+	output:
+		x Foobar
+		xii text
+		xiv goes right here
+		xvi forever
+		xviii and
+		xx ever
+		xxii sdfsdf
+		xxiv junk 
+		
+	input: cat testfile.txt | --number-lines -F 10 ii
 	output:
 		x Foobar
 		xii text
@@ -816,6 +838,9 @@ T44. input: -f "%a" -1 1.1 11
 	
 	input: cat testfile.txt | --number-lines -F one 2 five
 	output: ERROR - End arg not allowed
+	
+	input: cat testfile.txt | --number-lines -F one five
+	output: ERROR - Increment arg must be arabic when using alpha
 	
 	input: cat testfile.txt | --number-lines -F x ii xxi
 	output: ERROR - End arg not allowed
