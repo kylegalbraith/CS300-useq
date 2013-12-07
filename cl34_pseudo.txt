@@ -116,7 +116,7 @@ Else
 			Do the same checks as above only deal with start and end value
 		If the length of numbers = 1
 			Do the same checks as above only deal with end value
-	Else
+	Else --number-lines has been seen
 		If the length of numbers = 3
 			Output an error that you cannot use *end* with --number-lines
 
@@ -125,7 +125,10 @@ Else
 			Check the format of the increment value using regex
 
 			If formatWord is the emptystring
-				Set the format to be the format of the start or increment argument
+				If start value is alpha or roman format
+					Set formatWord to be the format of the start value
+				Else
+					Set formatWord to be the format of the increment value
 
 			If formatWord is alpha or ALPHA
 				If increment format is arabic
