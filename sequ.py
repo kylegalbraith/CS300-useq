@@ -403,11 +403,25 @@ def setup():
             except ValueError:
                 usage(3)
         if(len(numbers) <= 3 and len(numbers) >= 1):
-            limitArguments = setupFormatWordOutput(numbers, initialObj.formatWord)
-            if(checkArgumentFormat(limitArguments[0]) == "alpha"):
-                initialObj.formatWord = limitArguments[0]
-                limitArguments.remove(limitArguments[0])
-            
+            if(len(numbers) == 3):
+                if(initialObj.formatWord == ""):
+                    initialObj.formatWord = checkArgumentFormat(numbers[2])
+                limitArguments = setupFormatWordOutput(numbers, initialObj.formatWord, initialObj.numberLines)
+            elif(len(numbers) == 2):
+                if(initialObj.formatWord == ""):
+                    if not initialObj.numberLines:
+                        initialObj.formatWord = checkArgumentFormat(numbers[1])
+                    else:
+                        if(checkArgumentFormat(numbers[0]) == "alpha" or checkArgumentFormat(numbers[0]) == "roman"):
+                            initialObj.formatWord = checkArgumentFormat(numbers[0])
+                        else:
+                            initialObj.formatWord = checkArgumentFormat(numbers[1])
+                limitArguments = setupFormatWordOutput(numbers, initialObj.formatWord, initialObj.numberLines)
+            elif(len(numbers) == 1):
+                if(initialObj.formatWord == ""):
+                    initialObj.formatWord = checkArgumentFormat(numbers[0])
+                limitArguments = setupFormatWordOutput(numbers, initialObj.formatWord, initialObj.numberLines)
+                       
             numberOfArgs = len(limitArguments)
             if(not initialObj.numberLines): 
                 if(numberOfArgs == 3):
@@ -443,7 +457,7 @@ def setup():
 
     return initialObj
 
-def setupFormatWordOutput(numbers, formatWord):
+def setupFormatWordOutput(numbers, formatWord, numberLines):
     limitArray = []
     lengthOfCl = len(numbers)
     #start, step, end
@@ -451,10 +465,6 @@ def setupFormatWordOutput(numbers, formatWord):
         startFormat = checkArgumentFormat(numbers[0])
         stepFormat = checkArgumentFormat(numbers[1])
         endFormat = checkArgumentFormat(numbers[2])
-
-        if(formatWord == ""):
-            formatWord = endFormat
-            limitArray.append(formatWord)
         
         # If the format is alpha, then the step format must be arabic
         if(formatWord == "alpha" or formatWord == "ALPHA"):
@@ -519,17 +529,24 @@ def setupFormatWordOutput(numbers, formatWord):
         startFormat = checkArgumentFormat(numbers[0])
         endFormat = checkArgumentFormat(numbers[1])
 
-        if(formatWord == ""):
-            formatWord = endFormat
-            limitArray.append(formatWord)
-
         if(formatWord == "alpha" or formatWord == "ALPHA"):
-            if(startFormat == formatWord.lower() and endFormat == formatWord.lower()):
-                limitArray.append(wordToInt(numbers[0]))
-                limitArray.append(wordToInt(numbers[1]))
-                return limitArray
+            if not numberLines:
+                if(startFormat == formatWord.lower() and endFormat == formatWord.lower()):
+                    limitArray.append(wordToInt(numbers[0]))
+                    limitArray.append(wordToInt(numbers[1]))
+                    return limitArray
+                else:
+                    usage(10, formatWord)
             else:
-                usage(10, formatWord)
+                if(startFormat == formatWord.lower()):
+                    if(endFormat == "arabic"):
+                        limitArray.append(wordToInt(numbers[0]))
+                        limitArray.append(int(numbers[1]))
+                        return limitArray
+                    else:
+                        usage(11)
+                else:
+                    usage(10, formatWord)
 
         elif(formatWord == "roman" or formatWord == "ROMAN"):
             formatEqualsRoman = (startFormat == formatWord.lower() or startFormat == "arabic") and (endFormat == formatWord.lower() or endFormat == "arabic")
@@ -571,10 +588,6 @@ def setupFormatWordOutput(numbers, formatWord):
     #end
     elif(lengthOfCl == 1):
         endFormat = checkArgumentFormat(numbers[0])
-
-        if(formatWord == ""):
-            formatWord = endFormat
-            limitArray.append(formatWord)
 
         if(formatWord == "alpha" or formatWord == "ALPHA"):
             if(endFormat == formatWord.lower()):
